@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches
+END
+bitcoind-comparison.patch
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/bitcoind-comparison.patch
+END
+temp-revert-1.patch
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/temp-revert-1.patch
+END
+temp-revert-2.patch
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/temp-revert-2.patch
+END
+temp-revert-3.patch
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/temp-revert-3.patch
+END
+temp-revert-4.patch
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/temp-revert-4.patch
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/test-patches/README
+END

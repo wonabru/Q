@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/wallettools
+END
+walletunlock.py
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/wallettools/walletunlock.py
+END
+walletchangepass.py
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/wallettools/walletchangepass.py
+END

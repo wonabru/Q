@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors
+END
+qt-win32.yml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/qt-win32.yml
+END
+boost-win32.yml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/boost-win32.yml
+END
+deps-win32.yml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/deps-win32.yml
+END
+gitian-win32.yml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/gitian-win32.yml
+END
+gitian.yml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/gitian.yml
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-descriptors/README
+END

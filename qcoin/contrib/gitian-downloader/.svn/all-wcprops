@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5636/branches/0.8.6/contrib/gitian-downloader
+END
+devrandom-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/devrandom-key.pgp
+END
+win32-download-config
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/bitcoin/bitcoin.git/!svn/ver/5636/branches/0.8.6/contrib/gitian-downloader/win32-download-config
+END
+gavinandresen-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/gavinandresen-key.pgp
+END
+wtogami-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bitcoin/bitcoin.git/!svn/ver/5636/branches/0.8.6/contrib/gitian-downloader/wtogami-key.pgp
+END
+tcatm-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/tcatm-key.pgp
+END
+luke-jr-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/luke-jr-key.pgp
+END
+laanwj-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/laanwj-key.pgp
+END
+linux-download-config
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/bitcoin/bitcoin.git/!svn/ver/5636/branches/0.8.6/contrib/gitian-downloader/linux-download-config
+END
+sipa-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/sipa-key.pgp
+END
+bluematt-key.pgp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/gitian-downloader/bluematt-key.pgp
+END

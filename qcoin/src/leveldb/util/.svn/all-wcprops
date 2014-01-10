@@ -1,0 +1,209 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5653/branches/0.8.6/src/leveldb/util
+END
+arena.cc
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/arena.cc
+END
+arena.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/arena.h
+END
+env.cc
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/env.cc
+END
+options.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/options.cc
+END
+histogram.cc
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/histogram.cc
+END
+coding_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/coding_test.cc
+END
+posix_logger.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/posix_logger.h
+END
+coding.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/coding.cc
+END
+testharness.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/testharness.h
+END
+env_win.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/env_win.cc
+END
+bloom_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/bloom_test.cc
+END
+comparator.cc
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/comparator.cc
+END
+testutil.cc
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/testutil.cc
+END
+crc32c.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/crc32c.h
+END
+hash.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/hash.h
+END
+arena_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/arena_test.cc
+END
+logging.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/logging.cc
+END
+env_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/env_test.cc
+END
+logging.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/logging.h
+END
+histogram.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/histogram.h
+END
+cache_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/cache_test.cc
+END
+testharness.cc
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/testharness.cc
+END
+cache.cc
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/cache.cc
+END
+filter_policy.cc
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/filter_policy.cc
+END
+coding.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/coding.h
+END
+bloom.cc
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/bloom.cc
+END
+env_posix.cc
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5653/branches/0.8.6/src/leveldb/util/env_posix.cc
+END
+mutexlock.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/mutexlock.h
+END
+crc32c_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/crc32c_test.cc
+END
+crc32c.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/crc32c.cc
+END
+testutil.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/testutil.h
+END
+random.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5550/branches/0.8.6/src/leveldb/util/random.h
+END
+status.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/status.cc
+END
+hash.cc
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/util/hash.cc
+END

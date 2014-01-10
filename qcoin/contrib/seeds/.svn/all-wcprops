@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/seeds
+END
+makeseeds.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/seeds/makeseeds.py
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/seeds/README
+END

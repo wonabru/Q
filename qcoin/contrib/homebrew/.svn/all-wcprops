@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5634/branches/0.8.6/contrib/homebrew
+END
+makefile.osx.patch
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bitcoin/bitcoin.git/!svn/ver/5634/branches/0.8.6/contrib/homebrew/makefile.osx.patch
+END
+bitcoin.qt.pro.patch
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/homebrew/bitcoin.qt.pro.patch
+END

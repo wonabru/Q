@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/res/images
+END
+about.png
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/res/images/about.png
+END
+splash.png
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/res/images/splash.png
+END
+splash_testnet.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/res/images/splash_testnet.png
+END

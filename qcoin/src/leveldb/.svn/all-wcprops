@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/bitcoin/bitcoin.git/!svn/ver/5654/branches/0.8.6/src/leveldb
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/LICENSE
+END
+.gitignore
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/.gitignore
+END
+AUTHORS
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/AUTHORS
+END
+TODO
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/TODO
+END
+WINDOWS.md
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/WINDOWS.md
+END
+build_detect_platform
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/build_detect_platform
+END
+NEWS
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/NEWS
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5550/branches/0.8.6/src/leveldb/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/README
+END

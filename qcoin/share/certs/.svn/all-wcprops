@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/share/certs
+END
+BitcoinFoundation_Apple_Cert.pem
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/share/certs/BitcoinFoundation_Apple_Cert.pem
+END
+BitcoinFoundation_Comodo_Cert.pem
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/share/certs/BitcoinFoundation_Comodo_Cert.pem
+END
+PrivateKeyNotes.md
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/share/certs/PrivateKeyNotes.md
+END

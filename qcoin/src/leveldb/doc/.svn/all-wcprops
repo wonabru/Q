@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc
+END
+impl.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/impl.html
+END
+log_format.txt
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/log_format.txt
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/index.html
+END
+doc.css
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/doc.css
+END
+benchmark.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/benchmark.html
+END
+table_format.txt
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/doc/table_format.txt
+END

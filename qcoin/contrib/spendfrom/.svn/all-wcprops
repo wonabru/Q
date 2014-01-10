@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/spendfrom
+END
+spendfrom.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/spendfrom/spendfrom.py
+END
+setup.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/spendfrom/setup.py
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/spendfrom/README
+END

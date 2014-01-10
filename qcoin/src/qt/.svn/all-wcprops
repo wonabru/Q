@@ -1,0 +1,473 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/bitcoin/bitcoin.git/!svn/ver/5646/branches/0.8.6/src/qt
+END
+transactionrecord.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionrecord.h
+END
+aboutdialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/aboutdialog.cpp
+END
+transactionfilterproxy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionfilterproxy.cpp
+END
+monitoreddatamapper.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/monitoreddatamapper.cpp
+END
+overviewpage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/overviewpage.cpp
+END
+sendcoinsentry.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/sendcoinsentry.h
+END
+bitcoinunits.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinunits.h
+END
+optionsdialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/optionsdialog.h
+END
+notificator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/notificator.cpp
+END
+walletstack.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/walletstack.h
+END
+walletview.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5643/branches/0.8.6/src/qt/walletview.cpp
+END
+transactionrecord.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionrecord.cpp
+END
+guiconstants.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/guiconstants.h
+END
+guiutil.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/guiutil.h
+END
+transactiondesc.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiondesc.h
+END
+bitcoin.qrc
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoin.qrc
+END
+qvaluecombobox.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qvaluecombobox.h
+END
+qrcodedialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qrcodedialog.cpp
+END
+addressbookpage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/addressbookpage.cpp
+END
+splashscreen.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/splashscreen.h
+END
+qvalidatedlineedit.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qvalidatedlineedit.h
+END
+transactionfilterproxy.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionfilterproxy.h
+END
+bitcoinaddressvalidator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinaddressvalidator.cpp
+END
+walletframe.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/walletframe.cpp
+END
+monitoreddatamapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/monitoreddatamapper.h
+END
+overviewpage.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/overviewpage.h
+END
+csvmodelwriter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/csvmodelwriter.cpp
+END
+bitcoinunits.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinunits.cpp
+END
+editaddressdialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/editaddressdialog.cpp
+END
+walletstack.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5643/branches/0.8.6/src/qt/walletstack.cpp
+END
+signverifymessagedialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/signverifymessagedialog.h
+END
+bitcoinamountfield.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinamountfield.cpp
+END
+guiutil.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/guiutil.cpp
+END
+addresstablemodel.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/addresstablemodel.h
+END
+transactiondesc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiondesc.cpp
+END
+transactionview.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionview.h
+END
+qvaluecombobox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qvaluecombobox.cpp
+END
+notificator.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/notificator.h
+END
+walletview.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5643/branches/0.8.6/src/qt/walletview.h
+END
+splashscreen.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/splashscreen.cpp
+END
+qvalidatedlineedit.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qvalidatedlineedit.cpp
+END
+askpassphrasedialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/askpassphrasedialog.h
+END
+clientmodel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/clientmodel.cpp
+END
+bitcoingui.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoingui.h
+END
+bitcoinstrings.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinstrings.cpp
+END
+qrcodedialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/qrcodedialog.h
+END
+addressbookpage.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/addressbookpage.h
+END
+sendcoinsdialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5646/branches/0.8.6/src/qt/sendcoinsdialog.cpp
+END
+rpcconsole.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/rpcconsole.cpp
+END
+bitcoinaddressvalidator.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5642/branches/0.8.6/src/qt/bitcoinaddressvalidator.h
+END
+walletframe.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/walletframe.h
+END
+transactiondescdialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiondescdialog.h
+END
+paymentserver.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/paymentserver.h
+END
+walletmodel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/walletmodel.cpp
+END
+signverifymessagedialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/signverifymessagedialog.cpp
+END
+macdockiconhandler.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/macdockiconhandler.h
+END
+addresstablemodel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/addresstablemodel.cpp
+END
+csvmodelwriter.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/csvmodelwriter.h
+END
+editaddressdialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/editaddressdialog.h
+END
+transactionview.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactionview.cpp
+END
+optionsmodel.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/optionsmodel.h
+END
+transactiontablemodel.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiontablemodel.h
+END
+bitcoinamountfield.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoinamountfield.h
+END
+bitcoin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoin.cpp
+END
+askpassphrasedialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/askpassphrasedialog.cpp
+END
+bitcoingui.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/bitcoingui.cpp
+END
+aboutdialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/aboutdialog.h
+END
+macdockiconhandler.mm
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5539/branches/0.8.6/src/qt/macdockiconhandler.mm
+END
+transactiondescdialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiondescdialog.cpp
+END
+paymentserver.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/paymentserver.cpp
+END
+clientmodel.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/clientmodel.h
+END
+sendcoinsentry.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/sendcoinsentry.cpp
+END
+sendcoinsdialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/sendcoinsdialog.h
+END
+optionsdialog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/optionsdialog.cpp
+END
+rpcconsole.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/rpcconsole.h
+END
+optionsmodel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/optionsmodel.cpp
+END
+transactiontablemodel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/transactiontablemodel.cpp
+END
+walletmodel.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/qt/walletmodel.h
+END

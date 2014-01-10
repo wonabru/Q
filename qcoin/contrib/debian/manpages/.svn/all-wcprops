@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/manpages
+END
+bitcoin-qt.1
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/manpages/bitcoin-qt.1
+END
+bitcoind.1
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/manpages/bitcoind.1
+END
+bitcoin.conf.5
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/manpages/bitcoin.conf.5
+END
