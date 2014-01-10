@@ -2821,23 +2821,10 @@ bool InitBlockIndex() {
             block.nTime    = 1296688602;
             block.nNonce   = 414098458;
         }
-     //   uint256 privkeyofone = 0x1B653CF195D5A1D1;
-     //   dumpKeyInfo(privkeyofone);
 
-        //// debug print
         uint256 hash = block.GetHash();
         uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
-      /*  while(true)
-        {
-            if(block.nNonce%1000000==0)
-            {
-            hash = block.GetHash();
-            printf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex().c_str(), hashTarget.GetHex().c_str());
-            }
-            if(checkBlock(block)==true)
-                break;
-            block.nNonce = block.nNonce + 1;
-        }*/
+
         printf("%d\n", block.nNonce);
         printf("%d\n", bnProofOfWorkLimit.GetCompact());
         printf("%s\n", hashTarget.ToString().c_str());
