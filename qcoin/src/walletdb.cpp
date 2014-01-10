@@ -402,10 +402,10 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
         int nMinVersion = 0;
         if (Read((string)"minversion", nMinVersion))
         {
-          //  if (nMinVersion > CLIENT_VERSION)
-          //      return DB_TOO_NEW;
+            if (nMinVersion > CLIENT_VERSION)
+                return DB_TOO_NEW;
             pwallet->LoadMinVersion(nMinVersion);
-        }
+       }
 
         // Get cursor
         Dbc* pcursor = GetCursor();
