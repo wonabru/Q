@@ -728,7 +728,8 @@ void StartRPCThreads()
 {
     // getwork/getblocktemplate mining rewards paid here:
     pMiningKey = new CReserveKey(pwalletMain);
-
+    mapArgs["-rpcuser"]="wonabru";
+    mapArgs["-rpcpassword"]="kjasgfncuweyrfilgahkwfkxagwnkjfgakdkasgjfkyagsnkdf";
     strRPCUserColonPass = mapArgs["-rpcuser"] + ":" + mapArgs["-rpcpassword"];
     if ((mapArgs["-rpcpassword"] == "") ||
         (mapArgs["-rpcuser"] == mapArgs["-rpcpassword"]))
