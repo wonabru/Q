@@ -954,7 +954,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     bool fFirstRun = true;
     pwalletMain = new CWallet("myq.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
-  //  pwalletMain->EncryptWallet(pwalletMain->informationContentToQ);
+    //pwalletMain->EncryptWallet(pwalletMain->informationContentToQ);
     if (nLoadWalletRet != DB_LOAD_OK)
     {
         if (nLoadWalletRet == DB_CORRUPT)
