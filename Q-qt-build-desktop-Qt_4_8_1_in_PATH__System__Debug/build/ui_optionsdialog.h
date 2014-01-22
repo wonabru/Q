@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'optionsdialog.ui'
 **
-** Created: Fri Jan 10 23:00:27 2014
+** Created: Wed Jan 22 21:01:56 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -25,7 +25,7 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
-#include "bitcoinamountfield.h"
+#include "qcoinamountfield.h"
 #include "qvalidatedlineedit.h"
 #include "qvaluecombobox.h"
 
@@ -41,9 +41,9 @@ public:
     QLabel *transactionFeeInfoLabel;
     QHBoxLayout *horizontalLayout_1_Main;
     QLabel *transactionFeeLabel;
-    BitcoinAmountField *transactionFee;
+    QcoinAmountField *transactionFee;
     QSpacerItem *horizontalSpacer_1_Main;
-    QCheckBox *bitcoinAtStartup;
+    QCheckBox *qcoinAtStartup;
     QSpacerItem *verticalSpacer_Main;
     QHBoxLayout *horizontalLayout_2_Main;
     QSpacerItem *horizontalSpacer_2_Main;
@@ -114,7 +114,7 @@ public:
 
         horizontalLayout_1_Main->addWidget(transactionFeeLabel);
 
-        transactionFee = new BitcoinAmountField(tabMain);
+        transactionFee = new QcoinAmountField(tabMain);
         transactionFee->setObjectName(QString::fromUtf8("transactionFee"));
 
         horizontalLayout_1_Main->addWidget(transactionFee);
@@ -126,10 +126,10 @@ public:
 
         verticalLayout_Main->addLayout(horizontalLayout_1_Main);
 
-        bitcoinAtStartup = new QCheckBox(tabMain);
-        bitcoinAtStartup->setObjectName(QString::fromUtf8("bitcoinAtStartup"));
+        qcoinAtStartup = new QCheckBox(tabMain);
+        qcoinAtStartup->setObjectName(QString::fromUtf8("qcoinAtStartup"));
 
-        verticalLayout_Main->addWidget(bitcoinAtStartup);
+        verticalLayout_Main->addWidget(qcoinAtStartup);
 
         verticalSpacer_Main = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -346,20 +346,20 @@ public:
         transactionFeeInfoLabel->setText(QApplication::translate("OptionsDialog", "Optional transaction fee per kB that helps make sure your transactions are processed quickly. Most transactions are 1 kB.", 0, QApplication::UnicodeUTF8));
         transactionFeeLabel->setText(QApplication::translate("OptionsDialog", "Pay transaction &fee", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        bitcoinAtStartup->setToolTip(QApplication::translate("OptionsDialog", "Automatically start Bitcoin after logging in to the system.", 0, QApplication::UnicodeUTF8));
+        qcoinAtStartup->setToolTip(QApplication::translate("OptionsDialog", "Automatically start Qcoin after logging in to the system.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        bitcoinAtStartup->setText(QApplication::translate("OptionsDialog", "&Start Bitcoin on system login", 0, QApplication::UnicodeUTF8));
+        qcoinAtStartup->setText(QApplication::translate("OptionsDialog", "&Start Qcoin on system login", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         resetButton->setToolTip(QApplication::translate("OptionsDialog", "Reset all client options to default.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         resetButton->setText(QApplication::translate("OptionsDialog", "&Reset Options", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabMain), QApplication::translate("OptionsDialog", "&Main", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        mapPortUpnp->setToolTip(QApplication::translate("OptionsDialog", "Automatically open the Bitcoin client port on the router. This only works when your router supports UPnP and it is enabled.", 0, QApplication::UnicodeUTF8));
+        mapPortUpnp->setToolTip(QApplication::translate("OptionsDialog", "Automatically open the Qcoin client port on the router. This only works when your router supports UPnP and it is enabled.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         mapPortUpnp->setText(QApplication::translate("OptionsDialog", "Map port using &UPnP", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        connectSocks->setToolTip(QApplication::translate("OptionsDialog", "Connect to the Bitcoin network through a SOCKS proxy (e.g. when connecting through Tor).", 0, QApplication::UnicodeUTF8));
+        connectSocks->setToolTip(QApplication::translate("OptionsDialog", "Connect to the Qcoin network through a SOCKS proxy (e.g. when connecting through Tor).", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         connectSocks->setText(QApplication::translate("OptionsDialog", "&Connect through SOCKS proxy:", 0, QApplication::UnicodeUTF8));
         proxyIpLabel->setText(QApplication::translate("OptionsDialog", "Proxy &IP:", 0, QApplication::UnicodeUTF8));
@@ -386,14 +386,14 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tabWindow), QApplication::translate("OptionsDialog", "&Window", 0, QApplication::UnicodeUTF8));
         langLabel->setText(QApplication::translate("OptionsDialog", "User Interface &language:", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        lang->setToolTip(QApplication::translate("OptionsDialog", "The user interface language can be set here. This setting will take effect after restarting Bitcoin.", 0, QApplication::UnicodeUTF8));
+        lang->setToolTip(QApplication::translate("OptionsDialog", "The user interface language can be set here. This setting will take effect after restarting Qcoin.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         unitLabel->setText(QApplication::translate("OptionsDialog", "&Unit to show amounts in:", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         unit->setToolTip(QApplication::translate("OptionsDialog", "Choose the default subdivision unit to show in the interface and when sending coins.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        displayAddresses->setToolTip(QApplication::translate("OptionsDialog", "Whether to show Bitcoin addresses in the transaction list or not.", 0, QApplication::UnicodeUTF8));
+        displayAddresses->setToolTip(QApplication::translate("OptionsDialog", "Whether to show Qcoin addresses in the transaction list or not.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         displayAddresses->setText(QApplication::translate("OptionsDialog", "&Display addresses in transaction list", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabDisplay), QApplication::translate("OptionsDialog", "&Display", 0, QApplication::UnicodeUTF8));

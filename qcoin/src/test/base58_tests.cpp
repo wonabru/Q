@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_parse)
 {
     Array tests = read_json("base58_keys_valid.json");
     std::vector<unsigned char> result;
-    CBitcoinSecret secret;
-    CBitcoinAddress addr;
+    CQcoinSecret secret;
+    CQcoinAddress addr;
     // Save global state
     bool fTestNet_stored = fTestNet;
 
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_parse)
         {
             bool isCompressed = find_value(metadata, "isCompressed").get_bool();
             // Must be valid private key
-            // Note: CBitcoinSecret::SetString tests isValid, whereas CBitcoinAddress does not!
+            // Note: CQcoinSecret::SetString tests isValid, whereas CQcoinAddress does not!
             BOOST_CHECK_MESSAGE(secret.SetString(exp_base58string), "!SetString:"+ strTest);
             BOOST_CHECK_MESSAGE(secret.IsValid(), "!IsValid:" + strTest);
             bool fCompressedOut = false;
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_gen)
         if(isPrivkey)
         {
             bool isCompressed = find_value(metadata, "isCompressed").get_bool();
-            CBitcoinSecret secret;
+            CQcoinSecret secret;
             secret.SetSecret(CSecret(exp_payload.begin(), exp_payload.end()), isCompressed);
             BOOST_CHECK_MESSAGE(secret.ToString() == exp_base58string, "result mismatch: " + strTest);
         }
@@ -212,16 +212,16 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_gen)
                 BOOST_ERROR("Bad addrtype: " << strTest);
                 continue;
             }
-            CBitcoinAddress addrOut;
-            BOOST_CHECK_MESSAGE(boost::apply_visitor(CBitcoinAddressVisitor(&addrOut), dest), "encode dest: " + strTest);
+            CQcoinAddress addrOut;
+            BOOST_CHECK_MESSAGE(boost::apply_visitor(CQcoinAddressVisitor(&addrOut), dest), "encode dest: " + strTest);
             BOOST_CHECK_MESSAGE(addrOut.ToString() == exp_base58string, "mismatch: " + strTest);
         }
     }
 
     // Visiting a CNoDestination must fail
-    CBitcoinAddress dummyAddr;
+    CQcoinAddress dummyAddr;
     CTxDestination nodest = CNoDestination();
-    BOOST_CHECK(!boost::apply_visitor(CBitcoinAddressVisitor(&dummyAddr), nodest));
+    BOOST_CHECK(!boost::apply_visitor(CQcoinAddressVisitor(&dummyAddr), nodest));
 
     // Restore global state
     fTestNet = fTestNet_stored;
@@ -232,8 +232,8 @@ BOOST_AUTO_TEST_CASE(base58_keys_invalid)
 {
     Array tests = read_json("base58_keys_invalid.json"); // Negative testcases
     std::vector<unsigned char> result;
-    CBitcoinSecret secret;
-    CBitcoinAddress addr;
+    CQcoinSecret secret;
+    CQcoinAddress addr;
 
     BOOST_FOREACH(Value& tv, tests)
     {

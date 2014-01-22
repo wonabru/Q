@@ -1,6 +1,6 @@
 #include "optionsmodel.h"
 
-#include "bitcoinunits.h"
+#include "qcoinunits.h"
 #include "init.h"
 #include "walletdb.h"
 #include "guiutil.h"
@@ -42,14 +42,14 @@ void OptionsModel::Init()
     QSettings settings;
 
     // These are Qt-only settings:
-    nDisplayUnit = settings.value("nDisplayUnit", BitcoinUnits::Q).toInt();
+    nDisplayUnit = settings.value("nDisplayUnit", QcoinUnits::Q).toInt();
     bDisplayAddresses = settings.value("bDisplayAddresses", false).toBool();
     fMinimizeToTray = settings.value("fMinimizeToTray", false).toBool();
     fMinimizeOnClose = settings.value("fMinimizeOnClose", false).toBool();
     nTransactionFee = settings.value("nTransactionFee").toLongLong();
     language = settings.value("language", "").toString();
 
-    // These are shared with core Bitcoin; we want
+    // These are shared with core Qcoin; we want
     // command-line options to override the GUI settings:
     if (settings.contains("fUseUPnP"))
         SoftSetBoolArg("-upnp", settings.value("fUseUPnP").toBool());
@@ -88,8 +88,8 @@ bool OptionsModel::Upgrade()
 
     settings.setValue("bImportFinished", true);
 
-    // Move settings from old wallet.dat (if any):
-    CWalletDB walletdb("wallet.dat");
+    // Move settings from old myq.dat (if any):
+    CWalletDB walletdb("myq.dat");
 
     QList<QString> intOptions;
     intOptions << "nDisplayUnit" << "nTransactionFee";

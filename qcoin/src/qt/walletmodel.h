@@ -22,7 +22,7 @@ public:
     qint64 amount;
 };
 
-/** Interface to Bitcoin wallet from Qt view code. */
+/** Interface to Qcoin wallet from Qt view code. */
 class WalletModel : public QObject
 {
     Q_OBJECT
@@ -79,12 +79,12 @@ public:
     // Send coins to a list of recipients
     SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients);
 
-    // Wallet encryption
+    // Root encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
     // Passphrase only needed when unlocking
     bool setWalletLocked(bool locked, const SecureString &passPhrase=SecureString());
     bool changePassphrase(const SecureString &oldPass, const SecureString &newPass);
-    // Wallet backup
+    // Root backup
     bool backupWallet(const QString &filename);
 
     // RAI object for unlocking wallet, returned by requestUnlock()
@@ -112,7 +112,7 @@ public:
 private:
     CWallet *wallet;
 
-    // Wallet has an options model for wallet-specific options
+    // Root has an options model for wallet-specific options
     // (transaction fee, for example)
     OptionsModel *optionsModel;
 
@@ -152,7 +152,7 @@ signals:
     void message(const QString &title, const QString &message, unsigned int style);
 
 public slots:
-    /* Wallet status might have changed */
+    /* Root status might have changed */
     void updateStatus();
     /* New transaction, or transaction changed status */
     void updateTransaction(const QString &hash, int status);

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2012 The Qcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -196,7 +196,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CBitcoinAddress(strAddress).Get()];
+            ssValue >> pwallet->mapAddressBook[CQcoinAddress(strAddress).Get()];
         }
         else if (strType == "tx")
         {
@@ -273,17 +273,17 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 key.SetPubKey(vchPubKey);
                 if (!key.SetPrivKey(pkey))
                 {
-                    strErr = "Error reading wallet database: CPrivKey corrupt";
+                    strErr = "Error reading root.database: CPrivKey corrupt";
                     return false;
                 }
                 if (key.GetPubKey() != vchPubKey)
                 {
-                    strErr = "Error reading wallet database: CPrivKey pubkey inconsistency";
+                    strErr = "Error reading root.database: CPrivKey pubkey inconsistency";
                     return false;
                 }
                 if (!key.IsValid())
                 {
-                    strErr = "Error reading wallet database: invalid CPrivKey";
+                    strErr = "Error reading root.database: invalid CPrivKey";
                     return false;
                 }
             }
@@ -294,23 +294,23 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 key.SetPubKey(vchPubKey);
                 if (!key.SetPrivKey(wkey.vchPrivKey))
                 {
-                    strErr = "Error reading wallet database: CPrivKey corrupt";
+                    strErr = "Error reading root.database: CPrivKey corrupt";
                     return false;
                 }
                 if (key.GetPubKey() != vchPubKey)
                 {
-                    strErr = "Error reading wallet database: CWalletKey pubkey inconsistency";
+                    strErr = "Error reading root.database: CWalletKey pubkey inconsistency";
                     return false;
                 }
                 if (!key.IsValid())
                 {
-                    strErr = "Error reading wallet database: invalid CWalletKey";
+                    strErr = "Error reading root.database: invalid CWalletKey";
                     return false;
                 }
             }
             if (!pwallet->LoadKey(key))
             {
-                strErr = "Error reading wallet database: LoadKey failed";
+                strErr = "Error reading root.database: LoadKey failed";
                 return false;
             }
         }
@@ -322,7 +322,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             ssValue >> kMasterKey;
             if(pwallet->mapMasterKeys.count(nID) != 0)
             {
-                strErr = strprintf("Error reading wallet database: duplicate CMasterKey id %u", nID);
+                strErr = strprintf("Error reading root.database: duplicate CMasterKey id %u", nID);
                 return false;
             }
             pwallet->mapMasterKeys[nID] = kMasterKey;
@@ -337,7 +337,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             ssValue >> vchPrivKey;
             if (!pwallet->LoadCryptedKey(vchPubKey, vchPrivKey))
             {
-                strErr = "Error reading wallet database: LoadCryptedKey failed";
+                strErr = "Error reading root.database: LoadCryptedKey failed";
                 return false;
             }
             fIsEncrypted = true;
@@ -355,8 +355,8 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         else if (strType == "version")
         {
             ssValue >> nFileVersion;
-            if (nFileVersion == 10300)
-                nFileVersion = 300;
+            if (nFileVersion == 10000)
+                nFileVersion = 100;
         }
         else if (strType == "cscript")
         {
@@ -366,7 +366,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             ssValue >> script;
             if (!pwallet->LoadCScript(script))
             {
-                strErr = "Error reading wallet database: LoadCScript failed";
+                strErr = "Error reading root.database: LoadCScript failed";
                 return false;
             }
         }
@@ -411,7 +411,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
         Dbc* pcursor = GetCursor();
         if (!pcursor)
         {
-            printf("Error getting wallet database cursor\n");
+            printf("Error getting root.database cursor\n");
             return DB_CORRUPT;
         }
 
@@ -425,7 +425,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
                 break;
             else if (ret != 0)
             {
-                printf("Error reading next record from wallet database\n");
+                printf("Error reading next record from root.database\n");
                 return DB_CORRUPT;
             }
 
@@ -473,7 +473,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
         WriteTx(hash, pwallet->mapWallet[hash]);
 
     // Rewrite encrypted wallets of versions 0.4.0 and 0.5.0rc:
-    if (fIsEncrypted && (nFileVersion == 40000 || nFileVersion == 50000))
+    if (fIsEncrypted && (nFileVersion == 00001 || nFileVersion == 00001))
         return DB_NEED_REWRITE;
 
     if (nFileVersion < CLIENT_VERSION) // Update
@@ -488,7 +488,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
 void ThreadFlushWalletDB(const string& strFile)
 {
     // Make this thread recognisable as the wallet flushing thread
-    RenameThread("bitcoin-wallet");
+    RenameThread("qcoin-wallet");
 
     static bool fOneThread;
     if (fOneThread)
@@ -530,16 +530,16 @@ void ThreadFlushWalletDB(const string& strFile)
                     map<string, int>::iterator mi = bitdb.mapFileUseCount.find(strFile);
                     if (mi != bitdb.mapFileUseCount.end())
                     {
-                        printf("Flushing wallet.dat\n");
+                        printf("Flushing myq.dat\n");
                         nLastFlushed = nWalletDBUpdated;
                         int64 nStart = GetTimeMillis();
 
-                        // Flush wallet.dat so it's self contained
+                        // Flush myq.dat so it's self contained
                         bitdb.CloseDb(strFile);
                         bitdb.CheckpointLSN(strFile);
 
                         bitdb.mapFileUseCount.erase(mi++);
-                        printf("Flushed wallet.dat %"PRI64d"ms\n", GetTimeMillis() - nStart);
+                        printf("Flushed myq.dat %"PRI64d"ms\n", GetTimeMillis() - nStart);
                     }
                 }
             }
@@ -562,7 +562,7 @@ bool BackupWallet(const CWallet& wallet, const string& strDest)
                 bitdb.CheckpointLSN(wallet.strWalletFile);
                 bitdb.mapFileUseCount.erase(wallet.strWalletFile);
 
-                // Copy wallet.dat
+                // Copy myq.dat
                 filesystem::path pathSrc = GetDataDir() / wallet.strWalletFile;
                 filesystem::path pathDest(strDest);
                 if (filesystem::is_directory(pathDest))
@@ -574,10 +574,10 @@ bool BackupWallet(const CWallet& wallet, const string& strDest)
 #else
                     filesystem::copy_file(pathSrc, pathDest);
 #endif
-                    printf("copied wallet.dat to %s\n", pathDest.string().c_str());
+                    printf("copied myq.dat to %s\n", pathDest.string().c_str());
                     return true;
                 } catch(const filesystem::filesystem_error &e) {
-                    printf("error copying wallet.dat to %s - %s\n", pathDest.string().c_str(), e.what());
+                    printf("error copying myq.dat to %s - %s\n", pathDest.string().c_str(), e.what());
                     return false;
                 }
             }
@@ -588,15 +588,15 @@ bool BackupWallet(const CWallet& wallet, const string& strDest)
 }
 
 //
-// Try to (very carefully!) recover wallet.dat if there is a problem.
+// Try to (very carefully!) recover myq.dat if there is a problem.
 //
 bool CWalletDB::Recover(CDBEnv& dbenv, std::string filename, bool fOnlyKeys)
 {
     // Recovery procedure:
-    // move wallet.dat to wallet.timestamp.bak
+    // move myq.dat to wallet.timestamp.bak
     // Call Salvage with fAggressive=true to
     // get as much data as possible.
-    // Rewrite salvaged data to wallet.dat
+    // Rewrite salvaged data to myq.dat
     // Set -rescan so any missing transactions will be
     // found.
     int64 now = GetTime();

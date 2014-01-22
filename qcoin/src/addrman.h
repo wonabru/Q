@@ -269,7 +269,7 @@ public:
         // changes to the ADDRMAN_ parameters without breaking the on-disk structure.
         {
             LOCK(cs);
-            unsigned char nVersion = 0;
+            unsigned char nVersion = 1;
             READWRITE(nVersion);
             READWRITE(nKey);
             READWRITE(nNew);

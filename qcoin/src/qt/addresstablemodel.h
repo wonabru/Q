@@ -21,7 +21,7 @@ public:
 
     enum ColumnIndex {
         Label = 0,   /**< User specified label */
-        Address = 1  /**< Bitcoin address */
+        Address = 1  /**< Qcoin address */
     };
 
     enum RoleIndex {
@@ -34,7 +34,7 @@ public:
         NO_CHANGES,             /**< No changes were made during edit operation */
         INVALID_ADDRESS,        /**< Unparseable address */
         DUPLICATE_ADDRESS,      /**< Address already in address book */
-        WALLET_UNLOCK_FAILURE,  /**< Wallet could not be unlocked to create new receiving address */
+        WALLET_UNLOCK_FAILURE,  /**< Root could not be unlocked to create new receiving address */
         KEY_GENERATION_FAILURE  /**< Generating a new public key for a receiving address failed */
     };
 

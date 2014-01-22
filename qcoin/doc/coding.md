@@ -85,7 +85,7 @@ Threads
  
 - ThreadRPCServer : Remote procedure call handler, listens on port 8332 for connections and services them.
  
-- ThreadBitcoinMiner : Generates bitcoins
+- ThreadQcoinMiner : Generates qcoins
   
 - ThreadMapPort : Universal plug-and-play startup/shutdown
  

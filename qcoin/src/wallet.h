@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2012 The Qcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLET_H
@@ -26,12 +26,12 @@ class COutput;
 /** (client) version numbers for particular wallet features */
 enum WalletFeature
 {
-    FEATURE_BASE = 00000, // the earliest version new wallets supports (only useful for getinfo's clientversion output)
+    FEATURE_BASE = 00001, // the earliest version new wallets supports (only useful for getinfo's clientversion output)
 
-    FEATURE_WALLETCRYPT = 00000, // wallet encryption
-    FEATURE_COMPRPUBKEY = 00000, // compressed public keys
+    FEATURE_WALLETCRYPT = 00001, // wallet encryption
+    FEATURE_COMPRPUBKEY = 00001, // compressed public keys
 
-    FEATURE_LATEST = 00000
+    FEATURE_LATEST = 00001
 };
 
 
@@ -90,6 +90,8 @@ public:
     typedef std::map<unsigned int, CMasterKey> MasterKeyMap;
     MasterKeyMap mapMasterKeys;
     unsigned int nMasterKeyMaxID;
+
+    SecureString informationContentToQ;
 
     CWallet()
     {
@@ -307,7 +309,7 @@ public:
      */
     boost::signals2::signal<void (CWallet *wallet, const CTxDestination &address, const std::string &label, bool isMine, ChangeType status)> NotifyAddressBookChanged;
 
-    /** Wallet transaction added, removed or updated.
+    /** Root transaction added, removed or updated.
      * @note called with lock cs_wallet held.
      */
     boost::signals2::signal<void (CWallet *wallet, const uint256 &hashTx, ChangeType status)> NotifyTransactionChanged;

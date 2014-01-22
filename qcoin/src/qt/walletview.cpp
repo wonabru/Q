@@ -1,11 +1,11 @@
 /*
- * Qt4 bitcoin GUI.
+ * Qt4 qcoin GUI.
  *
  * W.J. van der Laan 2011-2012
- * The Bitcoin Developers 2011-2013
+ * The Qcoin Developers 2011-2013
  */
 #include "walletview.h"
-#include "bitcoingui.h"
+#include "qcoingui.h"
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
@@ -25,7 +25,7 @@
 #include <QFileDialog>
 #include <QPushButton>
 
-WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
+WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
     QStackedWidget(parent),
     gui(_gui),
     clientModel(0),
@@ -86,7 +86,7 @@ WalletView::~WalletView()
 {
 }
 
-void WalletView::setBitcoinGUI(BitcoinGUI *gui)
+void WalletView::setQcoinGUI(QcoinGUI *gui)
 {
     this->gui = gui;
 }
@@ -234,14 +234,14 @@ void WalletView::encryptWallet(bool status)
 void WalletView::backupWallet()
 {
     QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-    QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
+    QString filename = QFileDialog::getSaveFileName(this, tr("Backup Root"), saveDir, tr("root.data (*.dat)"));
     if (!filename.isEmpty()) {
         if (!walletModel->backupWallet(filename)) {
-            gui->message(tr("Backup Failed"), tr("There was an error trying to save the wallet data to the new location."),
+            gui->message(tr("Backup Failed"), tr("There was an error trying to save the root.data to the new location."),
                       CClientUIInterface::MSG_ERROR);
         }
         else
-            gui->message(tr("Backup Successful"), tr("The wallet data was successfully saved to the new location."),
+            gui->message(tr("Backup Successful"), tr("The root.data was successfully saved to the new location."),
                       CClientUIInterface::MSG_INFORMATION);
     }
 }

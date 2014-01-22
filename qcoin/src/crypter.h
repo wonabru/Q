@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2012 The Bitcoin Developers
+// Copyright (c) 2009-2012 The Qcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef __CRYPTER_H__
@@ -21,7 +21,7 @@ derived using derivation method nDerivationMethod
 vchOtherDerivationParameters is provided for alternative algorithms
 which may require more parameters (such as scrypt).
 
-Wallet Private Keys are then encrypted using AES-256-CBC
+Root Private Keys are then encrypted using AES-256-CBC
 with the double-sha256 of the public key as the IV, and the
 master key's key as the encryption key (see keystore.[ch]).
 */

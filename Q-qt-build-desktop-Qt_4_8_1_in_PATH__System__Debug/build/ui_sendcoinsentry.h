@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'sendcoinsentry.ui'
 **
-** Created: Fri Jan 10 23:00:27 2014
+** Created: Wed Jan 22 21:01:56 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -20,7 +20,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QToolButton>
-#include "bitcoinamountfield.h"
+#include "qcoinamountfield.h"
 #include "qvalidatedlineedit.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,7 +31,7 @@ public:
     QGridLayout *gridLayout;
     QLabel *label;
     QLabel *label_2;
-    BitcoinAmountField *payAmount;
+    QcoinAmountField *payAmount;
     QLabel *label_4;
     QHBoxLayout *payToLayout;
     QValidatedLineEdit *payTo;
@@ -62,7 +62,7 @@ public:
 
         gridLayout->addWidget(label_2, 3, 0, 1, 1);
 
-        payAmount = new BitcoinAmountField(SendCoinsEntry);
+        payAmount = new QcoinAmountField(SendCoinsEntry);
         payAmount->setObjectName(QString::fromUtf8("payAmount"));
 
         gridLayout->addWidget(payAmount, 5, 1, 1, 1);

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2012 The Qcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_SERIALIZE_H
@@ -49,7 +49,7 @@ enum
     // primary actions
     SER_NETWORK         = (1 << 0),
     SER_DISK            = (1 << 1),
-    SER_GETHASH         = (1 << 2),
+    SER_GETHASH         = (1 << 2)
 };
 
 #define IMPLEMENT_SERIALIZE(statements)    \

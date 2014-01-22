@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 
-/** Interface from Qt to configuration data structure for Bitcoin client.
+/** Interface from Qt to configuration data structure for Qcoin client.
    To Qt, the options are presented as a list with the different options
    laid out vertically.
    This can be changed to a tree once the settings become sufficiently
@@ -26,7 +26,7 @@ public:
         ProxyPort,         // int
         ProxySocksVersion, // int
         Fee,               // qint64
-        DisplayUnit,       // BitcoinUnits::Unit
+        DisplayUnit,       // QcoinUnits::Unit
         DisplayAddresses,  // bool
         Language,          // QString
         OptionIDRowCount,
@@ -35,7 +35,7 @@ public:
     void Init();
     void Reset();
 
-    /* Migrate settings from wallet.dat after app initialization */
+    /* Migrate settings from myq.dat after app initialization */
     bool Upgrade(); /* returns true if settings upgraded */
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;

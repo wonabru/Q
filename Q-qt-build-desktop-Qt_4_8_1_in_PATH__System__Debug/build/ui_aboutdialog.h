@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'aboutdialog.ui'
 **
-** Created: Fri Jan 10 23:00:27 2014
+** Created: Wed Jan 22 21:01:56 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -91,7 +91,7 @@ public:
         copyrightLabel = new QLabel(AboutDialog);
         copyrightLabel->setObjectName(QString::fromUtf8("copyrightLabel"));
         copyrightLabel->setCursor(QCursor(Qt::IBeamCursor));
-        copyrightLabel->setText(QString::fromUtf8("Copyright &copy; 2009-YYYY The Bitcoin developers"));
+        copyrightLabel->setText(QString::fromUtf8("Copyright &copy; 2009-YYYY The Qcoin developers"));
         copyrightLabel->setTextFormat(Qt::RichText);
         copyrightLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
 
@@ -129,7 +129,7 @@ public:
 
     void retranslateUi(QDialog *AboutDialog)
     {
-        AboutDialog->setWindowTitle(QApplication::translate("AboutDialog", "About Bitcoin", 0, QApplication::UnicodeUTF8));
+        AboutDialog->setWindowTitle(QApplication::translate("AboutDialog", "About Qcoin", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("AboutDialog", "<b>Q-coin</b> version", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("AboutDialog", "\n"
 "This is experimental software.\n"

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin Developers
+// Copyright (c) 2009-2012 The Qcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +7,7 @@
 //
 // Why base-58 instead of standard base-64 encoding?
 // - Don't want 0OIl characters that look the same in some fonts and
-//      could be used to create visually identical looking account numbers.
+// could be used to create visually identical looking account numbers.
 // - A string with non-alphanumeric characters is not as easily accepted as an account number.
 // - E-mail usually won't line-break if there's no punctuation to break at.
 // - Double-clicking selects the whole number as one word if it's all alphanumeric.
@@ -185,7 +185,7 @@ protected:
 
     CBase58Data()
     {
-        nVersion = 0;
+        nVersion = 1;
         vchData.clear();
     }
 
@@ -210,7 +210,7 @@ public:
         if (vchTemp.empty())
         {
             vchData.clear();
-            nVersion = 0;
+            nVersion = 1;
             return false;
         }
         nVersion = vchTemp[0];
@@ -236,38 +236,38 @@ public:
     int CompareTo(const CBase58Data& b58) const
     {
         if (nVersion < b58.nVersion) return -1;
-        if (nVersion > b58.nVersion) return  1;
-        if (vchData < b58.vchData)   return -1;
-        if (vchData > b58.vchData)   return  1;
+        if (nVersion > b58.nVersion) return 1;
+        if (vchData < b58.vchData) return -1;
+        if (vchData > b58.vchData) return 1;
         return 0;
     }
 
     bool operator==(const CBase58Data& b58) const { return CompareTo(b58) == 0; }
     bool operator<=(const CBase58Data& b58) const { return CompareTo(b58) <= 0; }
     bool operator>=(const CBase58Data& b58) const { return CompareTo(b58) >= 0; }
-    bool operator< (const CBase58Data& b58) const { return CompareTo(b58) <  0; }
-    bool operator> (const CBase58Data& b58) const { return CompareTo(b58) >  0; }
+    bool operator< (const CBase58Data& b58) const { return CompareTo(b58) < 0; }
+    bool operator> (const CBase58Data& b58) const { return CompareTo(b58) > 0; }
 };
 
-/** base58-encoded Bitcoin addresses.
- * Public-key-hash-addresses have version 0 (or 111 testnet).
- * The data vector contains RIPEMD160(SHA256(pubkey)), where pubkey is the serialized public key.
- * Script-hash-addresses have version 5 (or 196 testnet).
- * The data vector contains RIPEMD160(SHA256(cscript)), where cscript is the serialized redemption script.
- */
-class CBitcoinAddress;
-class CBitcoinAddressVisitor : public boost::static_visitor<bool>
+/** base58-encoded Qcoin addresses.
+* Public-key-hash-addresses have version 0 (or 111 testnet).
+* The data vector contains RIPEMD160(SHA256(pubkey)), where pubkey is the serialized public key.
+* Script-hash-addresses have version 5 (or 196 testnet).
+* The data vector contains RIPEMD160(SHA256(cscript)), where cscript is the serialized redemption script.
+*/
+class CQcoinAddress;
+class CQcoinAddressVisitor : public boost::static_visitor<bool>
 {
 private:
-    CBitcoinAddress *addr;
+    CQcoinAddress *addr;
 public:
-    CBitcoinAddressVisitor(CBitcoinAddress *addrIn) : addr(addrIn) { }
+    CQcoinAddressVisitor(CQcoinAddress *addrIn) : addr(addrIn) { }
     bool operator()(const CKeyID &id) const;
     bool operator()(const CScriptID &id) const;
     bool operator()(const CNoDestination &no) const;
 };
 
-class CBitcoinAddress : public CBase58Data
+class CQcoinAddress : public CBase58Data
 {
 public:
     enum
@@ -290,7 +290,7 @@ public:
 
     bool Set(const CTxDestination &dest)
     {
-        return boost::apply_visitor(CBitcoinAddressVisitor(this), dest);
+        return boost::apply_visitor(CQcoinAddressVisitor(this), dest);
     }
 
     bool IsValid() const
@@ -323,21 +323,21 @@ public:
         return fExpectTestNet == fTestNet && vchData.size() == nExpectedSize;
     }
 
-    CBitcoinAddress()
+    CQcoinAddress()
     {
     }
 
-    CBitcoinAddress(const CTxDestination &dest)
+    CQcoinAddress(const CTxDestination &dest)
     {
         Set(dest);
     }
 
-    CBitcoinAddress(const std::string& strAddress)
+    CQcoinAddress(const std::string& strAddress)
     {
         SetString(strAddress);
     }
 
-    CBitcoinAddress(const char* pszAddress)
+    CQcoinAddress(const char* pszAddress)
     {
         SetString(pszAddress);
     }
@@ -390,12 +390,12 @@ public:
     }
 };
 
-bool inline CBitcoinAddressVisitor::operator()(const CKeyID &id) const         { return addr->Set(id); }
-bool inline CBitcoinAddressVisitor::operator()(const CScriptID &id) const      { return addr->Set(id); }
-bool inline CBitcoinAddressVisitor::operator()(const CNoDestination &id) const { return false; }
+bool inline CQcoinAddressVisitor::operator()(const CKeyID &id) const { return addr->Set(id); }
+bool inline CQcoinAddressVisitor::operator()(const CScriptID &id) const { return addr->Set(id); }
+bool inline CQcoinAddressVisitor::operator()(const CNoDestination &id) const { return false; }
 
 /** A base58-encoded secret key */
-class CBitcoinSecret : public CBase58Data
+class CQcoinSecret : public CBase58Data
 {
 public:
     void SetSecret(const CSecret& vchSecret, bool fCompressed)
@@ -443,12 +443,12 @@ public:
         return SetString(strSecret.c_str());
     }
 
-    CBitcoinSecret(const CSecret& vchSecret, bool fCompressed)
+    CQcoinSecret(const CSecret& vchSecret, bool fCompressed)
     {
         SetSecret(vchSecret, fCompressed);
     }
 
-    CBitcoinSecret()
+    CQcoinSecret()
     {
     }
 };

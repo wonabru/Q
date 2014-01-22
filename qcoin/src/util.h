@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2009-2012 The Qcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_UTIL_H
@@ -339,14 +339,16 @@ inline int64 GetPerformanceCounter()
 
 inline int64 GetTimeMillis()
 {
+    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time())).total_milliseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds();
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds() + shiftts;
 }
 
 inline int64 GetTimeMicros()
 {
+    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time())).total_microseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds();
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds() + shiftts;
 }
 
 inline std::string DateTimeStrFormat(const char* pszFormat, int64 nTime)
@@ -560,7 +562,7 @@ inline uint32_t ByteReverse(uint32_t value)
 //    threadGroup.create_thread(boost::bind(&LoopForever<boost::function<void()> >, "nothing", f, milliseconds));
 template <typename Callable> void LoopForever(const char* name,  Callable func, int64 msecs)
 {
-    std::string s = strprintf("bitcoin-%s", name);
+    std::string s = strprintf("qcoin-%s", name);
     RenameThread(s.c_str());
     printf("%s thread start\n", name);
     try
@@ -586,7 +588,7 @@ template <typename Callable> void LoopForever(const char* name,  Callable func, 
 // .. and a wrapper that just calls func once
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
-    std::string s = strprintf("bitcoin-%s", name);
+    std::string s = strprintf("qcoin-%s", name);
     RenameThread(s.c_str());
     try
     {
