@@ -65,7 +65,7 @@ namespace Checkpoints
 
     bool CheckBlock(int nHeight, const uint256& hash)
     {
-        if (!GetBoolArg("-checkpoints", true))
+        if (!GetBoolArg("-checkpoints", false))
             return true;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
