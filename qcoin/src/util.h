@@ -37,7 +37,7 @@ typedef unsigned long long  uint64;
 static const int64 COIN = 100000000;
 static const int64 CENT = 1000000;
 
-boost::posix_time::ptime mocktime = boost::posix_time::ptime(boost::gregorian::date(2014,1,24));
+boost::posix_time::ptime faketime = boost::posix_time::ptime(boost::gregorian::date(2014,1,24));
 
 #define loop                for (;;)
 #define BEGIN(a)            ((char*)&(a))
@@ -341,14 +341,14 @@ inline int64 GetPerformanceCounter()
 
 inline int64 GetTimeMillis()
 {
-    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-mocktime).total_milliseconds();
+    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-faketime).total_milliseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
             boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds() + shiftts;
 }
 
 inline int64 GetTimeMicros()
 {
-    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-mocktime).total_microseconds();
+    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-faketime).total_microseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
             boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds() + shiftts;
 }
