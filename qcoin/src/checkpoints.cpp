@@ -80,7 +80,7 @@ namespace Checkpoints
         if (pindex==NULL)
             return 0.0;
 
-        int64 nNow = time(NULL);
+        int64 nNow = GetTime();
 
         double fWorkBefore = 0.0; // Amount of work done before pindex
         double fWorkAfter = 0.0;  // Amount of work left after pindex (estimated)

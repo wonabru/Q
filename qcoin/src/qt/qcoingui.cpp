@@ -527,7 +527,7 @@ void QcoinGUI::setNumBlocks(int count, int nTotalBlocks)
     QString tooltip;
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
-    QDateTime currentDate = QDateTime::currentDateTime();
+    QDateTime currentDate = QDateTime::fromTime_t(GetTime());
     int secs = lastBlockDate.secsTo(currentDate);
 
     if(count < nTotalBlocks)
