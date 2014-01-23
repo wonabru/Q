@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'optionsdialog.ui'
 **
-** Created: Wed Jan 22 21:01:56 2014
+** Created: Wed Jan 22 21:26:46 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
