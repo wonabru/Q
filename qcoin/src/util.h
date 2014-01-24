@@ -334,15 +334,14 @@ inline int64 GetPerformanceCounter()
 
 inline int64 GetTimeMicros()
 {
-    boost::posix_time::ptime poczatek = boost::posix_time::ptime(boost::gregorian::date(2014,1,25));
-    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-poczatek).total_microseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds() + shiftts;
+            boost::posix_time::ptime(boost::gregorian::date(2014,1,24))).total_microseconds()+1388534400000000;
 }
 
 inline int64 GetTimeMillis()
 {
-    return GetTimeMicros()/1000;
+    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
+            boost::posix_time::ptime(boost::gregorian::date(2014,1,24))).total_milliseconds()+1388534400000;
 }
 
 
