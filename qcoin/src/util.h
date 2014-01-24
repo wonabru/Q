@@ -2,8 +2,8 @@
 // Copyright (c) 2009-2012 The Qcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_UTIL_H
-#define BITCOIN_UTIL_H
+#ifndef QCOIN_UTIL_H
+#define QCOIN_UTIL_H
 
 #include "uint256.h"
 
@@ -37,7 +37,7 @@ typedef unsigned long long  uint64;
 static const int64 COIN = 100000000;
 static const int64 CENT = 1000000;
 
-boost::posix_time::ptime poczatek = boost::posix_time::ptime(boost::gregorian::date(2014,1,24));
+
 
 #define loop                for (;;)
 #define BEGIN(a)            ((char*)&(a))
@@ -129,13 +129,6 @@ inline void MilliSleep(int64 n)
 #else
 #define ATTR_WARN_PRINTF(X,Y)
 #endif
-
-
-
-
-
-
-
 
 extern std::map<std::string, std::string> mapArgs;
 extern std::map<std::string, std::vector<std::string> > mapMultiArgs;
@@ -339,19 +332,20 @@ inline int64 GetPerformanceCounter()
     return nCounter;
 }
 
-inline int64 GetTimeMillis()
-{
-    static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-poczatek).total_milliseconds();
-    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds() + shiftts;
-}
-
 inline int64 GetTimeMicros()
 {
+    boost::posix_time::ptime poczatek = boost::posix_time::ptime(boost::gregorian::date(2014,1,25));
     static int64 shiftts = (boost::posix_time::ptime(boost::gregorian::date(2014,1,1))-poczatek).total_microseconds();
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
             boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds() + shiftts;
 }
+
+inline int64 GetTimeMillis()
+{
+    return GetTimeMicros()/1000;
+}
+
+
 
 inline std::string DateTimeStrFormat(const char* pszFormat, int64 nTime)
 {
