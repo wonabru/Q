@@ -1314,7 +1314,7 @@ static int64 nTimeOffset = 0;
 
 int64 GetTimeOffset()
 {
-    return nTimeOffset;
+    return 0;//nTimeOffset;
 }
 
 int64 GetAdjustedTime()
@@ -1341,6 +1341,7 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
         // Only let other nodes change our time by so much
         if (abs64(nMedian) < 70 * 60)
         {
+            //KU
             nTimeOffset = nMedian;
         }
         else

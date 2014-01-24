@@ -335,13 +335,13 @@ inline int64 GetPerformanceCounter()
 inline int64 GetTimeMicros()
 {
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(2014,1,24))).total_microseconds()+1388534400000000;
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_microseconds();
 }
 
 inline int64 GetTimeMillis()
 {
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(2014,1,24))).total_milliseconds()+1388534400000;
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_milliseconds();
 }
 
 
