@@ -108,7 +108,7 @@ namespace Checkpoints
 
     int GetTotalBlocksEstimate()
     {
-        if (!GetBoolArg("-checkpoints", true))
+        if (!GetBoolArg("-checkpoints", false))
             return 0;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
@@ -118,7 +118,7 @@ namespace Checkpoints
 
     CBlockIndex* GetLastCheckpoint(const std::map<uint256, CBlockIndex*>& mapBlockIndex)
     {
-        if (!GetBoolArg("-checkpoints", true))
+        if (!GetBoolArg("-checkpoints", false))
             return NULL;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
