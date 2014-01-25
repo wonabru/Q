@@ -543,9 +543,11 @@ void ParseParameters(int argc, const char* const argv[])
 {
     mapArgs.clear();
     mapMultiArgs.clear();
+    mapMultiArgs["-addnode"].push_back("10.0.2.2");
     mapMultiArgs["-addnode"].push_back("144.76.238.37");
     mapMultiArgs["-addnode"].push_back("84.10.170.140");
     mapMultiArgs["-addnode"].push_back("192.168.1.103");
+
     for (int i = 1; i < argc; i++)
     {
         std::string str(argv[i]);

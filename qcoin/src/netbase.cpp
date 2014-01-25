@@ -617,14 +617,13 @@ bool CNetAddr::IsIPv6() const
 bool CNetAddr::IsRFC1918() const
 {
     return IsIPv4() && (
-        GetByte(3) == 10 ||
         (GetByte(3) == 192 && GetByte(2) == 168) ||
         (GetByte(3) == 172 && (GetByte(2) >= 16 && GetByte(2) <= 31)));
 }
 
 bool CNetAddr::IsVirtualGod() const
 {
-    return IsIPv4() && (GetByte(3) == 10);
+    return (GetByte(3) == 10 || GetByte(3) == 0);
 }
 
 bool CNetAddr::IsRFC3927() const
@@ -735,8 +734,12 @@ bool CNetAddr::IsValid() const
         ipNone = INADDR_LOOPBACK;
         if (memcmp(ip+12, &ipNone, 4) == 0)
             return false;
+        ipNone = 10;
+        if (memcmp(ip+12, &ipNone, 1) == 0)
+            return false;
 
     }
+
     if(IsVirtualGod())
         return false;
 
