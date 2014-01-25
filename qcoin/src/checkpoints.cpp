@@ -109,7 +109,7 @@ namespace Checkpoints
     int GetTotalBlocksEstimate()
     {
         if (!GetBoolArg("-checkpoints", false))
-            return 1;
+            return 0;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
 
