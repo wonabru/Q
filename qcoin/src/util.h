@@ -332,19 +332,19 @@ inline int64 GetPerformanceCounter()
     return nCounter;
 }
 
-const int64 shifttemp = 1800000;
-const int64 hourtemp = 13;
+const int64 shifttemp = 3600000;
+const int64 hourtemp = 15;
 
 inline int64 GetTimeMicros()
 {
-    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_microseconds() + shifttemp * 1000 * hourtemp;
+    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_microseconds() - shifttemp * 1000 * hourtemp;
 }
 
 inline int64 GetTimeMillis()
 {
-    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_milliseconds() + shifttemp * hourtemp;
+    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,25))).total_milliseconds() - shifttemp * hourtemp;
 }
 
 
