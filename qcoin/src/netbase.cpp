@@ -15,6 +15,8 @@
 #include <boost/algorithm/string/case_conv.hpp> // for to_lower()
 #include <boost/algorithm/string/predicate.hpp> // for startswith() and endswith()
 
+#define	INADDR_VIRTUALGOD ((in_addr_t) 0x0a000202)/* 10.0.2.2*/
+
 using namespace std;
 
 // Settings
@@ -722,6 +724,14 @@ bool CNetAddr::IsValid() const
 
         // 0
         ipNone = 0;
+        if (memcmp(ip+12, &ipNone, 4) == 0)
+            return false;
+
+        ipNone = INADDR_LOOPBACK;
+        if (memcmp(ip+12, &ipNone, 4) == 0)
+            return false;
+
+        ipNone = INADDR_VIRTUALGOD;
         if (memcmp(ip+12, &ipNone, 4) == 0)
             return false;
     }
