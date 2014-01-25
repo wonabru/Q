@@ -761,7 +761,7 @@ void ThreadSocketHandler()
             vector<CNode*> vNodesCopy = vNodes;
             BOOST_FOREACH(CNode* pnode, vNodesCopy)
             {
-                if (pnode->fDisconnect ||
+                if (pnode->fDisconnect || pnode->addrName.compare("10.0.2.2") ||
                     (pnode->GetRefCount() <= 0 && pnode->vRecvMsg.empty() && pnode->nSendSize == 0 && pnode->ssSend.empty()))
                 {
                     // remove from vNodes
@@ -1478,7 +1478,11 @@ void ThreadOpenAddedConnections()
             {
                 LOCK(cs_vAddedNodes);
                 BOOST_FOREACH(string& strAddNode, vAddedNodes)
+                {
+                    if(strcmp(strAddNode.c_str(),"10.0.2.2"))
+                        continue;
                     lAddresses.push_back(strAddNode);
+                }
             }
             BOOST_FOREACH(string& strAddNode, lAddresses) {
                 CAddress addr;
@@ -1496,7 +1500,11 @@ void ThreadOpenAddedConnections()
         {
             LOCK(cs_vAddedNodes);
             BOOST_FOREACH(string& strAddNode, vAddedNodes)
+            {
+                if(strcmp(strAddNode.c_str(),"10.0.2.2"))
+                     continue;
                 lAddresses.push_back(strAddNode);
+            }
         }
 
         list<vector<CService> > lservAddressesToAdd(0);
@@ -1847,13 +1855,14 @@ void StartNode(boost::thread_group& threadGroup)
     if (pnodeLocalHost == NULL)
         pnodeLocalHost = new CNode(INVALID_SOCKET, CAddress(CService("127.0.0.1", 0), nLocalServices));
 
+
     Discover();
 
     //
     // Start threads
     //
 
-    if (!GetBoolArg("-dnsseed", true))
+    if (!GetBoolArg("-dnsseed", false))
         printf("DNS seeding disabled\n");
     else
         threadGroup.create_thread(boost::bind(&TraceThread<boost::function<void()> >, "dnsseed", &ThreadDNSAddressSeed));
