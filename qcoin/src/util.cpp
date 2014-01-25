@@ -205,13 +205,13 @@ uint256 GetRandHash()
 
 
 //
-// OutputDebugStringF (aka printf -- there is a #define that we really
+// printf (aka printf -- there is a #define that we really
 // should get rid of one day) has been broken a couple of times now
 // by well-meaning people adding mutexes in the most straightforward way.
 // It breaks because it may be called by global destructors during shutdown.
 // Since the order of destruction of static/global objects is undefined,
 // defining a mutex as a global object doesn't work (the mutex gets
-// destroyed, and then some later destructor calls OutputDebugStringF,
+// destroyed, and then some later destructor calls printf,
 // maybe indirectly, and you get a core dump at shutdown trying to lock
 // the mutex).
 
@@ -233,7 +233,7 @@ static void DebugPrintInit()
     mutexDebugLog = new boost::mutex();
 }
 
-int OutputDebugStringF(const char* pszFormat, ...)
+int printf(const char* pszFormat, ...)
 {
     int ret = 0; // Returns total number of characters written
   //  cout << pszFormat << endl;
@@ -281,11 +281,11 @@ int OutputDebugStringF(const char* pszFormat, ...)
 #ifdef WIN32
     if (fPrintToDebugger)
     {
-        static CCriticalSection cs_OutputDebugStringF;
+        static CCriticalSection cs_printf;
 
         // accumulate and output a line at a time
         {
-            LOCK(cs_OutputDebugStringF);
+            LOCK(cs_printf);
             static std::string buffer;
 
             va_list arg_ptr;

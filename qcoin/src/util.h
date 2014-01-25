@@ -147,7 +147,7 @@ extern volatile bool fReopenDebugLog;
 
 void RandAddSeed();
 void RandAddSeedPerfmon();
-int ATTR_WARN_PRINTF(1,2) OutputDebugStringF(const char* pszFormat, ...);
+int ATTR_WARN_PRINTF(1,2) printf(const char* pszFormat, ...);
 
 /*
   Rationale for the real_strprintf / strprintf construction:
@@ -170,10 +170,10 @@ bool ATTR_WARN_PRINTF(1,2) error(const char *format, ...);
 /* Redefine printf so that it directs output to debug.log
  *
  * Do this *after* defining the other printf-like functions, because otherwise the
- * __attribute__((format(printf,X,Y))) gets expanded to __attribute__((format(OutputDebugStringF,X,Y)))
+ * __attribute__((format(printf,X,Y))) gets expanded to __attribute__((format(printf,X,Y)))
  * which confuses gcc.
  */
-#define printf OutputDebugStringF
+#define printf printf
 
 void LogException(std::exception* pex, const char* pszThread);
 void PrintException(std::exception* pex, const char* pszThread);
@@ -333,7 +333,7 @@ inline int64 GetPerformanceCounter()
 }
 
 const int64 shifttemp = 1800000;
-const int64 hourtemp = 10;
+const int64 hourtemp = 13;
 
 inline int64 GetTimeMicros()
 {

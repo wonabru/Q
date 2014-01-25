@@ -11,6 +11,8 @@
 #include "util.h"
 #include "ui_interface.h"
 #include "editaddressdialog.h"
+#include "askpassphrasedialog.h"
+#include "walletmodel.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -23,11 +25,13 @@
 #include <signal.h>
 #endif
 
+
 using namespace std;
 using namespace boost;
 using namespace Ui;
 
 CWallet* pwalletMain;
+WalletModel* pwalletModelMain;
 CClientUIInterface uiInterface;
 
 #ifdef WIN32
@@ -222,16 +226,6 @@ bool AppInit(int argc, char* argv[])
                 fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
         }
 #endif
-
-        detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
-        std::string myName = "0";
-        while(myName == "0" || myName == "")
-        {
-            Ui::EditAddressDialog myAddressDialog = new EditAddressDialog(EditAddressDialog::EditReceivingAddress);
-            myName = myAddressDialog.getAddress().c_str();
-        }
-        pwalletMain->strWalletName = nyName;
-        pwalletMain->informationContentToQ = new SecureString("independence4Q");
         fRet = AppInit2(threadGroup);
     }
     catch (std::exception& e) {
@@ -958,11 +952,33 @@ bool AppInit2(boost::thread_group& threadGroup)
     // ********************************************************* Step 8: load wallet
 
     uiInterface.InitMessage(_("Set your Name..."));
+   // OptionsModel optWalletMain;
+   // optWalletMain.Init();
+   // pwalletModelMain = new WalletModel(pwalletMain,&optWalletMain);
+   // detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
+    std::string myName = "0";
+   // while(myName == "0" || myName == "")
+   // {
+   //     Ui::EditAddressDialog myAddressDialog = new EditAddressDialog(EditAddressDialog::EditReceivingAddress);
+   //     myName = myAddressDialog.getAddress().c_str();
+   // }
 
+  //  std::basic_string<string> myInformationContent = "independence4Q";
+   // Ui::AskPassphraseDialog myPassphraseDialog;
+   // while(myInformationContent == "independence4Q" || myInformationContent == "")
+   // {
+   //     myPassphraseDialog = new AskPassphraseDialog(AskPassphraseDialog::Encrypt);
+   //     myPassphraseDialog.setModel(pwalletModelMain);
+   //     myInformationContent = myPassphraseDialog;
+   // }
+   // myPassphraseDialog.accept();
+   // pwalletMain->informationContentToQ = new SecureString(myInformationContent);
     nStart = GetTimeMillis();
     bool fFirstRun = true;
     pwalletMain = new CWallet("myq.dat");
+    pwalletMain->strWalletName = myName;
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
+
     //pwalletMain->EncryptWallet(pwalletMain->informationContentToQ);
     if (nLoadWalletRet != DB_LOAD_OK)
     {
