@@ -821,8 +821,8 @@ void ThreadSocketHandler()
         // Find which sockets have data to receive
         //
         struct timeval timeout;
-        timeout.tv_sec  = 0;
-        timeout.tv_usec = 50000; // frequency to poll pnode->vSend
+        timeout.tv_sec  = 60;
+        timeout.tv_usec = 60000*1000; // frequency to poll pnode->vSend
 
         fd_set fdsetRecv;
         fd_set fdsetSend;
@@ -1479,7 +1479,7 @@ void ThreadOpenAddedConnections()
                 LOCK(cs_vAddedNodes);
                 BOOST_FOREACH(string& strAddNode, vAddedNodes)
                 {
-                    if(strcmp(strAddNode.c_str(),"10.0.2.2"))
+                    if(strcmp(strAddNode.c_str(),"10.0.2.2")==true)
                         continue;
                     lAddresses.push_back(strAddNode);
                 }
@@ -1501,7 +1501,7 @@ void ThreadOpenAddedConnections()
             LOCK(cs_vAddedNodes);
             BOOST_FOREACH(string& strAddNode, vAddedNodes)
             {
-                if(strcmp(strAddNode.c_str(),"10.0.2.2"))
+                if(strcmp(strAddNode.c_str(),"10.0.2.2")==true)
                      continue;
                 lAddresses.push_back(strAddNode);
             }
