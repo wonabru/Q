@@ -15,7 +15,7 @@
 #include <boost/algorithm/string/case_conv.hpp> // for to_lower()
 #include <boost/algorithm/string/predicate.hpp> // for startswith() and endswith()
 
-#define	INADDR_VIRTUALGOD ((in_addr_t) 0x0a000202)/* 10.0.2.2*/
+#define	NETADDR_VIRTUALGOD 10 /* 10.0.2.2*/
 
 using namespace std;
 
@@ -622,6 +622,11 @@ bool CNetAddr::IsRFC1918() const
         (GetByte(3) == 172 && (GetByte(2) >= 16 && GetByte(2) <= 31)));
 }
 
+bool CNetAddr::IsVirtualGod() const
+{
+    return IsIPv4() && (GetByte(3) == 10);
+}
+
 bool CNetAddr::IsRFC3927() const
 {
     return IsIPv4() && (GetByte(3) == 169 && GetByte(2) == 254);
@@ -731,10 +736,9 @@ bool CNetAddr::IsValid() const
         if (memcmp(ip+12, &ipNone, 4) == 0)
             return false;
 
-        ipNone = INADDR_VIRTUALGOD;
-        if (memcmp(ip+12, &ipNone, 4) == 0)
-            return false;
     }
+    if(IsVirtualGod())
+        return false;
 
     return true;
 }
