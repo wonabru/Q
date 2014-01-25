@@ -118,7 +118,7 @@ namespace Checkpoints
 
     CBlockIndex* GetLastCheckpoint(const std::map<uint256, CBlockIndex*>& mapBlockIndex)
     {
-        if (!GetBoolArg("-checkpoints", false))
+        if (!GetBoolArg("-checkpoints", true))
             return NULL;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
