@@ -10,6 +10,7 @@
 #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
+#include "editaddressdialog.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -24,6 +25,7 @@
 
 using namespace std;
 using namespace boost;
+using namespace Ui;
 
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
@@ -222,6 +224,13 @@ bool AppInit(int argc, char* argv[])
 #endif
 
         detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
+        std::string myName = "0";
+        while(myName == "0" || myName == "")
+        {
+            Ui::EditAddressDialog myAddressDialog = new EditAddressDialog(EditAddressDialog::EditReceivingAddress);
+            myName = myAddressDialog.getAddress().c_str();
+        }
+        pwalletMain->strWalletName = nyName;
         pwalletMain->informationContentToQ = new SecureString("independence4Q");
         fRet = AppInit2(threadGroup);
     }
@@ -311,7 +320,7 @@ std::string HelpMessage()
         "  -externalip=<ip>       " + _("Specify your own public address") + "\n" +
         "  -onlynet=<net>         " + _("Only connect to nodes in network <net> (IPv4, IPv6 or Tor)") + "\n" +
         "  -discover              " + _("Discover own IP address (default: 1 when listening and no -externalip)") + "\n" +
-        "  -checkpoints           " + _("Only accept block chain matching built-in checkpoints (default: 1)") + "\n" +
+        "  -checkpoints           " + _("Only accept block chain matching built-in checkpoints (default: 0)") + "\n" +
         "  -listen                " + _("Accept connections from outside (default: 1 if no -proxy or -connect)") + "\n" +
         "  -bind=<addr>           " + _("Bind to given address and always listen on it. Use [host]:port notation for IPv6") + "\n" +
         "  -dnsseed               " + _("Find peers using DNS lookup (default: 1 unless -connect)") + "\n" +
@@ -948,7 +957,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 8: load wallet
 
-    uiInterface.InitMessage(_("Loading root..."));
+    uiInterface.InitMessage(_("Set your Name..."));
 
     nStart = GetTimeMillis();
     bool fFirstRun = true;
@@ -1001,7 +1010,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
             pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), ""))
+            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), pwalletMain->strWalletName))
                 strErrors << _("Cannot write default address") << "\n";
         }
 

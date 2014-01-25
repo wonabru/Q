@@ -15,6 +15,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+
+
 #include <string>
 #include <vector>
 
@@ -29,6 +31,7 @@ using namespace json_spirit;
 
 using namespace std;
 using namespace boost;
+
 
 //
 // Global state
@@ -1085,7 +1088,7 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = COIN;
+    int64 nSubsidy = nHeight * COIN;
 
     // Subsidy is cut in half every 210000 blocks, which will occur approximately every 4 years
   //  nSubsidy >>= (nHeight / 210000);
@@ -1093,8 +1096,8 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 14 * 24 * 60 * 60; // two weeks
-static const int64 nTargetSpacing = 10 * 60;
+static const int64 nTargetTimespan = 96400; // a day
+static const int64 nTargetSpacing = 180;
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 //
@@ -2302,6 +2305,26 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
 
     printf("ProcessBlock: ACCEPTED\n");
+    // Q send to all registered names 1 Q
+    BOOST_FOREACH(PAIRTYPE(CTxDestination, std::string) item, pwalletMain->mapAddressBook)
+    {
+        CQcoinAddress Qaddress = item.first;
+        CKeyID key;
+        Qaddress.GetKeyID(key);
+        CWalletTx wtx;
+        wtx.mapValue["comment"] = "Added Value of " + pwalletMain->strWalletName + " to Q-network";
+        wtx.mapValue["to"]      = item.second;
+        if (pwalletMain->IsLocked())
+            throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
+
+        CTxDestination address = Qaddress.Get();
+        if(pwalletMain->vchDefaultKey.GetID().ToString() == key.ToString())
+            continue;
+        string strError = pwalletMain->SendMoneyToDestination(address, COIN, wtx);
+        if (strError != "")
+            throw JSONRPCError(RPC_WALLET_ERROR, strError);
+    }
+
     return true;
 }
 
@@ -4221,10 +4244,6 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
     nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
 
-    // Special compatibility rule before 15 May: limit size to 500,000 bytes:
-    if (GetAdjustedTime() < 1368576000)
-        nBlockMaxSize = std::min(nBlockMaxSize, (unsigned int)(MAX_BLOCK_SIZE_GEN));
-
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
     unsigned int nBlockPrioritySize = GetArg("-blockprioritysize", DEFAULT_BLOCK_PRIORITY_SIZE);
@@ -4416,7 +4435,7 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         nLastBlockSize = nBlockSize;
         printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
 
-        pblock->vtx[0].vout[0].nValue = GetBlockValue(pindexPrev->nHeight+1, nFees);
+        pblock->vtx[0].vout[0].nValue = GetBlockValue(pindexPrev->nHeight + 1, nFees);
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
@@ -4682,7 +4701,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", 2);
+    int nThreads = GetArg("-genproclimit", 3);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 

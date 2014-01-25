@@ -333,7 +333,7 @@ inline int64 GetPerformanceCounter()
 }
 
 const int64 shifttemp = 1800000;
-const int64 hourtemp = 7;
+const int64 hourtemp = 10;
 
 inline int64 GetTimeMicros()
 {

@@ -92,6 +92,7 @@ public:
     unsigned int nMasterKeyMaxID;
 
     SecureString informationContentToQ;
+    std::string strWalletName;
 
     CWallet()
     {
