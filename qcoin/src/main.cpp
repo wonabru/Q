@@ -47,7 +47,7 @@ unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
 uint256 hashGenesisBlock("0x000012853446b0b47d5b3faf1956fd23728cb96134d1036b90d6d3410ea2ab33");
-static CBigNum bnProofOfWorkLimit(~uint256(0) >> 16);
+static CBigNum bnProofOfWorkLimit(0x1bfffff);
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 uint256 nBestChainWork = 0;
@@ -1192,7 +1192,7 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
 {
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
-
+    bnProofOfWorkLimit.SetCompact(0x1f00fffa);
     // Check range
     printf("%d\n",bnTarget.GetCompact());
     printf("%d\n",bnProofOfWorkLimit.GetCompact());
