@@ -196,6 +196,13 @@ void QcoinGUI::createActions()
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
+    editNameAction = new QAction(QIcon(":/icons/address-book"), tr("&Addresses"), this);
+    editNameAction->setStatusTip(tr("Edit the Name"));
+    editNameAction->setToolTip(editNameAction->statusTip());
+    editNameAction->setCheckable(true);
+    editNameAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
+    tabGroup->addAction(editNameAction);
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -206,6 +213,8 @@ void QcoinGUI::createActions()
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
+    connect(editNameAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(editNameAction, SIGNAL(triggered()), this, SLOT(gotoEditName()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setStatusTip(tr("Quit application"));
@@ -464,6 +473,11 @@ void QcoinGUI::gotoHistoryPage()
 void QcoinGUI::gotoAddressBookPage()
 {
     if (walletFrame) walletFrame->gotoAddressBookPage();
+}
+
+void QcoinGUI::gotoEditName()
+{
+    if (walletFrame) walletFrame->gotoEditName();
 }
 
 void QcoinGUI::gotoReceiveCoinsPage()

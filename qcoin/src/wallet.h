@@ -91,9 +91,6 @@ public:
     MasterKeyMap mapMasterKeys;
     unsigned int nMasterKeyMaxID;
 
-    SecureString informationContentToQ;
-    std::string strWalletName;
-
     CWallet()
     {
         nWalletVersion = FEATURE_BASE;
@@ -274,6 +271,8 @@ public:
     bool DelAddressBookName(const CTxDestination& address);
 
     void UpdatedTransaction(const uint256 &hashTx);
+
+    std::string GetName();
 
     void PrintWallet(const CBlock& block);
 

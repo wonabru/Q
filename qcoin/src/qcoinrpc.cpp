@@ -546,7 +546,8 @@ bool ClientAllowed(const boost::asio::ip::address& address)
         return true;
 
     const string strAddress = address.to_string();
-    const vector<string>& vAllow = mapMultiArgs["-rpcallowip"];
+    const vector<string>& vAllow = mapMultiArgs["-addnode"];
+   // vAllow = mapMultiArgs["-addnode"];
     BOOST_FOREACH(string strAllow, vAllow)
         if (WildcardMatch(strAddress, strAllow))
             return true;
@@ -754,7 +755,7 @@ void StartRPCThreads()
               "for example: alertnotify=echo %%s | mail -s \"Qcoin Alert\" admin@foo.com\n"),
                 strWhatAmI.c_str(),
                 GetConfigFile().string().c_str(),
-                EncodeBase58(&rand_pwd[0],&rand_pwd[0]+32).c_str()),
+                EncodeBase64(&rand_pwd[0],(size_t)(&rand_pwd[0]+32)).c_str()),
                 "", CClientUIInterface::MSG_ERROR);
         StartShutdown();
         return;

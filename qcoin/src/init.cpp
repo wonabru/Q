@@ -10,9 +10,6 @@
 #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
-#include "editaddressdialog.h"
-#include "askpassphrasedialog.h"
-#include "walletmodel.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -28,10 +25,8 @@
 
 using namespace std;
 using namespace boost;
-using namespace Ui;
 
 CWallet* pwalletMain;
-WalletModel* pwalletModelMain;
 CClientUIInterface uiInterface;
 
 #ifdef WIN32
@@ -951,35 +946,13 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 8: load wallet
 
-    uiInterface.InitMessage(_("Set your Name..."));
-   // OptionsModel optWalletMain;
-   // optWalletMain.Init();
-   // pwalletModelMain = new WalletModel(pwalletMain,&optWalletMain);
-   // detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
-    std::string myName = "0";
-   // while(myName == "0" || myName == "")
-   // {
-   //     Ui::EditAddressDialog myAddressDialog = new EditAddressDialog(EditAddressDialog::EditReceivingAddress);
-   //     myName = myAddressDialog.getAddress().c_str();
-   // }
+    uiInterface.InitMessage(_("Set your init Name to 0 ..."));
 
-  //  std::basic_string<string> myInformationContent = "independence4Q";
-   // Ui::AskPassphraseDialog myPassphraseDialog;
-   // while(myInformationContent == "independence4Q" || myInformationContent == "")
-   // {
-   //     myPassphraseDialog = new AskPassphraseDialog(AskPassphraseDialog::Encrypt);
-   //     myPassphraseDialog.setModel(pwalletModelMain);
-   //     myInformationContent = myPassphraseDialog;
-   // }
-   // myPassphraseDialog.accept();
-   // pwalletMain->informationContentToQ = new SecureString(myInformationContent);
     nStart = GetTimeMillis();
     bool fFirstRun = true;
     pwalletMain = new CWallet("myq.dat");
-    pwalletMain->strWalletName = myName;
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
-    //pwalletMain->EncryptWallet(pwalletMain->informationContentToQ);
     if (nLoadWalletRet != DB_LOAD_OK)
     {
         if (nLoadWalletRet == DB_CORRUPT)
@@ -1004,7 +977,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (GetBoolArg("-upgradewallet", fFirstRun))
     {
-        int nMaxVersion = GetArg("-upgradewallet", 0);
+        int nMaxVersion = GetArg("-upgradewallet", 1);
         if (nMaxVersion == 0) // the -upgradewallet without argument case
         {
             printf("Performing wallet upgrade to %i\n", FEATURE_LATEST);
@@ -1026,7 +999,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
             pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), pwalletMain->strWalletName))
+            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), "0"))
                 strErrors << _("Cannot write default address") << "\n";
         }
 

@@ -34,7 +34,7 @@ public:
 
     QString getAddress() const;
     void setAddress(const QString &address);
-
+signals:
 public slots:
     void accept();
 
@@ -47,6 +47,7 @@ private:
     AddressTableModel *model;
 
     QString address;
+    QString name;
 };
 
 #endif // EDITADDRESSDIALOG_H

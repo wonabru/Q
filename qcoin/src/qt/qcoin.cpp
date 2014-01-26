@@ -15,6 +15,7 @@
 #include "ui_interface.h"
 #include "paymentserver.h"
 #include "splashscreen.h"
+#include "editaddressdialog.h"
 
 #include <QMessageBox>
 #include <QTextCodec>
@@ -228,6 +229,8 @@ int main(int argc, char *argv[])
 
         boost::thread_group threadGroup;
 
+        QWidget qwidget;
+
         QcoinGUI window;
         guiref = &window;
 
@@ -252,6 +255,40 @@ int main(int argc, char *argv[])
                 window.setClientModel(&clientModel);
                 window.addWallet("~Default", &walletModel);
                 window.setCurrentWallet("~Default");
+/*
+                EditAddressDialog editNamedlg(EditAddressDialog::EditSendingAddress);
+                qwidget.setWindowModality(Qt::WindowModal);
+                editNamedlg.setWindowModality(Qt::WindowModal);
+                editNamedlg.setVisible(true);
+                QObject::connect(window.getEditNameAction(), SIGNAL(triger()), &editNamedlg, SLOT(accept()));
+
+                while(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
+                {
+                    qwidget.setWindowModality(Qt::WindowModal);
+                    qwidget.show();
+                    qwidget.activateWindow();
+                    if(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
+                        window.message("Improper Name","Name should be not empty and different from 0",10);
+                }
+                qwidget.disconnect();
+                window.setEncryptionStatus(WalletModel::Unencrypted);
+                while(pwalletMain->IsCrypted() == false)
+                {
+                    window.addAction(window.getChangeInformationContent());
+                    window.show();
+                    if(pwalletMain->IsCrypted() == false)
+                        window.message("Error while encryption","Wrong password",10);
+                }*/
+              //  std::basic_string<string> myInformationContent = "independence4Q";
+               // Ui::AskPassphraseDialog myPassphraseDialog;
+               // while(myInformationContent == "independence4Q" || myInformationContent == "")
+               // {
+               //     myPassphraseDialog = new AskPassphraseDialog(AskPassphraseDialog::Encrypt);
+               //     myPassphraseDialog.setModel(pwalletModelMain);
+               //     myInformationContent = myPassphraseDialog;
+               // }
+               // myPassphraseDialog.accept();
+               // pwalletMain->informationContentToQ = new SecureString(myInformationContent);
 
                 // If -min option passed, start window minimized.
                 if(GetBoolArg("-min"))
@@ -267,6 +304,8 @@ int main(int argc, char *argv[])
                 // qcoin: URIs
                 QObject::connect(paymentServer, SIGNAL(receivedURI(QString)), &window, SLOT(handleURI(QString)));
                 QTimer::singleShot(100, paymentServer, SLOT(uiReady()));
+
+
 
                 app.exec();
 

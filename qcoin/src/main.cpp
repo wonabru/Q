@@ -32,7 +32,7 @@ using namespace json_spirit;
 using namespace std;
 using namespace boost;
 
-
+unsigned int static ScanHash_CryptoPP(char* pmidstate, char* pdata, char* phash1, char* phash, unsigned int& nHashesDone);
 //
 // Global state
 //
@@ -46,8 +46,8 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x000012853446b0b47d5b3faf1956fd23728cb96134d1036b90d6d3410ea2ab33");
-static CBigNum bnProofOfWorkLimit(0x1bfffff);
+uint256 hashGenesisBlock("0x0000000001b21e6763c02808b782a8efd82851fa7f0ae3a5bb5b08d0fbb9bd38");
+static CBigNum bnProofOfWorkLimit = CBigNum(~uint256(0) >> 32);
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 uint256 nBestChainWork = 0;
@@ -1192,7 +1192,6 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
 {
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
-    bnProofOfWorkLimit.SetCompact(0x1f00fffa);
     // Check range
     printf("%d\n",bnTarget.GetCompact());
     printf("%d\n",bnProofOfWorkLimit.GetCompact());
@@ -2061,25 +2060,6 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     if (vtx.empty() || vtx.size() > MAX_BLOCK_SIZE || ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return state.DoS(100, error("CheckBlock() : size limits failed"));
 
-    // Special short-term limits to avoid 10,000 BDB lock limit:
-    if (GetBlockTime() >= 1363867200 && // start enforcing 21 March 2013, noon GMT
-        GetBlockTime() < 1368576000)  // stop enforcing 15 May 2013 00:00:00
-    {
-        // Rule is: #unique txids referenced <= 4,500
-        // ... to prevent 10,000 BDB lock exhaustion on old clients
-        set<uint256> setTxIn;
-        for (size_t i = 0; i < vtx.size(); i++)
-        {
-            setTxIn.insert(vtx[i].GetHash());
-            if (i == 0) continue; // skip coinbase txin
-            BOOST_FOREACH(const CTxIn& txin, vtx[i].vin)
-                setTxIn.insert(txin.prevout.hash);
-        }
-        size_t nTxids = setTxIn.size();
-        if (nTxids > 4500)
-            return error("CheckBlock() : 15 May maxlocks violation");
-    }
-
     // Check proof of work matches claimed amount
     if (fCheckPOW && !CheckProofOfWork(GetHash(), nBits))
         return state.DoS(50, error("CheckBlock() : proof of work failed"));
@@ -2312,7 +2292,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         CKeyID key;
         Qaddress.GetKeyID(key);
         CWalletTx wtx;
-        wtx.mapValue["comment"] = "Added Value of " + pwalletMain->strWalletName + " to Q-network";
+        wtx.mapValue["comment"] = "Added Value of " + pwalletMain->GetName() + " to Q-network";
         wtx.mapValue["to"]      = item.second;
         if (pwalletMain->IsLocked())
             throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
@@ -2783,7 +2763,7 @@ bool InitBlockIndex() {
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 520159231 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        txNew.vin[0].scriptSig = CScript() << 469827582 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         txNew.vout[0].nValue = COIN;
         txNew.vout[0].scriptPubKey = CScript() << ParseHex("04548a317e45cbfd0af57b4d098a14fbda656b1b75c308b8115af886200cb7778b6647648c2bd83ba4fad6b3951421a09a61cf0d3dece22ab3f29ca60c540f65b8") << OP_CHECKSIG;
         CBlock block;
@@ -2791,28 +2771,123 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1388534400;
-        block.nBits    = 0x1f00fffa;
-        block.nNonce   = 62734;
+        block.nTime    = 1420070400;
+        block.nBits    = 0x1d00ffff;
+        block.nNonce   = 265050893;
 
         if (fTestNet)
         {
-            block.nTime    = 1296688602;
-            block.nNonce   = 414098458;
+            block.nTime    = 1420070400;
+            block.nNonce   = 265050893;
         }
+/*
+        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+        printf("QcoinMiner started\n");
+        SetThreadPriority(THREAD_PRIORITY_LOWEST);
+        RenameThread("qcoin-miner");
+        CBlock *pblock = &block;
+        // Each thread has its own key and counter
+        CReserveKey reservekey(pwalletMain);
+        char pmidstatebuf[32+16]; char* pmidstate = alignup<16>(pmidstatebuf);
+        char pdatabuf[128+16];    char* pdata     = alignup<16>(pdatabuf);
+        char phash1buf[64+16];    char* phash1    = alignup<16>(phash1buf);
 
-        uint256 hash = block.GetHash();
+        FormatHashBuffers(pblock, pmidstate, pdata, phash1);
         uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
 
-        printf("%d\n", block.nNonce);
+        uint256 bestHash = block.GetHash();*/
+/*
+        uint256 hash = block.GetHash();
+
+
+        CBigNum bnWork;
+        bnProofOfWorkLimit.SetCompact(0x1c00fffe);
+        bnWork.SetCompact(block.nBits);
+        bool ok = false;
+        while(ok == false)
+        {
+            block.nNonce+=3;
+            hash = block.GetHash();
+            if (hash <= hashTarget)
+                ok = true;
+            if(hash < bestHash)
+                bestHash = hash;
+            if(block.nNonce%1000000==0)
+            {
+                printf("h %s n %d\n", bestHash.ToString().c_str(), block.nNonce);
+            }
+        }*//*
+        uint256 hashbuf[2];
+        uint256& hash = *alignup<16>(hashbuf);
+        loop
+        {
+            unsigned int nHashesDone = 0;
+            unsigned int nNonceFound;
+
+            // Crypto++ SHA256
+            nNonceFound = ScanHash_CryptoPP(pmidstate, pdata + 64, phash1,
+                                            (char*)&hash, nHashesDone);
+
+            // Check if something found
+            if (nNonceFound != (unsigned int) -1)
+            {
+                for (unsigned int i = 0; i < sizeof(hash)/4; i++)
+                    ((unsigned int*)&hash)[i] = ByteReverse(((unsigned int*)&hash)[i]);
+                if(hash < bestHash)
+                    bestHash = hash;
+                if (hash <= hashTarget)
+                {
+                    // Found a solution
+                    pblock->nNonce = ByteReverse(nNonceFound);
+                    assert(hash == pblock->GetHash());
+
+                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                    CheckWork(pblock, *pwalletMain, reservekey);
+                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                    break;
+                }
+            }
+            static int64 nHashCounter;
+            if (nHPSTimerStart == 0)
+            {
+                nHPSTimerStart = GetTimeMillis();
+                nHashCounter = 0;
+            }
+            else
+                nHashCounter += nHashesDone;
+            if (GetTimeMillis() - nHPSTimerStart > 4000)
+            {
+                static CCriticalSection cs;
+                {
+                    LOCK(cs);
+                    if (GetTimeMillis() - nHPSTimerStart > 4000)
+                    {
+                        dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
+                        nHPSTimerStart = GetTimeMillis();
+                        nHashCounter = 0;
+                        static int64 nLogTime;
+                        if (GetTime() - nLogTime > 10)
+                        {
+                            nLogTime = GetTime();
+                            printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
+                            printf("h %s n %d\n", bestHash.ToString().c_str(), nNonceFound);
+                            printf("T %s\n", hashTarget.ToString().c_str());
+                        }
+                    }
+                }
+            }
+        }
+        printf("%d\n", pblock->nNonce);
+        //printf("%d\n", bnWork.GetCompact());
         printf("%d\n", bnProofOfWorkLimit.GetCompact());
-        printf("%s\n", hashTarget.ToString().c_str());
-        printf("%s\n", hash.ToString().c_str());
+        printf("hT %s\n", hashTarget.ToString().c_str());
+        printf("h %s\n", hash.ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0x91e69d0bfb9f179bf2b66a8d9316f044921d19b4dd7f4c19f29f7fbc41706458"));
+        printf("M %s\n", block.hashMerkleRoot.ToString().c_str());
+        */
+        assert(block.hashMerkleRoot == uint256("0x2dd0ecc986d19e249ceb3f746ed43ab463651cfb9991f5553fa28dbd5e16be16"));
         block.print();
-        assert(hash == hashGenesisBlock);
+        assert(block.GetHash() == hashGenesisBlock);
 
         // Start new block file
         try {

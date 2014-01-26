@@ -77,9 +77,12 @@ bool EditAddressDialog::saveCurrentRow()
         if(mapper->submit())
         {
             address = ui->addressEdit->text();
+            name = ui->labelEdit->text();
         }
         break;
     }
+    if(name.isEmpty())
+        return false;
     return !address.isEmpty();
 }
 

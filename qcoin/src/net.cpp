@@ -1481,6 +1481,8 @@ void ThreadOpenAddedConnections()
                 {
                     if(strcmp(strAddNode.c_str(),"10.0.2.2")==true)
                         continue;
+                    if(strcmp(strAddNode.c_str(),GetLocalAddress().ToStringIP().c_str())==true)
+                        continue;
                     lAddresses.push_back(strAddNode);
                 }
             }
@@ -1503,6 +1505,8 @@ void ThreadOpenAddedConnections()
             {
                 if(strcmp(strAddNode.c_str(),"10.0.2.2")==true)
                      continue;
+                if(strcmp(strAddNode.c_str(),GetLocalAddress().ToStringIP().c_str())==true)
+                    continue;
                 lAddresses.push_back(strAddNode);
             }
         }

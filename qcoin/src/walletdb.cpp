@@ -21,6 +21,8 @@ static uint64 nAccountingEntryNumber = 0;
 bool CWalletDB::WriteName(const string& strAddress, const string& strName)
 {
     nWalletDBUpdated++;
+    if(strName.size() == 0)
+        return false;
     return Write(make_pair(string("name"), strAddress), strName);
 }
 
@@ -29,7 +31,8 @@ bool CWalletDB::EraseName(const string& strAddress)
     // This should only be used for sending addresses, never for receiving addresses,
     // receiving addresses must always have an address book entry if they're not change return.
     nWalletDBUpdated++;
-    return Erase(make_pair(string("name"), strAddress));
+    return false;
+   // return Erase(make_pair(string("name"), strAddress));
 }
 
 bool CWalletDB::ReadAccount(const string& strAccount, CAccount& account)

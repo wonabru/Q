@@ -730,18 +730,7 @@ bool CNetAddr::IsValid() const
         ipNone = 0;
         if (memcmp(ip+12, &ipNone, 4) == 0)
             return false;
-
-        ipNone = INADDR_LOOPBACK;
-        if (memcmp(ip+12, &ipNone, 4) == 0)
-            return false;
-        ipNone = 10;
-        if (memcmp(ip+12, &ipNone, 1) == 0)
-            return false;
-
     }
-
-    if(IsVirtualGod())
-        return false;
 
     return true;
 }

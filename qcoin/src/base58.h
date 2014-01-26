@@ -185,7 +185,7 @@ protected:
 
     CBase58Data()
     {
-        nVersion = 1;
+        nVersion = 0;
         vchData.clear();
     }
 
@@ -210,7 +210,7 @@ public:
         if (vchTemp.empty())
         {
             vchData.clear();
-            nVersion = 1;
+            nVersion = 0;
             return false;
         }
         nVersion = vchTemp[0];
@@ -272,7 +272,7 @@ class CQcoinAddress : public CBase58Data
 public:
     enum
     {
-        PUBKEY_ADDRESS = 0,
+        PUBKEY_ADDRESS = 52,
         SCRIPT_ADDRESS = 5,
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,

@@ -85,6 +85,12 @@ void WalletFrame::gotoAddressBookPage()
     walletStack->gotoAddressBookPage();
 }
 
+void WalletFrame::gotoEditName()
+{
+    walletStack->gotoEditName();
+}
+
+
 void WalletFrame::gotoReceiveCoinsPage()
 {
     walletStack->gotoReceiveCoinsPage();

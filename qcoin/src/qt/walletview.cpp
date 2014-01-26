@@ -16,6 +16,7 @@
 #include "transactionview.h"
 #include "overviewpage.h"
 #include "askpassphrasedialog.h"
+#include "editaddressdialog.h"
 #include "ui_interface.h"
 
 #include <QHBoxLayout>
@@ -51,6 +52,8 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
 
     addressBookPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab);
 
+    editName = new EditAddressDialog(EditAddressDialog::EditSendingAddress, parent);
+
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
 
     sendCoinsPage = new SendCoinsDialog(gui);
@@ -60,6 +63,7 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
     addWidget(overviewPage);
     addWidget(transactionsPage);
     addWidget(addressBookPage);
+    addWidget(editName);
     addWidget(receiveCoinsPage);
     addWidget(sendCoinsPage);
 
@@ -162,6 +166,12 @@ void WalletView::gotoAddressBookPage()
 {
     gui->getAddressBookAction()->setChecked(true);
     setCurrentWidget(addressBookPage);
+}
+
+void WalletView::gotoEditName()
+{
+    gui->getEditNameAction()->setChecked(true);
+    setCurrentWidget(editName);
 }
 
 void WalletView::gotoReceiveCoinsPage()

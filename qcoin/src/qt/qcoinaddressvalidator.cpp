@@ -56,8 +56,8 @@ QValidator::State QcoinAddressValidator::validate(QString &input, int &pos) cons
 
         if(((ch >= '0' && ch<='9') ||
            (ch >= 'a' && ch<='z') ||
-           (ch >= 'A' && ch<='Z')) &&
-           ch != 'l' && ch != 'I' && ch != '0' && ch != 'O')
+           (ch >= 'A' && ch<='Z') ||
+                (ch == '\\') || (ch == '/')))
         {
             // Alphanumeric and not a 'forbidden' character
         }

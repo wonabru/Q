@@ -215,7 +215,8 @@ HEADERS += src/qt/qcoingui.h \
     src/leveldb.h \
     src/threadsafety.h \
     src/limitedmap.h \
-    src/qt/splashscreen.h
+    src/qt/splashscreen.h \
+    src/base58.h
 
 SOURCES += src/qt/qcoin.cpp \
     src/qt/qcoingui.cpp \
