@@ -821,8 +821,8 @@ void ThreadSocketHandler()
         // Find which sockets have data to receive
         //
         struct timeval timeout;
-        timeout.tv_sec  = 60;
-        timeout.tv_usec = 60000*1000; // frequency to poll pnode->vSend
+        timeout.tv_sec  = 0;
+        timeout.tv_usec = 5000; // frequency to poll pnode->vSend
 
         fd_set fdsetRecv;
         fd_set fdsetSend;
