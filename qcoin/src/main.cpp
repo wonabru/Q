@@ -1676,8 +1676,8 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
     accountsInQNetwork->refreshAddressTable();
-    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->size(), nFees))
-        return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->size(), nFees)));
+    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
+        return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -4512,7 +4512,7 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         nLastBlockSize = nBlockSize;
         printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
         accountsInQNetwork->refreshAddressTable();
-        pblock->vtx[0].vout[0].nValue = GetBlockValue(accountsInQNetwork->size(), nFees);
+        pblock->vtx[0].vout[0].nValue = GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees);
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
@@ -4748,6 +4748,7 @@ void static QcoinMiner(CWallet *pwallet)
                             printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
                             printf("bestHash %s\n", bestHash.ToString().c_str());
                             printf("hashTarget %s\n", hashTarget.ToString().c_str());
+                            printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }
                     }
                 }
