@@ -1052,14 +1052,19 @@ bool AppInit2(boost::thread_group& threadGroup)
     // ********************************************************* Step 10: load peers
 
     uiInterface.InitMessage(_("Loading addresses..."));
-
+    CAddress addr1;
+    ConnectNode(addr1, "144.76.238.37");
+    CAddress addr2;
+    ConnectNode(addr2, "84.10.170.140");
+    CAddress addr3;
+    ConnectNode(addr3, "192.168.1.103");
     nStart = GetTimeMillis();
 
-    {
-        CAddrDB adb;
-        if (!adb.Read(addrman))
-            printf("Invalid or missing peers.dat; recreating\n");
-    }
+  //  {
+  //      CAddrDB adb;
+  //      if (!adb.Read(addrman))
+   //         printf("Invalid or missing peers.dat; recreating\n");
+  //  }
 
     printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
