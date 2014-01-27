@@ -756,12 +756,12 @@ void ThreadSocketHandler()
         // Disconnect nodes
         //
         {
-            LOCK(cs_vNodes);
+            /*LOCK(cs_vNodes);
             // Disconnect unused nodes
             vector<CNode*> vNodesCopy = vNodes;
             BOOST_FOREACH(CNode* pnode, vNodesCopy)
             {
-                if (pnode->fDisconnect || pnode->addrName.compare("10.0.2.2") ||
+                if (pnode->fDisconnect ||
                     (pnode->GetRefCount() <= 0 && pnode->vRecvMsg.empty() && pnode->nSendSize == 0 && pnode->ssSend.empty()))
                 {
                     // remove from vNodes
@@ -779,7 +779,7 @@ void ThreadSocketHandler()
                         pnode->Release();
                     vNodesDisconnected.push_back(pnode);
                 }
-            }
+            }*/
 
             // Delete disconnected nodes
             list<CNode*> vNodesDisconnectedCopy = vNodesDisconnected;
@@ -1026,7 +1026,7 @@ void ThreadSocketHandler()
                 if (lockSend)
                     SocketSendData(pnode);
             }
-
+/*
             //
             // Inactivity checking
             //
@@ -1049,7 +1049,7 @@ void ThreadSocketHandler()
                     printf("socket inactivity timeout\n");
                     pnode->fDisconnect = true;
                 }
-            }
+            }*/
         }
         {
             LOCK(cs_vNodes);
