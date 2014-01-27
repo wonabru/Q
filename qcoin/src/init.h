@@ -6,8 +6,12 @@
 #define BITCOIN_INIT_H
 
 #include "wallet.h"
+#include "addresstablemodel.h"
 
 extern CWallet* pwalletMain;
+
+extern AddressTableModel *addrModel;
+extern AddressTablePriv *accountsInQNetwork;
 
 void StartShutdown();
 bool ShutdownRequested();

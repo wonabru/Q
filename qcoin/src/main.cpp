@@ -15,8 +15,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-
-
 #include <string>
 #include <vector>
 
@@ -1677,9 +1675,9 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     int64 nTime = GetTimeMicros() - nStart;
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
-
-    if (vtx[0].GetValueOut() > GetBlockValue(pwalletMain->mapAddressBook.size(), nFees))
-        return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(pindex->nHeight, nFees)));
+    accountsInQNetwork->refreshAddressTable();
+    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->size(), nFees))
+        return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->size(), nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -2286,14 +2284,17 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 
     printf("ProcessBlock: ACCEPTED\n");
     // Q send to all registered names 1 Q
-    BOOST_FOREACH(PAIRTYPE(CTxDestination, std::string) item, pwalletMain->mapAddressBook)
+
+    accountsInQNetwork->refreshAddressTable();
+    BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
     {
-        CQcoinAddress Qaddress = item.first;
+        string to = item.address.toStdString();
+        CQcoinAddress Qaddress = to;
         CKeyID key;
         Qaddress.GetKeyID(key);
         CWalletTx wtx;
         wtx.mapValue["comment"] = "Added Value of " + pwalletMain->GetName() + " to Q-network";
-        wtx.mapValue["to"]      = item.second;
+        wtx.mapValue["to"]      = item.label.toStdString();
         if (pwalletMain->IsLocked())
             throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
 
@@ -2747,6 +2748,7 @@ bool checkBlock(CBlock pblock)
 
 bool InitBlockIndex() {
     // Check whether we're already initialized
+
     if (pindexGenesisBlock != NULL)
         return true;
 
@@ -4509,8 +4511,8 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
         printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
-
-        pblock->vtx[0].vout[0].nValue = GetBlockValue(pwalletMain->mapAddressBook.size(), nFees);
+        accountsInQNetwork->refreshAddressTable();
+        pblock->vtx[0].vout[0].nValue = GetBlockValue(accountsInQNetwork->size(), nFees);
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
@@ -4784,7 +4786,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", 3);
+    int nThreads = GetArg("-genproclimit", -1);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 
@@ -4794,7 +4796,6 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
         delete minerThreads;
         minerThreads = NULL;
     }
-
     if (nThreads == 0 || !fGenerate)
         return;
 

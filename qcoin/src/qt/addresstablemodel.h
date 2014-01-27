@@ -4,9 +4,42 @@
 #include <QAbstractTableModel>
 #include <QStringList>
 
-class AddressTablePriv;
+class AddressTableModel;
 class CWallet;
 class WalletModel;
+
+struct AddressTableEntry
+{
+public:
+    enum Type {
+        Sending,
+        Receiving
+    };
+
+    Type type;
+    QString label;
+    QString address;
+
+    AddressTableEntry() {}
+    AddressTableEntry(Type type, const QString &label, const QString &address):
+        type(type), label(label), address(address) {}
+};
+
+class AddressTablePriv
+{
+public:
+    CWallet *wallet;
+    QList<AddressTableEntry> cachedAddressTable;
+    AddressTableModel *parent;
+
+    AddressTablePriv(CWallet *wallet, AddressTableModel *parent):
+        wallet(wallet), parent(parent) {}
+
+    void refreshAddressTable();
+    void updateEntry(const QString &address, const QString &label, bool isMine, int status);
+    int size();
+    AddressTableEntry *index(int idx);
+};
 
 /**
    Qt model of the address book in the core. This allows views to access and modify the address book.

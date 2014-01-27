@@ -11,21 +11,7 @@
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
 
-struct AddressTableEntry
-{
-    enum Type {
-        Sending,
-        Receiving
-    };
 
-    Type type;
-    QString label;
-    QString address;
-
-    AddressTableEntry() {}
-    AddressTableEntry(Type type, const QString &label, const QString &address):
-        type(type), label(label), address(address) {}
-};
 
 struct AddressTableEntryLessThan
 {
@@ -43,18 +29,7 @@ struct AddressTableEntryLessThan
     }
 };
 
-// Private implementation
-class AddressTablePriv
-{
-public:
-    CWallet *wallet;
-    QList<AddressTableEntry> cachedAddressTable;
-    AddressTableModel *parent;
-
-    AddressTablePriv(CWallet *wallet, AddressTableModel *parent):
-        wallet(wallet), parent(parent) {}
-
-    void refreshAddressTable()
+    void AddressTablePriv::refreshAddressTable()
     {
         cachedAddressTable.clear();
         {
@@ -73,7 +48,7 @@ public:
         qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
     }
 
-    void updateEntry(const QString &address, const QString &label, bool isMine, int status)
+    void AddressTablePriv::updateEntry(const QString &address, const QString &label, bool isMine, int status)
     {
         // Find address / label in model
         QList<AddressTableEntry>::iterator lower = qLowerBound(
@@ -120,12 +95,12 @@ public:
         }
     }
 
-    int size()
+    int AddressTablePriv::size()
     {
         return cachedAddressTable.size();
     }
 
-    AddressTableEntry *index(int idx)
+    AddressTableEntry *AddressTablePriv::index(int idx)
     {
         if(idx >= 0 && idx < cachedAddressTable.size())
         {
@@ -136,7 +111,7 @@ public:
             return 0;
         }
     }
-};
+
 
 AddressTableModel::AddressTableModel(CWallet *wallet, WalletModel *parent) :
     QAbstractTableModel(parent),walletModel(parent),wallet(wallet),priv(0)

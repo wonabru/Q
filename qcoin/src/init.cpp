@@ -18,16 +18,18 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <openssl/crypto.h>
 
+
 #ifndef WIN32
 #include <signal.h>
 #endif
-
 
 using namespace std;
 using namespace boost;
 
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
+AddressTableModel *addrModel;
+AddressTablePriv *accountsInQNetwork;
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -953,6 +955,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     pwalletMain = new CWallet("myq.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
+
+
     if (nLoadWalletRet != DB_LOAD_OK)
     {
         if (nLoadWalletRet == DB_CORRUPT)
@@ -1065,7 +1069,9 @@ bool AppInit2(boost::thread_group& threadGroup)
   //      if (!adb.Read(addrman))
    //         printf("Invalid or missing peers.dat; recreating\n");
   //  }
-
+    addrman.Add(addr1, addr1);
+    addrman.Add(addr2, addr2);
+    addrman.Add(addr3, addr3);
     printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
 
@@ -1091,6 +1097,9 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (fServer)
         StartRPCThreads();
 
+    addrModel = new AddressTableModel(pwalletMain);
+    accountsInQNetwork = new AddressTablePriv(pwalletMain,addrModel);
+
     // Generate coins in the background
     GenerateQcoins(true, pwalletMain);
 
@@ -1103,6 +1112,8 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Run a thread to flush wallet periodically
     threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
+
+
 
     return !fRequestShutdown;
 }

@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
         boost::thread_group threadGroup;
 
-        QWidget qwidget;
+       // QWidget qwidget;
 
         QcoinGUI window;
         guiref = &window;
@@ -260,17 +260,24 @@ int main(int argc, char *argv[])
                 qwidget.setWindowModality(Qt::WindowModal);
                 editNamedlg.setWindowModality(Qt::WindowModal);
                 editNamedlg.setVisible(true);
-                QObject::connect(window.getEditNameAction(), SIGNAL(triger()), &editNamedlg, SLOT(accept()));
-
+               // QAction::connect(window.getEditNameAction(), SIGNAL(triger()), &editNamedlg, SLOT(accept()));
+                QTimer* apptime = new QTimer(guiref);
+                QObject::connect(apptime, SIGNAL(timeout()), guiref, SLOT(detectShutdown()));
                 while(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
                 {
+                    window.addAction(window.getEditNameAction());
+                    guiref->show();
+                    apptime->start();
+
                     qwidget.setWindowModality(Qt::WindowModal);
                     qwidget.show();
                     qwidget.activateWindow();
+                    apptime->stop();
                     if(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
                         window.message("Improper Name","Name should be not empty and different from 0",10);
                 }
-                qwidget.disconnect();
+                qwidget.disconnect();*/
+                /*
                 window.setEncryptionStatus(WalletModel::Unencrypted);
                 while(pwalletMain->IsCrypted() == false)
                 {
