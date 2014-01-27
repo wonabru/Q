@@ -1386,7 +1386,7 @@ void ThreadOpenConnections()
 
         CSemaphoreGrant grant(*semOutbound);
         boost::this_thread::interruption_point();
-
+/*
         // Add seed nodes if IRC isn't working
         if (addrman.size()==0 && (GetTime() - nStart > 60) && !fTestNet)
         {
@@ -1406,7 +1406,7 @@ void ThreadOpenConnections()
             }
             addrman.Add(vAdd, CNetAddr("127.0.0.1"));
         }
-
+*/
         //
         // Choose an address to connect to based on most recently seen
         //
