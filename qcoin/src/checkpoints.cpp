@@ -65,7 +65,7 @@ namespace Checkpoints
 
     bool CheckBlock(int nHeight, const uint256& hash)
     {
-        if (!GetBoolArg("-checkpoints", false))
+        if (!GetBoolArg("-checkpoints", true))
             return true;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
@@ -108,8 +108,8 @@ namespace Checkpoints
 
     int GetTotalBlocksEstimate()
     {
-        if (!GetBoolArg("-checkpoints", false))
-            return 0;
+        if (!GetBoolArg("-checkpoints", true))
+            return 1;
 
         const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
 
