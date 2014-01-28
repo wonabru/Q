@@ -1675,9 +1675,9 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     int64 nTime = GetTimeMicros() - nStart;
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
-  //  accountsInQNetwork->refreshAddressTable();
-   // if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
-   //     return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
+    accountsInQNetwork->refreshAddressTable();
+    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
+       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -2293,10 +2293,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
                 printf("Invalid Qcoin address");
-            pwalletMain->SetAddressBookName(address.Get(),address.ToString());
+            CWalletDB(pwalletMain->strWalletFile).WriteName(address.ToString(), address.ToString());
         }
     }
-    bitdb.CloseDb(pwalletMain->strWalletFile);
+    //bitdb.CloseDb(pwalletMain->strWalletFile);
     /*
     BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
     {
@@ -4305,9 +4305,26 @@ public:
     }
 };
 
-CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey)
+CBlockTemplate* CreateNewBlock(CWallet *wallet)
 {
     // Create new block
+    QList<AddressTableEntry> reservekey;
+    reservekey.clear();
+    {
+    LOCK(wallet->cs_wallet);
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapAddressBook)
+    {
+        const CQcoinAddress& address = item.first;
+        const std::string& strName = item.second;
+        bool fMine = IsMine(*wallet, address.Get());
+        reservekey.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                          QString::fromStdString(strName),
+                          QString::fromStdString(address.ToString())));
+    }
+    }
+    printf("No of Names: %d\n",reservekey.size());
+    if(reservekey.size() <= 0)
+        return NULL;
     auto_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
     if(!pblocktemplate.get())
         return NULL;
@@ -4320,7 +4337,8 @@ CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey)
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
     txNew.vout.clear();
-    printf("No of Names: %d\n",reservekey.size());
+
+
     BOOST_FOREACH(AddressTableEntry item, reservekey)
     {
         if(item.label != "")
@@ -4333,6 +4351,7 @@ CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey)
             scriptPubKey.SetDestination(address.Get());
             CTxOut txout(-1,scriptPubKey);
             txNew.vout.push_back(txout);
+            printf("Name %s\n",address.ToString().c_str());
         }
     }
 
@@ -4687,9 +4706,7 @@ void static QcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
         CBlockIndex* pindexPrev = pindexBest;
 
-        accountsInQNetwork->refreshAddressTable();
-
-        auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(accountsInQNetwork->cachedAddressTable));
+        auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
         if (!pblocktemplate.get())
             return;
         CBlock *pblock = &pblocktemplate->block;
