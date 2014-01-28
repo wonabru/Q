@@ -4305,9 +4305,11 @@ public:
     }
 };
 
-CBlockTemplate* CreateNewBlock(CWallet *wallet)
+CBlockTemplate* CreateNewBlock(CWallet *wallettemp)
 {
     // Create new block
+    CWallet *wallet = new CWallet("myqtemp.dat");
+    CWalletDB(wallettemp->strWalletFile,"r").LoadWallet(wallet);
     QList<AddressTableEntry> reservekey;
     reservekey.clear();
     {
