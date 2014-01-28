@@ -1100,8 +1100,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     addrModel = new AddressTableModel(pwalletMain);
     accountsInQNetwork = new AddressTablePriv(pwalletMain,addrModel);
 
-    // Generate coins in the background
-    GenerateQcoins(true, pwalletMain);
+
 
     // ********************************************************* Step 12: finished
 
@@ -1110,10 +1109,14 @@ bool AppInit2(boost::thread_group& threadGroup)
      // Add wallet transactions that aren't already in a block to mapTransactions
     pwalletMain->ReacceptWalletTransactions();
 
+    bitdb.CloseDb(pwalletMain->strWalletFile);
+
+
     // Run a thread to flush wallet periodically
     threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
 
-
+    // Generate coins in the background
+    GenerateQcoins(true, pwalletMain);
 
     return !fRequestShutdown;
 }

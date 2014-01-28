@@ -2289,15 +2289,14 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     {
         BOOST_FOREACH(CTxOut &o, r.vout)
         {
-
-            CScript &sc = o.scriptPubKey;
-            CQcoinAddress Qaddress(sc.ToString());
-            CTxDestination tx = Qaddress.Get();
-            pwalletMain->SetAddressBookName(tx,"Q");
+            string to = o.scriptPubKey.ToString();
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                printf("Invalid Qcoin address");
+            pwalletMain->SetAddressBookName(address.Get(),to);
         }
     }
-
-    accountsInQNetwork->refreshAddressTable();
+    bitdb.CloseDb(pwalletMain->strWalletFile);
     /*
     BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
     {
