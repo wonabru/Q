@@ -2293,7 +2293,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
                 printf("Invalid Qcoin address");
-            pwalletMain->SetAddressBookName(address.Get(),to);
+            pwalletMain->SetAddressBookName(address.Get(),address.ToString());
         }
     }
     bitdb.CloseDb(pwalletMain->strWalletFile);
