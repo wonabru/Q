@@ -1675,9 +1675,9 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     int64 nTime = GetTimeMicros() - nStart;
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
-    accountsInQNetwork->refreshAddressTable();
-    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
-        return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
+  //  accountsInQNetwork->refreshAddressTable();
+   // if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
+   //     return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -2293,7 +2293,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             CScript &sc = o.scriptPubKey;
             CQcoinAddress Qaddress(sc.ToString());
             CTxDestination tx = Qaddress.Get();
-            pwalletMain->SetAddressBookName(tx,"InformationInQNetwork");
+            pwalletMain->SetAddressBookName(tx,"Q");
         }
     }
 
@@ -4306,7 +4306,7 @@ public:
     }
 };
 
-CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
+CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey)
 {
     // Create new block
     auto_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
@@ -4314,27 +4314,31 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
 
-    accountsInQNetwork->refreshAddressTable();
+
 
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
-    txNew.vout.resize(accountsInQNetwork->cachedAddressTable.size());
+ //   txNew.vout.resize(0);
     int no = 0;
-    /*
+/*
     CPubKey pubKeyFees;
-    pubKeyFees.setP(reservekey.GetReservedKey());
+    reservekey.GetReservedKey(pubKeyFees);
     if (!pubKeyFees.IsValid())
-            throw runtime_error(" Invalid public key: "+to);
+            throw runtime_error(" Invalid public key");
     txNew.vout[no++].scriptPubKey << pubKeyFees << OP_CHECKSIG;*/
-    BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
+    BOOST_FOREACH(AddressTableEntry item, reservekey)
     {
-        string to = item.address.toStdString();
-        CPubKey vchPubKey(ParseHex(to));
-        if (!vchPubKey.IsValid())
-                throw runtime_error(" Invalid public key: "+to);
-        txNew.vout[no++].scriptPubKey << vchPubKey << OP_CHECKSIG;
+        if(item.label != "")
+        {
+            txNew.vout.resize(no+1);
+            string to = item.address.toStdString();
+            CPubKey vchPubKey(ParseHex(to));
+            if (!vchPubKey.IsValid())
+                printf(" Invalid public Q key: %s\n",to.c_str());
+            txNew.vout[no++].scriptPubKey << vchPubKey << OP_CHECKSIG;
+        }
     }
 
     // Add our coinbase tx as first transaction
@@ -4537,8 +4541,7 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
         printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
-        accountsInQNetwork->refreshAddressTable();
-        pblock->vtx[0].vout[0].nValue = GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees);
+
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
@@ -4547,6 +4550,11 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock);
         pblock->nNonce         = 0;
         pblock->vtx[0].vin[0].scriptSig = CScript() << OP_0 << OP_0;
+        for(unsigned k=0;k<pblock->vtx[0].vout.size();k++)
+        {
+            pblock->vtx[0].vout[k].nValue = GetBlockValue(1, nFees / pblock->vtx[0].vout.size());
+        }
+
         pblocktemplate->vTxSigOps[0] = pblock->vtx[0].GetLegacySigOpCount();
 
         CBlockIndex indexDummy(*pblock);
@@ -4684,7 +4692,9 @@ void static QcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
         CBlockIndex* pindexPrev = pindexBest;
 
-        auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(reservekey));
+        accountsInQNetwork->refreshAddressTable();
+
+        auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(accountsInQNetwork->cachedAddressTable));
         if (!pblocktemplate.get())
             return;
         CBlock *pblock = &pblocktemplate->block;
@@ -4774,7 +4784,7 @@ void static QcoinMiner(CWallet *pwallet)
                             printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
                             printf("bestHash %s\n", bestHash.ToString().c_str());
                             printf("hashTarget %s\n", hashTarget.ToString().c_str());
-                            printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
+                           // printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }
                     }
                 }
@@ -4823,6 +4833,8 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
         delete minerThreads;
         minerThreads = NULL;
     }
+    //QcoinMiner(pwalletMain);
+    //nThreads=0;
     if (nThreads == 0 || !fGenerate)
         return;
 

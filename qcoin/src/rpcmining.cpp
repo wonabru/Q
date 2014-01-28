@@ -132,8 +132,10 @@ Value getwork(const Array& params, bool fHelp)
             CBlockIndex* pindexPrevNew = pindexBest;
             nStart = GetTime();
 
+            accountsInQNetwork->refreshAddressTable();
+
             // Create new block
-            pblocktemplate = CreateNewBlock(*pMiningKey);
+            pblocktemplate = CreateNewBlock(accountsInQNetwork->cachedAddressTable);
             if (!pblocktemplate)
                 throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
             vNewBlockTemplate.push_back(pblocktemplate);
@@ -264,7 +266,8 @@ Value getblocktemplate(const Array& params, bool fHelp)
             delete pblocktemplate;
             pblocktemplate = NULL;
         }
-        pblocktemplate = CreateNewBlock(*pMiningKey);
+        accountsInQNetwork->refreshAddressTable();
+        pblocktemplate = CreateNewBlock(accountsInQNetwork->cachedAddressTable);
         if (!pblocktemplate)
             throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
 

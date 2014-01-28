@@ -9,6 +9,8 @@
 #include "sync.h"
 #include "net.h"
 #include "script.h"
+#include "qbytearray.h"
+#include "addresstablemodel.h"
 
 #include <list>
 
@@ -155,7 +157,7 @@ void ThreadScriptCheck();
 /** Run the miner threads */
 void GenerateQcoins(bool fGenerate, CWallet* pwallet);
 /** Generate a new block, without valid proof-of-work */
-CBlockTemplate* CreateNewBlock(CReserveKey& reservekey);
+CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey);
 /** Modify the extranonce in a block */
 void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 /** Do mining precalculation */
