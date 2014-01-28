@@ -4320,24 +4320,20 @@ CBlockTemplate* CreateNewBlock(QList<AddressTableEntry>& reservekey)
     CTransaction txNew;
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
- //   txNew.vout.resize(0);
-    int no = 0;
-/*
-    CPubKey pubKeyFees;
-    reservekey.GetReservedKey(pubKeyFees);
-    if (!pubKeyFees.IsValid())
-            throw runtime_error(" Invalid public key");
-    txNew.vout[no++].scriptPubKey << pubKeyFees << OP_CHECKSIG;*/
+    txNew.vout.clear();
+    printf("No of Names: %d\n",reservekey.size());
     BOOST_FOREACH(AddressTableEntry item, reservekey)
     {
         if(item.label != "")
         {
-            txNew.vout.resize(no+1);
             string to = item.address.toStdString();
-            CPubKey vchPubKey(ParseHex(to));
-            if (!vchPubKey.IsValid())
-                printf(" Invalid public Q key: %s\n",to.c_str());
-            txNew.vout[no++].scriptPubKey << vchPubKey << OP_CHECKSIG;
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                printf("Invalid Qcoin address");
+            CScript scriptPubKey;
+            scriptPubKey.SetDestination(address.Get());
+            CTxOut txout(-1,scriptPubKey);
+            txNew.vout.push_back(txout);
         }
     }
 
