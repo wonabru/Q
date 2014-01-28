@@ -1070,8 +1070,11 @@ bool AppInit2(boost::thread_group& threadGroup)
    //         printf("Invalid or missing peers.dat; recreating\n");
   //  }
     addrman.Add(addr1, addr1);
+    addrman.Good(addr1);
     addrman.Add(addr2, addr2);
+    addrman.Good(addr2);
     addrman.Add(addr3, addr3);
+    addrman.Good(addr3);
     printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
 
