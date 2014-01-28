@@ -118,6 +118,8 @@ class CValidationState;
 
 struct CBlockTemplate;
 
+std::string printNamesInQNetwork(CWallet *wallet);
+
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWallet* pwalletIn);
 /** Unregister a wallet from core */

@@ -1675,9 +1675,9 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     int64 nTime = GetTimeMicros() - nStart;
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
-    accountsInQNetwork->refreshAddressTable();
-    if (vtx[0].GetValueOut() > GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees))
-       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(accountsInQNetwork->cachedAddressTable.size(), nFees)));
+
+    if (vtx[0].GetValueOut() > GetBlockValue(NamesInQNetwork.size(), nFees))
+       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(NamesInQNetwork.size(), nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -2281,7 +2281,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-
+    std::string names = printNamesInQNetwork(pwalletMain);
+    printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n");
     // Q send to all registered names 1 Q
 
@@ -2296,6 +2297,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             CWalletDB(pwalletMain->strWalletFile).WriteName(address.ToString(), address.ToString());
         }
     }
+    names = printNamesInQNetwork(pwalletMain);
+    printf("%s",names.c_str());
     //bitdb.CloseDb(pwalletMain->strWalletFile);
     /*
     BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
@@ -2773,13 +2776,37 @@ bool InitBlockIndex() {
     if (!fReindex) {
 
         // Genesis block
-        const char* pszTimestamp = "On 1-st one disapeared to be one over billions";
+        string to = "Qn 1-st one disapeared to be one over billions";
+        uint256 privkey(to);
+        CSecret secret;
+        secret.resize(32);
+        memcpy(&secret[0], &privkey, 32);
+        bool fCompressed = 0;
+        printf("  * %s:\n", fCompressed ? "compressed" : "uncompressed");
+        CQcoinSecret bsecret;
+        bsecret.SetSecret(secret, fCompressed);
+        printf("    * secret (base58): %s\n", bsecret.ToString().c_str());
+        CKey key;
+        key.SetSecret(secret, fCompressed);
+        vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
+        printf("    * pubkey (hex): %s\n", HexStr(vchPubKey).c_str());
+        string toin = "Real live through giving independence to your demons";
+        uint256 privkeyin(toin);
+        CSecret secretin;
+        secretin.resize(32);
+        memcpy(&secretin[0], &privkeyin, 32);
+        CKey keyin;
+        keyin.SetSecret(secretin, fCompressed);
+        vector<unsigned char> vchPubKeyin = keyin.GetPubKey().Raw();
         CTransaction txNew;
-        txNew.vin.resize(1);
+        CTxIn vi;
+        vi.prevout.SetNull();
+        vi.scriptSig << vchPubKeyin;
+        txNew.vin.clear();
         txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 469827582 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        txNew.vin.push_back(vi);
         txNew.vout[0].nValue = COIN;
-        txNew.vout[0].scriptPubKey = CScript() << ParseHex("04548a317e45cbfd0af57b4d098a14fbda656b1b75c308b8115af886200cb7778b6647648c2bd83ba4fad6b3951421a09a61cf0d3dece22ab3f29ca60c540f65b8") << OP_CHECKSIG;
+        txNew.vout[0].scriptPubKey << vchPubKey;
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
@@ -2794,7 +2821,7 @@ bool InitBlockIndex() {
             block.nTime    = 1420070400;
             block.nNonce   = 265050893;
         }
-/*
+        printf("M %s\n", block.hashMerkleRoot.ToString().c_str());
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
         printf("QcoinMiner started\n");
         SetThreadPriority(THREAD_PRIORITY_LOWEST);
@@ -2809,28 +2836,8 @@ bool InitBlockIndex() {
         FormatHashBuffers(pblock, pmidstate, pdata, phash1);
         uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
 
-        uint256 bestHash = block.GetHash();*/
-/*
-        uint256 hash = block.GetHash();
+        uint256 bestHash = block.GetHash();
 
-
-        CBigNum bnWork;
-        bnProofOfWorkLimit.SetCompact(0x1c00fffe);
-        bnWork.SetCompact(block.nBits);
-        bool ok = false;
-        while(ok == false)
-        {
-            block.nNonce+=3;
-            hash = block.GetHash();
-            if (hash <= hashTarget)
-                ok = true;
-            if(hash < bestHash)
-                bestHash = hash;
-            if(block.nNonce%1000000==0)
-            {
-                printf("h %s n %d\n", bestHash.ToString().c_str(), block.nNonce);
-            }
-        }*//*
         uint256 hashbuf[2];
         uint256& hash = *alignup<16>(hashbuf);
         loop
@@ -2897,9 +2904,9 @@ bool InitBlockIndex() {
         printf("hT %s\n", hashTarget.ToString().c_str());
         printf("h %s\n", hash.ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("M %s\n", block.hashMerkleRoot.ToString().c_str());
-        */
-        assert(block.hashMerkleRoot == uint256("0x2dd0ecc986d19e249ceb3f746ed43ab463651cfb9991f5553fa28dbd5e16be16"));
+
+
+        assert(block.hashMerkleRoot == uint256("0x9d17b0b3752c8484cdf23004b1de4571e7added3c30993ec50b5154f9aec4ce8"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4304,6 +4311,40 @@ public:
         }
     }
 };
+
+std::string printNamesInQNetwork(CWallet *wallet)
+{
+    std::string rets = "";
+    NamesInQNetwork.clear();
+    {
+    LOCK(wallet->cs_wallet);
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapAddressBook)
+    {
+        const CQcoinAddress& address = item.first;
+        const std::string& strName = item.second;
+        bool fMine = IsMine(*wallet, address.Get());
+        NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                          QString::fromStdString(strName),
+                          QString::fromStdString(address.ToString())));
+    }
+    }
+    BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
+    {
+        if(item.label != "")
+        {
+            string to = item.address.toStdString();
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                printf("Invalid Qcoin address");
+            CScript scriptPubKey;
+            scriptPubKey.SetDestination(address.Get());
+            rets += "Name " + address.ToString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
+        }
+    }
+    return rets;
+}
+
+
 
 CBlockTemplate* CreateNewBlock(CWallet *wallettemp)
 {

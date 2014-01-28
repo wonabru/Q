@@ -28,8 +28,8 @@ using namespace boost;
 
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
-AddressTableModel *addrModel;
-AddressTablePriv *accountsInQNetwork;
+QList<AddressTableEntry> NamesInQNetwork;
+
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -955,7 +955,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     pwalletMain = new CWallet("myq.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
-
+    std::string names = printNamesInQNetwork(pwalletMain);
 
     if (nLoadWalletRet != DB_LOAD_OK)
     {
@@ -1099,10 +1099,6 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (fServer)
         StartRPCThreads();
-
-    addrModel = new AddressTableModel(pwalletMain);
-    accountsInQNetwork = new AddressTablePriv(pwalletMain,addrModel);
-
 
 
     // ********************************************************* Step 12: finished

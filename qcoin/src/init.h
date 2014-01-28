@@ -9,9 +9,9 @@
 #include "addresstablemodel.h"
 
 extern CWallet* pwalletMain;
+extern std::string printNamesInQNetwork(CWallet *wallet);
+extern QList<AddressTableEntry> NamesInQNetwork;
 
-extern AddressTableModel *addrModel;
-extern AddressTablePriv *accountsInQNetwork;
 
 void StartShutdown();
 bool ShutdownRequested();

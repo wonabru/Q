@@ -269,22 +269,24 @@ public:
 
 class CQcoinAddress : public CBase58Data
 {
+
 public:
     enum
     {
-        PUBKEY_ADDRESS = 56,
+        PUBKEY_ADDRESS = 81,
         SCRIPT_ADDRESS = 5,
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,
+        lenghtQ = 20
     };
 
     bool Set(const CKeyID &id) {
-        SetData(fTestNet ? PUBKEY_ADDRESS_TEST : PUBKEY_ADDRESS, &id, 20);
+        SetData(fTestNet ? PUBKEY_ADDRESS_TEST : PUBKEY_ADDRESS, &id, lenghtQ);
         return true;
     }
 
     bool Set(const CScriptID &id) {
-        SetData(fTestNet ? SCRIPT_ADDRESS_TEST : SCRIPT_ADDRESS, &id, 20);
+        SetData(fTestNet ? SCRIPT_ADDRESS_TEST : SCRIPT_ADDRESS, &id, lenghtQ);
         return true;
     }
 
@@ -295,25 +297,25 @@ public:
 
     bool IsValid() const
     {
-        unsigned int nExpectedSize = 20;
+        unsigned int nExpectedSize = lenghtQ;
         bool fExpectTestNet = false;
         switch(nVersion)
         {
             case PUBKEY_ADDRESS:
-                nExpectedSize = 20; // Hash of public key
+                nExpectedSize = lenghtQ; // Hash of public key
                 fExpectTestNet = false;
                 break;
             case SCRIPT_ADDRESS:
-                nExpectedSize = 20; // Hash of CScript
+                nExpectedSize = lenghtQ; // Hash of CScript
                 fExpectTestNet = false;
                 break;
 
             case PUBKEY_ADDRESS_TEST:
-                nExpectedSize = 20;
+                nExpectedSize = lenghtQ;
                 fExpectTestNet = true;
                 break;
             case SCRIPT_ADDRESS_TEST:
-                nExpectedSize = 20;
+                nExpectedSize = lenghtQ;
                 fExpectTestNet = true;
                 break;
 
@@ -349,13 +351,13 @@ public:
         case PUBKEY_ADDRESS:
         case PUBKEY_ADDRESS_TEST: {
             uint160 id;
-            memcpy(&id, &vchData[0], 20);
+            memcpy(&id, &vchData[0], lenghtQ);
             return CKeyID(id);
         }
         case SCRIPT_ADDRESS:
         case SCRIPT_ADDRESS_TEST: {
             uint160 id;
-            memcpy(&id, &vchData[0], 20);
+            memcpy(&id, &vchData[0], lenghtQ);
             return CScriptID(id);
         }
         }
@@ -369,7 +371,7 @@ public:
         case PUBKEY_ADDRESS:
         case PUBKEY_ADDRESS_TEST: {
             uint160 id;
-            memcpy(&id, &vchData[0], 20);
+            memcpy(&id, &vchData[0], lenghtQ);
             keyID = CKeyID(id);
             return true;
         }
