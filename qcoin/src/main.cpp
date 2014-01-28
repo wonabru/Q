@@ -2285,11 +2285,24 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     printf("ProcessBlock: ACCEPTED\n");
     // Q send to all registered names 1 Q
 
+    BOOST_FOREACH(CTransaction&r, pblock->vtx)
+    {
+        BOOST_FOREACH(CTxOut &o, r.vout)
+        {
+
+            CScript &sc = o.scriptPubKey;
+            CQcoinAddress Qaddress(sc.ToString());
+            CTxDestination tx = Qaddress.Get();
+            pwalletMain->SetAddressBookName(tx,"InformationInQNetwork");
+        }
+    }
+
     accountsInQNetwork->refreshAddressTable();
+    /*
     BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
     {
         string to = item.address.toStdString();
-        CQcoinAddress Qaddress = to;
+        CQcoinAddress Qaddress(to);
         CKeyID key;
         Qaddress.GetKeyID(key);
         CWalletTx wtx;
@@ -2304,7 +2317,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         string strError = pwalletMain->SendMoneyToDestination(address, COIN, wtx);
         if (strError != "")
             throw JSONRPCError(RPC_WALLET_ERROR, strError);
-    }
+    }*/
 
     return true;
 }
@@ -4301,15 +4314,28 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey)
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
 
+    accountsInQNetwork->refreshAddressTable();
+
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
-    txNew.vout.resize(1);
-    CPubKey pubkey;
-    if (!reservekey.GetReservedKey(pubkey))
-        return NULL;
-    txNew.vout[0].scriptPubKey << pubkey << OP_CHECKSIG;
+    txNew.vout.resize(accountsInQNetwork->cachedAddressTable.size());
+    int no = 0;
+    /*
+    CPubKey pubKeyFees;
+    pubKeyFees.setP(reservekey.GetReservedKey());
+    if (!pubKeyFees.IsValid())
+            throw runtime_error(" Invalid public key: "+to);
+    txNew.vout[no++].scriptPubKey << pubKeyFees << OP_CHECKSIG;*/
+    BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
+    {
+        string to = item.address.toStdString();
+        CPubKey vchPubKey(ParseHex(to));
+        if (!vchPubKey.IsValid())
+                throw runtime_error(" Invalid public key: "+to);
+        txNew.vout[no++].scriptPubKey << vchPubKey << OP_CHECKSIG;
+    }
 
     // Add our coinbase tx as first transaction
     pblock->vtx.push_back(txNew);
