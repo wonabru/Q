@@ -4801,42 +4801,14 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
 
-    try { loop {
 
-       printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
-               ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
-
-       pblock->nNonce = RAND_bytes((unsigned char*)&pblock->nNonce, sizeof(pblock->nNonce));
-       //
-        // Pre-build hash buffers
-        //
-        char pmidstatebuf[32+16]; char* pmidstate = alignup<16>(pmidstatebuf);
-        char pdatabuf[128+16];    char* pdata     = alignup<16>(pdatabuf);
-        char phash1buf[64+16];    char* phash1    = alignup<16>(phash1buf);
-
-        FormatHashBuffers(pblock, pmidstate, pdata, phash1);
-
-        unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
-
-        int64 nStart = GetTime();
         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
         uint256 bestHash = pblock->GetHash();
-        uint256 hashbuf[2];
-        uint256& hash = *alignup<16>(hashbuf);
+        uint256 hash;
         loop
         {
-            unsigned int nHashesDone = 0;
-            unsigned int nNonceFound;
-
-            // Crypto++ SHA256
-            nNonceFound = ScanHash_CryptoPP(pmidstate, pdata + 64, phash1,
-                                            (char*)&hash, nHashesDone);
-
-            // Check if something found
-            if (nNonceFound != (unsigned int) -1)
-            {
-                for (unsigned int i = 0; i < sizeof(hash)/4; i++)
-                    ((unsigned int*)&hash)[i] = ByteReverse(((unsigned int*)&hash)[i]);
+                pblock->nNonce = RAND_bytes((unsigned char*)&pblock->nNonce, sizeof(pblock->nNonce));
+                hash = pblock->GetHash();
 
                 if(hash < bestHash)
                 {
@@ -4846,8 +4818,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 if (hash <= hashTarget)
                 {
                     // Found a solution
-                    pblock->nNonce = ByteReverse(nNonceFound);
-                    assert(hash == pblock->GetHash());
                     pblock->print();
                     ofstream ofnonce("NonceOfGenesis.txt");
                     ofnonce << pblock->nNonce<<endl;
@@ -4855,52 +4825,19 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                     ofnonce.close();
                     break;
                 }
-            }
 
-            // Meter hashes/sec
-            static int64 nHashCounter;
-            if (nHPSTimerStart == 0)
-            {
-                nHPSTimerStart = GetTimeMillis();
-                nHashCounter = 0;
-            }
-            else
-                nHashCounter += nHashesDone;
-            if (GetTimeMillis() - nHPSTimerStart > 4000)
-            {
-                static CCriticalSection cs;
-                {
-                    LOCK(cs);
-                    if (GetTimeMillis() - nHPSTimerStart > 4000)
-                    {
-                        dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
-                        nHPSTimerStart = GetTimeMillis();
-                        nHashCounter = 0;
+
+
+
                         static int64 nLogTime;
                         if (GetTime() - nLogTime > 30)
                         {
                             nLogTime = GetTime();
-                            printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
                             printf("bestHash %s\n", bestHash.ToString().c_str());
                             printf("hashTarget %s\n", hashTarget.ToString().c_str());
                            // printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }
-                    }
-                }
-            }
 
-            // Check for stop or if block needs to be rebuilt
-            boost::this_thread::interruption_point();
-            if (nBlockNonce >= 0xffff0000)
-                break;
-            if (GetTime() - nStart > 60)
-                break;
-        }
-    } }
-    catch (boost::thread_interrupted)
-    {
-        printf("QcoinMiner terminated\n");
-        throw;
     }
 
 
