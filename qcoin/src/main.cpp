@@ -4809,8 +4809,6 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
        printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-       unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
-
        //
         // Pre-build hash buffers
         //
@@ -4896,7 +4894,7 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
             boost::this_thread::interruption_point();
             if (nBlockNonce >= 0xffff0000)
                 break;
-            if (nTransactionsUpdated != nTransactionsUpdatedLast && GetTime() - nStart > 60)
+            if (GetTime() - nStart > 60)
                 break;
         }
     } }
