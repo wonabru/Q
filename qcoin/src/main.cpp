@@ -4809,7 +4809,9 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
        printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-        //
+       unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
+
+       //
         // Pre-build hash buffers
         //
         char pmidstatebuf[32+16]; char* pmidstate = alignup<16>(pmidstatebuf);
@@ -4818,6 +4820,9 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
 
         FormatHashBuffers(pblock, pmidstate, pdata, phash1);
 
+        unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
+
+        int64 nStart = GetTime();
         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
         uint256 bestHash = pblock->GetHash();
         uint256 hashbuf[2];
@@ -4889,7 +4894,10 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-
+            if (nBlockNonce >= 0xffff0000)
+                break;
+            if (nTransactionsUpdated != nTransactionsUpdatedLast && GetTime() - nStart > 60)
+                break;
         }
     } }
     catch (boost::thread_interrupted)
