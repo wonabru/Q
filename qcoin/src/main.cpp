@@ -2791,11 +2791,8 @@ bool InitBlockIndex() {
         CQcoinSecret bsecret;
         bsecret.SetSecret(secret, fCompressed);
         printf("    * secret (base58): %s\n", bsecret.ToString().c_str());
-        CKey key;
-        key.SetSecret(secret, fCompressed);
-        vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
-        GenesisName << key.GetPubKey();
-        printf("    * pubkey (hex): %s\n", HexStr(vchPubKey).c_str());
+
+
        // string toin = "Rltgityd";
         uint256 privkeyin((uint64)(0x1d00ffff));
         CSecret secretin;
@@ -2805,6 +2802,11 @@ bool InitBlockIndex() {
         keyin.SetSecret(secretin, fCompressed);
         vector<unsigned char> vchPubKeyin;
         keyin.SignCompact(privkey,vchPubKeyin);
+        CKey key;
+        key.SetSecret(secretin, fCompressed);
+        vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
+
+        GenesisName << key.GetPubKey();
 
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
 
