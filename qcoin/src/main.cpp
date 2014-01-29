@@ -47,7 +47,7 @@ unsigned int nTransactionsUpdated = 0;
 
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000000001b21e6763c02808b782a8efd82851fa7f0ae3a5bb5b08d0fbb9bd38");
+uint256 hashGenesisBlock("0x000000000dd5c231a7ccc91f6a6a5392cced021ee560f42f9e1a7662d54b10f0");
 static CBigNum bnProofOfWorkLimit = CBigNum(~uint256(0) >> 32);
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2787,23 +2787,20 @@ bool InitBlockIndex() {
         secret.resize(32);
         memcpy(&secret[0], &privkey, 32);
         bool fCompressed = 0;
-        printf("  * %s:\n", fCompressed ? "compressed" : "uncompressed");
-        CQcoinSecret bsecret;
-        bsecret.SetSecret(secret, fCompressed);
-        printf("    * secret (base58): %s\n", bsecret.ToString().c_str());
 
 
        // string toin = "Rltgityd";
-        uint256 privkeyin((uint64)(0x1d00ffff));
+        uint64 s64 = 140737080002480;
+        uint256 privkeyin(s64);
         CSecret secretin;
         secretin.resize(32);
         memcpy(&secretin[0], &privkeyin, 32);
         CKey keyin;
         keyin.SetSecret(secretin, fCompressed);
-        vector<unsigned char> vchPubKeyin;
-        keyin.SignCompact(privkey,vchPubKeyin);
+        vector<unsigned char> vchPubKeyin = keyin.GetPubKey().Raw();
+
         CKey key;
-        key.SetSecret(secretin, fCompressed);
+        key.SetSecret(secret, fCompressed);
         vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
 
         GenesisName << key.GetPubKey();
@@ -2811,12 +2808,9 @@ bool InitBlockIndex() {
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
 
         CTransaction txNew;
-        CTxIn vi;
-        vi.prevout.SetNull();
-        vi.scriptSig << vchPubKeyin;
-        txNew.vin.clear();
+        txNew.vin.resize(1);
         txNew.vout.resize(1);
-        txNew.vin.push_back(vi);
+        txNew.vin[0].scriptSig << vchPubKeyin;
         txNew.vout[0].nValue = 0;
         txNew.vout[0].scriptPubKey << vchPubKey;
         CBlock block;
@@ -2826,7 +2820,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d00ffff;
-        block.nNonce   = 265050893;
+        block.nNonce   = 2047631884;
 
         block.print();
 
@@ -2836,18 +2830,21 @@ bool InitBlockIndex() {
             block.nNonce   = 265050893;
         }
 
-        printf("M %s\n", block.hashMerkleRoot.ToString().c_str());
-        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+        printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
+     //   printf("M2 %s\n", block.BuildMerkleTree().ToString().c_str());
+    //    printf("M3 %s\n", block.BuildMerkleTree().ToString().c_str());
+    //    printf("M4 %s\n", block.BuildMerkleTree().ToString().c_str());
+;
 
         CBlock *pblock = &block;
         QcoinMinerGenesisBlock(pblock);
        // GenerateQcoinsGenesisBlock(pblock);
        // getwchar();
-        printf("%d\n", pblock->nNonce);
-        printf("h %s\n", pblock->GetHash().ToString().c_str());
+        printf("%d\n", block.nNonce);
+        printf("h %s\n", block.GetHash().ToString().c_str());
 
 
-        assert(block.hashMerkleRoot == uint256("0x7b51fb95e77af72585c119a68d67d84e081b7a96bef786751a7c0ac78eb7d6fc"));
+        assert(block.hashMerkleRoot == uint256("0x9bb2db572da7c16d09d3b0811af3a0843c07c16a133e3ea6992b58b26e2a2ef8"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4818,7 +4815,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         pblock->nNonce = random();
-        pblock->nNonce = RAND_bytes((unsigned char *)&pblock->nNonce, sizeof(pblock->nNonce));
+       // pblock->nNonce = RAND_bytes((unsigned char *)&pblock->nNonce, sizeof(pblock->nNonce));
 
         //
         // Pre-build hash buffers
@@ -4866,7 +4863,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                     // Found a solution
                     pblock->nNonce = ByteReverse(nNonceFound);
                     assert(hash == pblock->GetHash());
-
+                    printf("nNonce InitBlock = %d\n",pblock->nNonce);
                     return;
 
                 }
