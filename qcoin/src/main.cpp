@@ -2795,14 +2795,17 @@ bool InitBlockIndex() {
         vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
         GenesisName << key.GetPubKey();
         printf("    * pubkey (hex): %s\n", HexStr(vchPubKey).c_str());
-        string toin = "Rltgityd";
-        uint256 privkeyin(toin);
+       // string toin = "Rltgityd";
+        uint256 privkeyin((uint64)(0x1d00ffff));
         CSecret secretin;
         secretin.resize(32);
         memcpy(&secretin[0], &privkeyin, 32);
         CKey keyin;
         keyin.SetSecret(secretin, fCompressed);
         vector<unsigned char> vchPubKeyin = keyin.GetPubKey().Raw();
+
+        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+
         CTransaction txNew;
         CTxIn vi;
         vi.prevout.SetNull();
