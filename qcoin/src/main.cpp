@@ -2831,9 +2831,7 @@ bool InitBlockIndex() {
 
         printf("M %s\n", block.hashMerkleRoot.ToString().c_str());
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
-        printf("QcoinMiner started\n");
-        SetThreadPriority(THREAD_PRIORITY_LOWEST);
-        RenameThread("qcoin-miner");
+
         CBlock *pblock = &block;
         GenerateQcoinsGenesisBlock(pwalletMain,pblock);
         getwchar();
@@ -4899,8 +4897,12 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
         printf("QcoinMiner terminated\n");
         throw;
     }
+
     pblock->print();
-    assert(0);
+    ofstream ofnonce("NonceOfGenesis.txt");
+    ofnonce << pblock->nNonce<<endl;
+    ofnonce << pblock->GetHash().ToString()<<endl;
+    ofnonce.close();
 }
 
 void GenerateQcoins(bool fGenerate, CWallet* pwallet)
