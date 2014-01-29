@@ -29,7 +29,7 @@ using namespace json_spirit;
 
 using namespace std;
 using namespace boost;
-void GenerateQcoinsGenesisBlock(CWallet* pwallet, CBlock * pblock);
+void GenerateQcoinsGenesisBlock(CBlock * pblock);
 unsigned int static ScanHash_CryptoPP(char* pmidstate, char* pdata, char* phash1, char* phash, unsigned int& nHashesDone);
 //
 // Global state
@@ -2833,7 +2833,7 @@ bool InitBlockIndex() {
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
 
         CBlock *pblock = &block;
-        GenerateQcoinsGenesisBlock(pwalletMain,pblock);
+        GenerateQcoinsGenesisBlock(pblock);
         getwchar();
         printf("%d\n", pblock->nNonce);
         printf("h %s\n", pblock->GetHash().ToString().c_str());
@@ -4795,20 +4795,18 @@ void static QcoinMiner(CWallet *pwallet)
     }
 }
 
-void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
+void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
     printf("QcoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
-
-    // Each thread has its own key and counter
-    CReserveKey reservekey(pwallet);
 
     try { loop {
 
        printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
+       pblock->nNonce = RAND_bytes((unsigned char*)&pblock->nNonce, sizeof(pblock->nNonce));
        //
         // Pre-build hash buffers
         //
@@ -4850,10 +4848,11 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
                     // Found a solution
                     pblock->nNonce = ByteReverse(nNonceFound);
                     assert(hash == pblock->GetHash());
-
-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
-                    CheckWork(pblock, *pwalletMain, reservekey);
-                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                    pblock->print();
+                    ofstream ofnonce("NonceOfGenesis.txt");
+                    ofnonce << pblock->nNonce<<endl;
+                    ofnonce << pblock->GetHash().ToString()<<endl;
+                    ofnonce.close();
                     break;
                 }
             }
@@ -4904,11 +4903,7 @@ void static QcoinMinerGenesisBlock(CWallet *pwallet, CBlock *pblock)
         throw;
     }
 
-    pblock->print();
-    ofstream ofnonce("NonceOfGenesis.txt");
-    ofnonce << pblock->nNonce<<endl;
-    ofnonce << pblock->GetHash().ToString()<<endl;
-    ofnonce.close();
+
 }
 
 void GenerateQcoins(bool fGenerate, CWallet* pwallet)
@@ -4935,10 +4930,10 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
         minerThreads->create_thread(boost::bind(&QcoinMiner, pwallet));
 }
 
-void GenerateQcoinsGenesisBlock(CWallet* pwallet, CBlock * pblock)
+void GenerateQcoinsGenesisBlock(CBlock * pblock)
 {
     static boost::thread_group* minerThreads = NULL;
-
+    RandAddSeedPerfmon();
     int nThreads = boost::thread::hardware_concurrency();
 
     if (minerThreads != NULL)
@@ -4950,7 +4945,7 @@ void GenerateQcoinsGenesisBlock(CWallet* pwallet, CBlock * pblock)
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pwallet, pblock));
+        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock));
 }
 
 // Amount compression:
