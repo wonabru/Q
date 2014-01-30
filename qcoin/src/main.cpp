@@ -4918,7 +4918,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             if (nBlockNonce >= 0xffff0000)
                 break;
-            if (GetTime() - nStart > 600)
+            if (GetTime() - nStart > 3000)
                 break;
 
         }
