@@ -2790,22 +2790,34 @@ bool InitBlockIndex() {
 
 
        // string toin = "Rltgityd";
-        uint64 s64 = 140737080002480;
+        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+        uint64 s64 = 140736853561472;//bnProofOfWorkLimit.getulong();
         uint256 privkeyin(s64);
         CSecret secretin;
         secretin.resize(32);
         memcpy(&secretin[0], &privkeyin, 32);
         CKey keyin;
         keyin.SetSecret(secretin, fCompressed);
+
         vector<unsigned char> vchPubKeyin = keyin.GetPubKey().Raw();
 
+    //    keyin.Sign(privkey,vchPubKeyin);
+        /*unsigned char ss[vchPubKeyin.size()];
+        for(int i=0;i<vchPubKeyin.size();i++)
+            ss[i]=vchPubKeyin[i];
+        uint64 a = 140736853561472;
+        printf("%llu\n",a);
+        */
         CKey key;
         key.SetSecret(secret, fCompressed);
         vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
 
         GenesisName << key.GetPubKey();
 
-        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+
+
+   //     CTxIn vi;
+     //   vi.scriptSig <<
 
         CTransaction txNew;
         txNew.vin.resize(1);
@@ -2844,7 +2856,7 @@ bool InitBlockIndex() {
         printf("h %s\n", block.GetHash().ToString().c_str());
 
 
-        assert(block.hashMerkleRoot == uint256("0x9bb2db572da7c16d09d3b0811af3a0843c07c16a133e3ea6992b58b26e2a2ef8"));
+        assert(block.hashMerkleRoot == uint256("0x049298d6f391d35d6dfe003a3e0f426861e1078be369992cc58716db69cc7469"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
