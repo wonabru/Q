@@ -2791,7 +2791,7 @@ bool InitBlockIndex() {
 
        // string toin = "Rltgityd";
         bnProofOfWorkLimit.SetCompact(0x1d00ffff);
-        uint64 s64 = 140736853561472;//bnProofOfWorkLimit.getulong();
+        uint64 s64 = 1420070400;//bnProofOfWorkLimit.getulong();
         uint256 privkeyin(s64);
         CSecret secretin;
         secretin.resize(32);
@@ -2829,10 +2829,10 @@ bool InitBlockIndex() {
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
-        block.nVersion = 1;
+        block.nVersion = 3;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d00ffff;
-        block.nNonce   = 2047631884;
+        block.nNonce   = 3;
 
         block.print();
 
@@ -4826,7 +4826,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-        pblock->nNonce = random();
+        pblock->nNonce++;
        // pblock->nNonce = RAND_bytes((unsigned char *)&pblock->nNonce, sizeof(pblock->nNonce));
 
         //
@@ -4918,7 +4918,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             if (nBlockNonce >= 0xffff0000)
                 break;
-            if (GetTime() - nStart > 3000)
+            if (GetTime() - nStart > 666)
                 break;
 
         }
