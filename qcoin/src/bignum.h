@@ -289,8 +289,8 @@ public:
     CBigNum& SetCompact(unsigned int nCompact)
     {
         unsigned int nSize = nCompact >> 24;
-        bool fNegative     =(nCompact & 0x00800000) != 0;
-        unsigned int nWord = nCompact & 0x007fffff;
+        bool fNegative     =(nCompact & 0x00000001) == 0;
+        unsigned int nWord = nCompact & 0x00fffffe;
         if (nSize <= 3)
         {
             nWord >>= 8*(3-nSize);
@@ -319,13 +319,12 @@ public:
         }
         // The 0x00800000 bit denotes the sign.
         // Thus, if it is already set, divide the mantissa by 256 and increase the exponent.
-        if (nCompact & 0x00800000)
+        if (nCompact & 0x00000001)
         {
-            nCompact >>= 8;
             nSize++;
         }
         nCompact |= nSize << 24;
-        nCompact |= (BN_is_negative(this) ? 0x00800000 : 0);
+        nCompact |= (BN_is_negative(this) ? 0 : 1);
         return nCompact;
     }
 

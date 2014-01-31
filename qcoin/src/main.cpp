@@ -44,11 +44,9 @@ CCriticalSection cs_main;
 CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
-
-
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x000000000dd5c231a7ccc91f6a6a5392cced021ee560f42f9e1a7662d54b10f0");
-static CBigNum bnProofOfWorkLimit = CBigNum(~uint256(0) >> 32);
+uint256 hashGenesisBlock("0x00002ffb4df40daa2c1ed6d58dba871a0985b59689da798ece01bd11ff0a2feb");
+static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 uint256 nBestChainWork = 0;
@@ -1196,8 +1194,8 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     // Check range
-    printf("%d\n",bnTarget.GetCompact());
-    printf("%d\n",bnProofOfWorkLimit.GetCompact());
+    printf("%lu\n",bnTarget.getulong());
+    printf("%lu\n",bnProofOfWorkLimit.getulong());
     if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
         return error("CheckProofOfWork() : nBits below minimum work");
 
@@ -2790,7 +2788,7 @@ bool InitBlockIndex() {
 
 
        // string toin = "Rltgityd";
-        bnProofOfWorkLimit.SetCompact(0x1d00ffff);
+
         uint64 s64 = 1420070400;//bnProofOfWorkLimit.getulong();
         uint256 privkeyin(s64);
         CSecret secretin;
@@ -2829,12 +2827,14 @@ bool InitBlockIndex() {
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
-        block.nVersion = 3;
+        block.nVersion = 1;
         block.nTime    = 1420070400;
-        block.nBits    = 0x1d00ffff;
-        block.nNonce   = 3;
-
+        block.nBits    = 0x1fffffff;
+        block.nNonce   = 108582917;
+        bnProofOfWorkLimit.SetCompact(block.nBits);
+        printf("%lu\n", bnProofOfWorkLimit.getulong());
         block.print();
+        assert(block.nBits == bnProofOfWorkLimit.GetCompact());
 
         if (fTestNet)
         {
@@ -2843,20 +2843,21 @@ bool InitBlockIndex() {
         }
 
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
+        printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
      //   printf("M2 %s\n", block.BuildMerkleTree().ToString().c_str());
     //    printf("M3 %s\n", block.BuildMerkleTree().ToString().c_str());
     //    printf("M4 %s\n", block.BuildMerkleTree().ToString().c_str());
 ;
 
-        CBlock *pblock = &block;
-        QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;
+     //   QcoinMinerGenesisBlock(pblock);
        // GenerateQcoinsGenesisBlock(pblock);
        // getwchar();
         printf("%d\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
 
-        assert(block.hashMerkleRoot == uint256("0x049298d6f391d35d6dfe003a3e0f426861e1078be369992cc58716db69cc7469"));
+        assert(block.hashMerkleRoot == uint256("0x0e8e7c58db863eda18d4f2472c932edda6e3f91cfcc1b359ad8dfc7ba04c1c11"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
