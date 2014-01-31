@@ -1194,6 +1194,7 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     // Check range
+    bnProofOfWorkLimit.SetCompact(0x1dffffff);
     printf("%lu\n",bnTarget.getulong());
     printf("%lu\n",bnProofOfWorkLimit.getulong());
     if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
@@ -2303,6 +2304,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
     }
     names = printNamesInQNetwork(pwalletMain);
+    bool firstLoad;
+    pwalletMain->LoadWallet(firstLoad);
     printf("%s",names.c_str());
     //bitdb.CloseDb(pwalletMain->strWalletFile);
     /*
