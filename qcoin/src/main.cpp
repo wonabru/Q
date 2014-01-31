@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x00002ffb4df40daa2c1ed6d58dba871a0985b59689da798ece01bd11ff0a2feb");
+uint256 hashGenesisBlock("0x0000008c70ab9a1dd7da6f437631bb232274a0c21fe0d0c0cb23036d3f5f16cd");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2293,11 +2293,13 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     {
         BOOST_FOREACH(CTxOut &o, r.vout)
         {
-            string to = o.scriptPubKey.ToString();
-            CQcoinAddress address(to.c_str());
-            if (!address.IsValid())
-                printf("Invalid Qcoin address");
-            CWalletDB(pwalletMain->strWalletFile).WriteName(address.ToString(), address.ToString());
+        //    string to = o.scriptPubKey.GetID().ToString();
+        //    CQcoinAddress address(to.c_str());
+        //    if (!address.IsValid())
+        //        printf("Invalid Qcoin address");
+         //   CScript scriptPubKey;
+         //   scriptPubKey.SetDestination(address.Get());
+            CWalletDB(pwalletMain->strWalletFile).WriteName(o.scriptPubKey.GetID().ToString(), o.scriptPubKey.GetID().ToString());
         }
     }
     names = printNamesInQNetwork(pwalletMain);
@@ -2829,11 +2831,11 @@ bool InitBlockIndex() {
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1420070400;
-        block.nBits    = 0x1fffffff;
-        block.nNonce   = 108582917;
+        block.nBits    = 0x1dffffff;
+        block.nNonce   = 627802887;
         bnProofOfWorkLimit.SetCompact(block.nBits);
         printf("%lu\n", bnProofOfWorkLimit.getulong());
-        block.print();
+        printf("%x\n", bnProofOfWorkLimit.GetCompact());
         assert(block.nBits == bnProofOfWorkLimit.GetCompact());
 
         if (fTestNet)
@@ -2849,7 +2851,7 @@ bool InitBlockIndex() {
     //    printf("M4 %s\n", block.BuildMerkleTree().ToString().c_str());
 ;
 
-     //   CBlock *pblock = &block;
+      //  CBlock *pblock = &block;
      //   QcoinMinerGenesisBlock(pblock);
        // GenerateQcoinsGenesisBlock(pblock);
        // getwchar();
@@ -4305,7 +4307,7 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
 {
     // Create new block
     printf("%s",printNamesInQNetwork(wallet).c_str());
-    if(NamesInQNetwork.size() <= 1)
+    if(NamesInQNetwork.size() <= 0)
         return NULL;
     auto_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
     if(!pblocktemplate.get())
@@ -4946,7 +4948,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
         minerThreads = NULL;
     }
     //QcoinMiner(pwalletMain);
-    //nThreads=0;
+    nThreads=1;
     if (nThreads == 0 || !fGenerate)
         return;
 
