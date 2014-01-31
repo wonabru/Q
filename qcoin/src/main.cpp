@@ -2300,7 +2300,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         //        printf("Invalid Qcoin address");
          //   CScript scriptPubKey;
          //   scriptPubKey.SetDestination(address.Get());
-            CWalletDB(pwalletMain->strWalletFile).WriteName(o.scriptPubKey.GetID().ToString(), o.scriptPubKey.GetID().ToString());
+            pwalletMain->AddCScript(o.scriptPubKey);
+           // CWalletDB(pwalletMain->strWalletFile).WriteName(.ToString().c_str(), HexStr(o.scriptPubKey.begin(),o.scriptPubKey.end(),true).c_str());
         }
     }
     names = printNamesInQNetwork(pwalletMain);
