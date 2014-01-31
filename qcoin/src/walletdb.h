@@ -78,7 +78,7 @@ public:
     bool WriteCScript(const uint160& hash, const CScript& redeemScript)
     {
         nWalletDBUpdated++;
-        return Write(std::make_pair(std::string("cscript"), hash), redeemScript, false);
+        return Write(std::make_pair(std::string("cscript"), hash), redeemScript, true);
     }
 
     bool WriteBestBlock(const CBlockLocator& locator)

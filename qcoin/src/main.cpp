@@ -2304,9 +2304,9 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
            // CWalletDB(pwalletMain->strWalletFile).WriteName(.ToString().c_str(), HexStr(o.scriptPubKey.begin(),o.scriptPubKey.end(),true).c_str());
         }
     }
-    names = printNamesInQNetwork(pwalletMain);
     bool firstLoad;
     pwalletMain->LoadWallet(firstLoad);
+    names = printNamesInQNetwork(pwalletMain);
     printf("%s",names.c_str());
     //bitdb.CloseDb(pwalletMain->strWalletFile);
     /*
