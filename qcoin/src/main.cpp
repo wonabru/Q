@@ -29,9 +29,7 @@ using namespace json_spirit;
 
 using namespace std;
 using namespace boost;
-void GenerateQcoinsGenesisBlock(CBlock * pblock);
-void static QcoinMinerGenesisBlock(CBlock *pblock);
-unsigned int static ScanHash_CryptoPP(char* pmidstate, char* pdata, char* phash1, char* phash, unsigned int& nHashesDone);
+void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe);
 //
 // Global state
 //
@@ -45,7 +43,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000008c70ab9a1dd7da6f437631bb232274a0c21fe0d0c0cb23036d3f5f16cd");
+uint256 hashGenesisBlock("0x0000007f1ef31f1967008898826a3a5b84f885dd5103a2cedd0bdf0ed9497881");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1194,9 +1192,9 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     // Check range
-    bnProofOfWorkLimit.SetCompact(0x1dffffff);
-    printf("%lu\n",bnTarget.getulong());
-    printf("%lu\n",bnProofOfWorkLimit.getulong());
+    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
+    printf("%d\n",bnTarget.getint());
+    printf("%d\n",bnProofOfWorkLimit.getint());
     if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
         return error("CheckProofOfWork() : nBits below minimum work");
 
@@ -2287,48 +2285,15 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
     std::string names = printNamesInQNetwork(pwalletMain);
     printf("%s",names.c_str());
-    printf("ProcessBlock: ACCEPTED\n");
-    // Q send to all registered names 1 Q
+    printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
-    BOOST_FOREACH(CTransaction&r, pblock->vtx)
-    {
-        BOOST_FOREACH(CTxOut &o, r.vout)
-        {
-        //    string to = o.scriptPubKey.GetID().ToString();
-        //    CQcoinAddress address(to.c_str());
-        //    if (!address.IsValid())
-        //        printf("Invalid Qcoin address");
-         //   CScript scriptPubKey;
-         //   scriptPubKey.SetDestination(address.Get());
-            pwalletMain->AddCScript(o.scriptPubKey);
-           // CWalletDB(pwalletMain->strWalletFile).WriteName(.ToString().c_str(), HexStr(o.scriptPubKey.begin(),o.scriptPubKey.end(),true).c_str());
-        }
-    }
-    bool firstLoad;
-    pwalletMain->LoadWallet(firstLoad);
+    vector<unsigned char> bpk[20];
+    memcpy(&bpk[0],&pblock->namePubKey,20);
+    CPubKey blockPubKey(bpk[0]);
+
+    pwalletMain->SetAddressBookName(blockPubKey.GetID(),pblock->GetBlockName());
     names = printNamesInQNetwork(pwalletMain);
-    printf("%s",names.c_str());
-    //bitdb.CloseDb(pwalletMain->strWalletFile);
-    /*
-    BOOST_FOREACH(AddressTableEntry item, accountsInQNetwork->cachedAddressTable)
-    {
-        string to = item.address.toStdString();
-        CQcoinAddress Qaddress(to);
-        CKeyID key;
-        Qaddress.GetKeyID(key);
-        CWalletTx wtx;
-        wtx.mapValue["comment"] = "Added Value of " + pwalletMain->GetName() + " to Q-network";
-        wtx.mapValue["to"]      = item.label.toStdString();
-        if (pwalletMain->IsLocked())
-            throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
-
-        CTxDestination address = Qaddress.Get();
-        if(pwalletMain->vchDefaultKey.GetID().ToString() == key.ToString())
-            continue;
-        string strError = pwalletMain->SendMoneyToDestination(address, COIN, wtx);
-        if (strError != "")
-            throw JSONRPCError(RPC_WALLET_ERROR, strError);
-    }*/
+    printf("%s\n New account accepted\n",names.c_str());
 
     return true;
 }
@@ -2771,7 +2736,28 @@ bool checkBlock(CBlock pblock)
 }
 
 bool InitBlockIndex() {
-    // Check whether we're already initialized
+    ifstream fpss;
+    fpss.open("../../.wonabruQ1");
+    char namePubKeyWonabru[32];
+    fpss.getline(namePubKeyWonabru,32);
+    fpss.close();
+    CSecret WonabruSecret;
+    WonabruSecret.resize(32);
+    memcpy(&WonabruSecret[0],&namePubKeyWonabru[0],32);
+    CKey WQ1;
+    WQ1.SetSecret(WonabruSecret, true);
+    CPubKey keyWonabru(WQ1.GetPubKey());
+    CSecret QSecret(WonabruSecret);
+    reverse_copy(&namePubKeyWonabru[0],&namePubKeyWonabru[31],&QSecret[0]);
+    WQ1.SetSecret(QSecret,true);
+    CPubKey keyQ(WQ1.GetPubKey());
+    CSecret GodSecret(WonabruSecret);
+    memcpy(&GodSecret[0],&WonabruSecret[0],16);
+    memcpy(&GodSecret[15],&QSecret[0],16);
+    WQ1.SetSecret(GodSecret,true);
+    reserved[0] = keyWonabru;
+    reserved[1] = keyQ;
+    reserved[2] = CPubKey(WQ1.GetPubKey());
 
     if (pindexGenesisBlock != NULL)
         return true;
@@ -2782,88 +2768,43 @@ bool InitBlockIndex() {
     printf("Initializing databases...\n");
 
     // Only add the genesis block if not reindexing (in which case we reuse the one already on disk)
+    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
     if (!fReindex) {
 
-        // Genesis block
-        string to = "1odtboob";
-        uint256 privkey(to);
-        CSecret secret;
-        secret.resize(32);
-        memcpy(&secret[0], &privkey, 32);
-        bool fCompressed = 0;
-
-
-       // string toin = "Rltgityd";
-
-        uint64 s64 = 1420070400;//bnProofOfWorkLimit.getulong();
-        uint256 privkeyin(s64);
-        CSecret secretin;
-        secretin.resize(32);
-        memcpy(&secretin[0], &privkeyin, 32);
-        CKey keyin;
-        keyin.SetSecret(secretin, fCompressed);
-
-        vector<unsigned char> vchPubKeyin = keyin.GetPubKey().Raw();
-
-    //    keyin.Sign(privkey,vchPubKeyin);
-        /*unsigned char ss[vchPubKeyin.size()];
-        for(int i=0;i<vchPubKeyin.size();i++)
-            ss[i]=vchPubKeyin[i];
-        uint64 a = 140736853561472;
-        printf("%llu\n",a);
-        */
-        CKey key;
-        key.SetSecret(secret, fCompressed);
-        vector<unsigned char> vchPubKey = key.GetPubKey().Raw();
-
-        GenesisName << key.GetPubKey();
-
-
-
-   //     CTxIn vi;
-     //   vi.scriptSig <<
-
+        GenesisName.SetDestination(reserved[2].GetID());
+        CScript sign;
+        sign.SetDestination(reserved[0].GetID());
         CTransaction txNew;
         txNew.vin.resize(1);
+        txNew.vin[0].scriptSig = sign;
         txNew.vout.resize(1);
-        txNew.vin[0].scriptSig << vchPubKeyin;
-        txNew.vout[0].nValue = 0;
-        txNew.vout[0].scriptPubKey << vchPubKey;
+        txNew.vout[0].nValue = COIN;
+        txNew.vout[0].scriptPubKey = GenesisName;
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
+        block.SetBlockName("666");
+        block.namePubKey = (uint160)reserved[0].GetID();
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1420070400;
-        block.nBits    = 0x1dffffff;
-        block.nNonce   = 627802887;
-        bnProofOfWorkLimit.SetCompact(block.nBits);
-        printf("%lu\n", bnProofOfWorkLimit.getulong());
+        block.nBits    = 0x1d7fffff;
+        block.nNonce   = 28530690;
+
+        printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
         assert(block.nBits == bnProofOfWorkLimit.GetCompact());
+        block.print();
 
-        if (fTestNet)
-        {
-            block.nTime    = 1420070400;
-            block.nNonce   = 265050893;
-        }
 
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
-     //   printf("M2 %s\n", block.BuildMerkleTree().ToString().c_str());
-    //    printf("M3 %s\n", block.BuildMerkleTree().ToString().c_str());
-    //    printf("M4 %s\n", block.BuildMerkleTree().ToString().c_str());
-;
 
-      //  CBlock *pblock = &block;
-     //   QcoinMinerGenesisBlock(pblock);
-       // GenerateQcoinsGenesisBlock(pblock);
-       // getwchar();
-        printf("%d\n", block.nNonce);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+        printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
-
-        assert(block.hashMerkleRoot == uint256("0x0e8e7c58db863eda18d4f2472c932edda6e3f91cfcc1b359ad8dfc7ba04c1c11"));
+        assert(block.hashMerkleRoot == uint256("0x464a5006dd6c8343bf6942ff9d9ed18f7e0599e38c5007c137fa2849eb083748"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4182,41 +4123,6 @@ void SHA256Transform(void* pstate, void* pinput, const void* pinit)
         ((uint32_t*)pstate)[i] = ctx.h[i];
 }
 
-//
-// ScanHash scans nonces looking for a hash with at least some zero bits.
-// It operates on big endian data.  Caller does the byte reversing.
-// All input buffers are 16-byte aligned.  nNonce is usually preserved
-// between calls, but periodically or if nNonce is 0xffff0000 or above,
-// the block is rebuilt and nNonce starts over at zero.
-//
-unsigned int static ScanHash_CryptoPP(char* pmidstate, char* pdata, char* phash1, char* phash, unsigned int& nHashesDone)
-{
-    unsigned int& nNonce = *(unsigned int*)(pdata + 12);
-    for (;;)
-    {
-        // Crypto++ SHA256
-        // Hash pdata using pmidstate as the starting state into
-        // pre-formatted buffer phash1, then hash phash1 into phash
-        nNonce++;
-        SHA256Transform(phash1, pdata, pmidstate);
-        SHA256Transform(phash, phash1, pSHA256InitState);
-
-        // Return the nonce if the hash has at least some zero bits,
-        // caller will check if it has enough to reach the target
-        if (((unsigned short*)phash)[14] == 0)
-            return nNonce;
-
-        // If nothing found after trying for a while, return -1
-        if ((nNonce & 0xffff) == 0)
-        {
-            nHashesDone = 0xffff+1;
-            return (unsigned int) -1;
-        }
-        if ((nNonce & 0xfff) == 0)
-            boost::this_thread::interruption_point();
-    }
-}
-
 // Some explaining would be appreciated
 class COrphan
 {
@@ -4277,8 +4183,8 @@ std::string printNamesInQNetwork(CWallet *wallet)
     LOCK(wallet->cs_wallet);
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapAddressBook)
     {
-        const CQcoinAddress& address = item.first;
-        const std::string& strName = item.second;
+        const CQcoinAddress address(item.first);
+        const std::string strName = item.second;
         bool fMine = IsMine(*wallet, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
@@ -4318,8 +4224,8 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
 
-
-
+    pblock->SetBlockName(wallet->GetName());
+    pblock->SetBlockPubKey(wallet->GetBlockPubKey());
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
@@ -4335,11 +4241,12 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
                 printf("Invalid Qcoin address");
-            CScript scriptPubKey;
-            scriptPubKey.SetDestination(address.Get());
-            CTxOut txout(-1,scriptPubKey);
+            CScript pubKey;
+            pubKey.SetDestination(address.Get());
+            CTxOut txout;
+            txout.scriptPubKey = pubKey;
             txNew.vout.push_back(txout);
-            printf("Name %s\n",address.ToString().c_str());
+    //        printf("Name %s\n",address.ToString().c_str());
         }
     }
 
@@ -4676,153 +4583,30 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 
 void static QcoinMiner(CWallet *pwallet)
 {
-    printf("QcoinMiner started\n");
+     auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
+     if (!pblocktemplate.get())
+         return;
+     CBlock *pblock = &pblocktemplate->block;
+     QcoinMinerGenesisBlock(pblock, true);
+     return;
+}
+
+void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
+{
+
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
 
     // Each thread has its own key and counter
-    CReserveKey reservekey(pwallet);
-    unsigned int nExtraNonce = 0;
+    CReserveKey reservekey(pwalletMain);
 
-    try { loop {
-        while (vNodes.empty())
-            MilliSleep(1000);
-
-        //
-        // Create new block
-        //
-        unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
-        CBlockIndex* pindexPrev = pindexBest;
-
+    if(ifOnlyForMe == true)
+    {
         auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
         if (!pblocktemplate.get())
             return;
-        CBlock *pblock = &pblocktemplate->block;
-        IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
-
-        printf("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
-               ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
-
-        //
-        // Pre-build hash buffers
-        //
-        char pmidstatebuf[32+16]; char* pmidstate = alignup<16>(pmidstatebuf);
-        char pdatabuf[128+16];    char* pdata     = alignup<16>(pdatabuf);
-        char phash1buf[64+16];    char* phash1    = alignup<16>(phash1buf);
-
-        FormatHashBuffers(pblock, pmidstate, pdata, phash1);
-
-        unsigned int& nBlockTime = *(unsigned int*)(pdata + 64 + 4);
-        unsigned int& nBlockBits = *(unsigned int*)(pdata + 64 + 8);
-        unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
-
-
-        //
-        // Search
-        //
-        int64 nStart = GetTime();
-        uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-        uint256 bestHash = pblock->GetHash();
-        uint256 hashbuf[2];
-        uint256& hash = *alignup<16>(hashbuf);
-        loop
-        {
-            unsigned int nHashesDone = 0;
-            unsigned int nNonceFound;
-
-            // Crypto++ SHA256
-            nNonceFound = ScanHash_CryptoPP(pmidstate, pdata + 64, phash1,
-                                            (char*)&hash, nHashesDone);
-
-            // Check if something found
-            if (nNonceFound != (unsigned int) -1)
-            {
-                for (unsigned int i = 0; i < sizeof(hash)/4; i++)
-                    ((unsigned int*)&hash)[i] = ByteReverse(((unsigned int*)&hash)[i]);
-
-                if(hash < bestHash)
-                {
-                    bestHash = hash;
-                }
-
-                if (hash <= hashTarget)
-                {
-                    // Found a solution
-                    pblock->nNonce = ByteReverse(nNonceFound);
-                    assert(hash == pblock->GetHash());
-
-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
-                    CheckWork(pblock, *pwalletMain, reservekey);
-                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
-                    break;
-                }
-            }
-
-            // Meter hashes/sec
-            static int64 nHashCounter;
-            if (nHPSTimerStart == 0)
-            {
-                nHPSTimerStart = GetTimeMillis();
-                nHashCounter = 0;
-            }
-            else
-                nHashCounter += nHashesDone;
-            if (GetTimeMillis() - nHPSTimerStart > 4000)
-            {
-                static CCriticalSection cs;
-                {
-                    LOCK(cs);
-                    if (GetTimeMillis() - nHPSTimerStart > 4000)
-                    {
-                        dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
-                        nHPSTimerStart = GetTimeMillis();
-                        nHashCounter = 0;
-                        static int64 nLogTime;
-                        if (GetTime() - nLogTime > 30)
-                        {
-                            nLogTime = GetTime();
-                            printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
-                            printf("bestHash %s\n", bestHash.ToString().c_str());
-                            printf("hashTarget %s\n", hashTarget.ToString().c_str());
-                           // printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
-                        }
-                    }
-                }
-            }
-
-            // Check for stop or if block needs to be rebuilt
-            boost::this_thread::interruption_point();
-            if (vNodes.empty())
-                break;
-            if (nBlockNonce >= 0xffff0000)
-                break;
-            if (nTransactionsUpdated != nTransactionsUpdatedLast && GetTime() - nStart > 60)
-                break;
-            if (pindexPrev != pindexBest)
-                break;
-
-            // Update nTime every few seconds
-            pblock->UpdateTime(pindexPrev);
-            nBlockTime = ByteReverse(pblock->nTime);
-            if (fTestNet)
-            {
-                // Changing pblock->nTime can change work required on testnet:
-                nBlockBits = ByteReverse(pblock->nBits);
-                hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-            }
-        }
-    } }
-    catch (boost::thread_interrupted)
-    {
-        printf("QcoinMiner terminated\n");
-        throw;
+        pblock = &pblocktemplate->block;
     }
-}
-
-void static QcoinMinerGenesisBlock(CBlock *pblock)
-{
-
-
 
     try { loop {
 
@@ -4834,19 +4618,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         pblock->nNonce++;
-       // pblock->nNonce = RAND_bytes((unsigned char *)&pblock->nNonce, sizeof(pblock->nNonce));
-
-        //
-        // Pre-build hash buffers
-        //
-        char pmidstatebuf[32+16]; char* pmidstate = alignup<16>(pmidstatebuf);
-        char pdatabuf[128+16];    char* pdata     = alignup<16>(pdatabuf);
-        char phash1buf[64+16];    char* phash1    = alignup<16>(phash1buf);
-
-        FormatHashBuffers(pblock, pmidstate, pdata, phash1);
-
-
-        unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
 
 
         //
@@ -4855,22 +4626,16 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         int64 nStart = GetTime();
         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
         uint256 bestHash = pblock->GetHash();
-        uint256 hashbuf[2];
-        uint256& hash = *alignup<16>(hashbuf);
+        uint256 hash = pblock->GetHash();
         loop
         {
-            unsigned int nHashesDone = 0;
-            unsigned int nNonceFound;
 
-            // Crypto++ SHA256
-            nNonceFound = ScanHash_CryptoPP(pmidstate, pdata + 64, phash1,
-                                            (char*)&hash, nHashesDone);
+            pblock->nNonce++;
 
             // Check if something found
-            if (nNonceFound != (unsigned int) -1)
+            if (pblock->nNonce)
             {
-                for (unsigned int i = 0; i < sizeof(hash)/4; i++)
-                    ((unsigned int*)&hash)[i] = ByteReverse(((unsigned int*)&hash)[i]);
+                hash = pblock->GetHash();
 
                 if(hash < bestHash)
                 {
@@ -4880,9 +4645,8 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 if (hash <= hashTarget)
                 {
                     // Found a solution
-                    pblock->nNonce = ByteReverse(nNonceFound);
                     assert(hash == pblock->GetHash());
-                    printf("nNonce InitBlock = %d\n",pblock->nNonce);
+                    printf("nNonce InitBlock = %u\n",pblock->nNonce);
                     return;
 
                 }
@@ -4895,8 +4659,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 nHPSTimerStart = GetTimeMillis();
                 nHashCounter = 0;
             }
-            else
-                nHashCounter += nHashesDone;
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
                 static CCriticalSection cs;
@@ -4922,9 +4684,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-
-            if (nBlockNonce >= 0xffff0000)
-                break;
             if (GetTime() - nStart > 666)
                 break;
 
@@ -4951,8 +4710,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
         delete minerThreads;
         minerThreads = NULL;
     }
-    //QcoinMiner(pwalletMain);
-    nThreads=1;
+
     if (nThreads == 0 || !fGenerate)
         return;
 
@@ -4976,7 +4734,7 @@ void GenerateQcoinsGenesisBlock(CBlock * pblock)
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock));
+        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock, false));
 }
 
 // Amount compression:

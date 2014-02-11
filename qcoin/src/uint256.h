@@ -403,6 +403,7 @@ public:
 
 typedef base_uint<160> base_uint160;
 typedef base_uint<256> base_uint256;
+typedef base_uint<888> base_name;
 
 
 

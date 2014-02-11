@@ -96,6 +96,13 @@ public:
     std::vector<unsigned char> Raw() const {
         return vchPubKey;
     }
+
+    std::string ToString() const {
+        std::string ret = "";
+        for(unsigned i=0;i<vchPubKey.size();i++)
+            ret += vchPubKey[i];
+        return ret;
+    }
 };
 
 

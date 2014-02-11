@@ -210,7 +210,7 @@ public:
         if (vchTemp.empty())
         {
             vchData.clear();
-            nVersion = 0;
+            nVersion = 1;
             return false;
         }
         nVersion = vchTemp[0];
@@ -273,7 +273,7 @@ class CQcoinAddress : public CBase58Data
 public:
     enum
     {
-        PUBKEY_ADDRESS = 81,
+        PUBKEY_ADDRESS = 0,
         SCRIPT_ADDRESS = 5,
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,

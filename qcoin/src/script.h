@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Qcoin developers
+// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2014      wonabru
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef H_BITCOIN_SCRIPT
@@ -583,6 +584,8 @@ public:
     {
         printf("%s\n", ToString().c_str());
     }
+
+    std::string GetPubKeyString() const;
 
     CScriptID GetID() const
     {

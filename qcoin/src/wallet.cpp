@@ -27,6 +27,24 @@ struct CompareValueOnly
     }
 };
 
+std::string CWallet::getNamePubKey()
+{
+    std::string ret = "";
+    vector<unsigned char> dpk = vchDefaultKey.Raw();
+    for(unsigned i=0;i<dpk.size();i++)
+    {
+        ret += (char)dpk[i];
+    }
+    return ret;
+}
+
+uint160 CWallet::GetBlockPubKey() const
+{
+    uint160 ret;
+    memcpy(&ret,&vchDefaultKey.Raw()[0],20);
+    return ret;
+}
+
 CPubKey CWallet::GenerateNewKey()
 {
     bool fCompressed = CanSupportFeature(FEATURE_COMPRPUBKEY); // default to compressed public keys if we want 0.6.0 wallets

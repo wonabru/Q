@@ -15,6 +15,7 @@ using namespace boost;
 #include "main.h"
 #include "sync.h"
 #include "util.h"
+#include "base58.h"
 
 bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CScript scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType, int flags);
 
@@ -38,6 +39,14 @@ CBigNum CastToBigNum(const valtype& vch)
     // Get rid of extra leading zeros
     return CBigNum(CBigNum(vch).getvch());
 }
+
+std::string CScript::GetPubKeyString() const
+{
+    CQcoinAddress spk;
+    spk.SetString(this->ToString());
+    return spk.ToString();
+}
+
 
 bool CastToBool(const valtype& vch)
 {

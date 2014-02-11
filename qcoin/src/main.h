@@ -1277,6 +1277,9 @@ public:
     unsigned int nTime;
     unsigned int nBits;
     unsigned int nNonce;
+    uint160 namePubKey;
+    base_name name;
+
 
     CBlockHeader()
     {
@@ -1292,6 +1295,8 @@ public:
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+        READWRITE(namePubKey);
+        READWRITE(name);
     )
 
     void SetNull()
@@ -1302,6 +1307,8 @@ public:
         nTime = 0;
         nBits = 0;
         nNonce = 0;
+        namePubKey = 0;
+        name = 0;
     }
 
     bool IsNull() const
@@ -1311,13 +1318,44 @@ public:
 
     uint256 GetHash() const
     {
-        return Hash(BEGIN(nVersion), END(nNonce));
+        return Hash(BEGIN(nVersion), END(name));
     }
 
     int64 GetBlockTime() const
     {
         return (int64)nTime;
     }
+
+    void SetBlockName(std::string names)
+    {
+        std::vector<unsigned char> mn = std::vector<unsigned char>((const unsigned char *)names.c_str(),(const unsigned char *)names.c_str()+strlen(names.c_str()));
+        memcpy(&name,&mn[0],mn.size());
+    }
+
+    std::string GetBlockName() const
+    {
+        unsigned char mn[111];
+        memcpy(&mn[0],&name,111);
+        return std::string((const char *)mn);
+    }
+
+    void SetBlockPubKey(uint160 pubKeys)
+    {
+        namePubKey = pubKeys;
+    }
+
+    std::string GetBlockPubKey() const
+    {
+        std::vector<unsigned char> vch;
+        vch.resize(20);
+        memcpy(&vch[0],&namePubKey,20);
+        CPubKey myPubKey(vch);
+        vch.clear();
+        CScript myscript;
+        myscript.SetDestination(myPubKey.GetID());
+        return myscript.GetPubKeyString();
+    }
+
 
     void UpdateTime(const CBlockIndex* pindexPrev);
 };
@@ -1364,6 +1402,8 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.namePubKey     = namePubKey;
+        block.name           = name;
         return block;
     }
 
@@ -1477,12 +1517,12 @@ public:
 
     void print() const
     {
-        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%"PRIszu")\n",
+        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),
             hashMerkleRoot.ToString().c_str(),
-            nTime, nBits, nNonce,
+            nTime, nBits, nNonce, GetBlockName().c_str(), GetBlockPubKey().c_str(),
             vtx.size());
         for (unsigned int i = 0; i < vtx.size(); i++)
         {
@@ -1648,7 +1688,8 @@ public:
     unsigned int nTime;
     unsigned int nBits;
     unsigned int nNonce;
-
+    uint160 namePubKey;
+    base_name name;
 
     CBlockIndex()
     {
@@ -1669,6 +1710,8 @@ public:
         nTime          = 0;
         nBits          = 0;
         nNonce         = 0;
+        namePubKey     = 0;
+        name           = 0;
     }
 
     CBlockIndex(CBlockHeader& block)
@@ -1690,6 +1733,8 @@ public:
         nTime          = block.nTime;
         nBits          = block.nBits;
         nNonce         = block.nNonce;
+        namePubKey     = block.namePubKey;
+        name           = block.name;
     }
 
     CDiskBlockPos GetBlockPos() const {
@@ -1720,6 +1765,8 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.namePubKey     = namePubKey;
+        block.name           = name;
         return block;
     }
 
@@ -1732,7 +1779,7 @@ public:
     {
         return (int64)nTime;
     }
-
+//QQQ
     CBigNum GetBlockWork() const
     {
         CBigNum bnTarget;
@@ -1789,9 +1836,9 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockIndex(pprev=%p, pnext=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
+        return strprintf("CBlockIndex(pprev=%p, pnext=%p, nHeight=%d, merkle=%s, name=%s, namePubKey=%s, hashBlock=%s)",
             pprev, pnext, nHeight,
-            hashMerkleRoot.ToString().c_str(),
+            hashMerkleRoot.ToString().c_str(),name.ToString().c_str(),namePubKey.ToString().c_str(),
             GetBlockHash().ToString().c_str());
     }
 
@@ -1852,6 +1899,8 @@ public:
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+        READWRITE(namePubKey);
+        READWRITE(name);
     )
 
     uint256 GetBlockHash() const
@@ -1863,6 +1912,8 @@ public:
         block.nTime           = nTime;
         block.nBits           = nBits;
         block.nNonce          = nNonce;
+        block.namePubKey      = namePubKey;
+        block.name            = name;
         return block.GetHash();
     }
 

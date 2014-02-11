@@ -11,7 +11,7 @@
 extern CWallet* pwalletMain;
 extern std::string printNamesInQNetwork(CWallet *wallet);
 extern QList<AddressTableEntry> NamesInQNetwork;
-
+extern CPubKey reserved[3];
 
 void StartShutdown();
 bool ShutdownRequested();

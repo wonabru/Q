@@ -29,7 +29,7 @@ using namespace boost;
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
 QList<AddressTableEntry> NamesInQNetwork;
-
+CPubKey reserved[3];
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -799,7 +799,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 7: load block chain
 
-    fReindex = GetBoolArg("-reindex");
+//    fReindex = GetBoolArg("-reindex");
 
     // Upgrading to 0.8; hard-link the old blknnnn.dat files into /blocks/
     filesystem::path blocksDir = GetDataDir() / "blocks";
@@ -948,7 +948,8 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 8: load wallet
 
-    uiInterface.InitMessage(_("Set your init Name to 0 ..."));
+    uiInterface.InitMessage(_("Set your init Name..."));
+
 
     nStart = GetTimeMillis();
     bool fFirstRun = true;
@@ -1000,10 +1001,25 @@ bool AppInit2(boost::thread_group& threadGroup)
         // Create new keyUser and set as default key
         RandAddSeedPerfmon();
 
+        std::string defaultname = "name is Your destiny. Will you jailbreak this?";
+        unsigned char Qbuntuname[47];
+        for(unsigned i=0;i<47;i++)
+        {
+            Qbuntuname[i] = defaultname[i];
+        }
+        RAND_bytes(Qbuntuname, 47);
+        defaultname.clear();
+        for(unsigned i=0;i<47;i++)
+        {
+            defaultname += (char)Qbuntuname[i];
+        }
+        pwalletMain->SetAddressBookName(reserved[0].GetID(), "wonabru");
+        pwalletMain->SetAddressBookName(reserved[1].GetID(), "Q");
+        pwalletMain->SetAddressBookName(reserved[2].GetID(), "1");
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
             pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), "0"))
+            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname))
                 strErrors << _("Cannot write default address") << "\n";
         }
 
@@ -1116,6 +1132,11 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Generate coins in the background
     GenerateQcoins(true, pwalletMain);
+
+    //Should be like this but one should give an option for someone who would like to check.
+
+    //One can always abort here!
+    //GenerateQcoinsGenesisBlock(block);
 
     return !fRequestShutdown;
 }
