@@ -4512,6 +4512,8 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
             unsigned int nTime;
             unsigned int nBits;
             unsigned int nNonce;
+            uint160 namePubKey;
+            base_name name;
         }
         block;
         unsigned char pchPadding0[64];
@@ -4527,6 +4529,8 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
     tmp.block.nTime          = pblock->nTime;
     tmp.block.nBits          = pblock->nBits;
     tmp.block.nNonce         = pblock->nNonce;
+    tmp.block.name           = pblock->name;
+    tmp.block.namePubKey     = pblock->namePubKey;
 
     FormatHashBlocks(&tmp.block, sizeof(tmp.block));
     FormatHashBlocks(&tmp.hash1, sizeof(tmp.hash1));
@@ -4583,11 +4587,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 
 void static QcoinMiner(CWallet *pwallet)
 {
-     auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
-     if (!pblocktemplate.get())
-         return;
-     CBlock *pblock = &pblocktemplate->block;
-     QcoinMinerGenesisBlock(pblock, true);
+     QcoinMinerGenesisBlock(NULL, true);
      return;
 }
 
@@ -4700,7 +4700,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", -1);
+    int nThreads = GetArg("-genproclimit", 1);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 
