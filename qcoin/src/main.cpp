@@ -4591,6 +4591,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 void static QcoinMiner(CWallet *pwallet)
 {
      QcoinMinerGenesisBlock(NULL, true);
+     QcoinMiner(pwallet);
      return;
 }
 
@@ -4650,6 +4651,9 @@ void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
                     // Found a solution
                     assert(hash == pblock->GetHash());
                     printf("nNonce InitBlock = %u\n",pblock->nNonce);
+                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                    CheckWork(pblock, *pwalletMain, reservekey);
+                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
                     return;
 
                 }
