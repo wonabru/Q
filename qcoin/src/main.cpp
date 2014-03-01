@@ -2736,6 +2736,9 @@ bool checkBlock(CBlock pblock)
 }
 
 bool InitBlockIndex() {
+
+   //
+
     ifstream fpss;
     fpss.open("../../.wonabruQ1");
     char namePubKeyWonabru[32];
@@ -4630,7 +4633,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
         loop
         {
 
-            pblock->nNonce++;
+            pblock->nNonce = (uint)random();
 
             // Check if something found
             if (pblock->nNonce)
@@ -4675,6 +4678,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
                             nLogTime = GetTime();
                             printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
                             printf("bestHash %s\n", bestHash.ToString().c_str());
+                            printf("nBits %u\n",pblock->nBits);
                             printf("hashTarget %s\n", hashTarget.ToString().c_str());
                            // printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }
@@ -4700,7 +4704,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", 1);
+    int nThreads = GetArg("-genproclimit", -1);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 
@@ -4713,6 +4717,8 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 
     if (nThreads == 0 || !fGenerate)
         return;
+
+    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)

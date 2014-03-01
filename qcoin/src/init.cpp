@@ -1096,6 +1096,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 11: start node
 
+
     if (!CheckDiskSpace())
         return false;
 
