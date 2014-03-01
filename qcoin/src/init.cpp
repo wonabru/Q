@@ -1077,7 +1077,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     CAddress addr2;
     ConnectNode(addr2, "84.10.170.140");
     CAddress addr3;
-    ConnectNode(addr3, "192.168.1.103");
+    ConnectNode(addr3, "195.245.104.3");
     nStart = GetTimeMillis();
 
   //  {
