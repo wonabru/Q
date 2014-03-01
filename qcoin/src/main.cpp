@@ -4704,7 +4704,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", -1);
+    int nThreads = GetArg("-genproclimit", 1);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 
