@@ -1072,6 +1072,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     ConnectNode(addr2, "84.10.170.140");
     CAddress addr3;
     ConnectNode(addr3, "195.245.104.3");
+    CAddress addr4;
+    ConnectNode(addr4, "192.168.0.207");
     nStart = GetTimeMillis();
 
   //  {
@@ -1085,6 +1087,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     addrman.Good(addr2);
     addrman.Add(addr3, addr3);
     addrman.Good(addr3);
+    addrman.Add(addr4, addr4);
+    addrman.Good(addr4);
     printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
 
