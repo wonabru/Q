@@ -1001,17 +1001,11 @@ bool AppInit2(boost::thread_group& threadGroup)
         // Create new keyUser and set as default key
         RandAddSeedPerfmon();
 
-        std::string defaultname = "name is Your destiny. Will you jailbreak this?";
-        unsigned char Qbuntuname[47];
-        for(unsigned i=0;i<47;i++)
+        std::string Qbuntuname = "NameIsYourDestinyWillYouJailbreakThis";
+        std::string defaultname = "Q";
+        for(unsigned i=0;i<17;i++)
         {
-            Qbuntuname[i] = defaultname[i];
-        }
-        RAND_bytes(Qbuntuname, 47);
-        defaultname.clear();
-        for(unsigned i=0;i<47;i++)
-        {
-            defaultname += (char)Qbuntuname[i];
+            defaultname += (char)Qbuntuname[(int)(rand()*37.0/(RAND_MAX-1))];
         }
         pwalletMain->SetAddressBookName(reserved[0].GetID(), "wonabru");
         pwalletMain->SetAddressBookName(reserved[1].GetID(), "Q");

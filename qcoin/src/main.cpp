@@ -29,7 +29,7 @@ using namespace json_spirit;
 
 using namespace std;
 using namespace boost;
-void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe);
+void static QcoinMinerGenesisBlock(CBlock *pblock);
 //
 // Global state
 //
@@ -43,7 +43,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000007f1ef31f1967008898826a3a5b84f885dd5103a2cedd0bdf0ed9497881");
+uint256 hashGenesisBlock("0x0000007f42039712e79e6cf1168484c5a8130fbea1771ac10f7c70351b8aa8b1");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2287,11 +2287,15 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
-    vector<unsigned char> bpk[20];
-    memcpy(&bpk[0],&pblock->namePubKey,20);
-    CPubKey blockPubKey(bpk[0]);
-
-    pwalletMain->SetAddressBookName(blockPubKey.GetID(),pblock->GetBlockName());
+    std::vector<unsigned char> vch;
+    vch.resize(20);
+    memcpy(&vch[0],&pblock->namePubKey,20);
+    CScript myPubKey(vch);
+    vch.clear();
+    CTxDestination myCTx;
+    ExtractDestination(myPubKey,myCTx);
+    std::string blockname = pblock->GetBlockName();
+    pwalletMain->SetAddressBookName(myCTx,blockname);
     names = printNamesInQNetwork(pwalletMain);
     printf("%s\n New account accepted\n",names.c_str());
 
@@ -2737,7 +2741,7 @@ bool checkBlock(CBlock pblock)
 
 bool InitBlockIndex() {
 
-   //
+
 
     ifstream fpss;
     fpss.open("../../.wonabruQ1");
@@ -2784,15 +2788,16 @@ bool InitBlockIndex() {
         txNew.vout[0].nValue = COIN;
         txNew.vout[0].scriptPubKey = GenesisName;
         CBlock block;
+        block.SetBlockName("VIVIVI");
+        block.SetBlockPubKey((uint160)reserved[0].GetID());
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
-        block.SetBlockName("666");
-        block.namePubKey = (uint160)reserved[0].GetID();
+
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 28530690;
+        block.nNonce   = 535282432;
 
         printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
@@ -2803,7 +2808,7 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock,false);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
@@ -4227,8 +4232,12 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
 
-    pblock->SetBlockName(wallet->GetName());
+    std::string myname = wallet->GetName();
+    printf("MyName: %s\n",myname.c_str());
+    pblock->SetBlockName(myname);
     pblock->SetBlockPubKey(wallet->GetBlockPubKey());
+    myname = pblock->GetBlockName();
+    printf("MyName: %s\n",myname.c_str());
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
@@ -4468,7 +4477,7 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
         }
 
         pblocktemplate->vTxSigOps[0] = pblock->vtx[0].GetLegacySigOpCount();
-
+        pblock->hashMerkleRoot = pblock->BuildMerkleTree();
         CBlockIndex indexDummy(*pblock);
         indexDummy.pprev = pindexPrev;
         indexDummy.nHeight = pindexPrev->nHeight + 1;
@@ -4590,12 +4599,16 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 
 void static QcoinMiner(CWallet *pwallet)
 {
-     QcoinMinerGenesisBlock(NULL, true);
+     auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
+     if (!pblocktemplate.get())
+        return;
+     CBlock *pblock = &pblocktemplate->block;
+     QcoinMinerGenesisBlock(pblock);
      QcoinMiner(pwallet);
      return;
 }
 
-void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
+void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
 
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
@@ -4603,14 +4616,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock, bool ifOnlyForMe = false)
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwalletMain);
-
-    if(ifOnlyForMe == true)
-    {
-        auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
-        if (!pblocktemplate.get())
-            return;
-        pblock = &pblocktemplate->block;
-    }
 
     try { loop {
 
@@ -4744,7 +4749,7 @@ void GenerateQcoinsGenesisBlock(CBlock * pblock)
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock, false));
+        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock));
 }
 
 // Amount compression:

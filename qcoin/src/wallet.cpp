@@ -1467,13 +1467,7 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
 
 std::string CWallet::GetName()
 {
-    CTxDestination address;
-    CScript scriptPubKey;
-    if(LoadCScript(scriptPubKey) == false)
-        return "0";
-    ExtractDestination(scriptPubKey, address);
-    if(::IsMine(*this, address) == false)
-        return "0";
+    CTxDestination address = vchDefaultKey.GetID();
     return mapAddressBook[address];
 }
 

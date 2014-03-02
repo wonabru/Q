@@ -1328,15 +1328,33 @@ public:
 
     void SetBlockName(std::string names)
     {
-        std::vector<unsigned char> mn = std::vector<unsigned char>((const unsigned char *)names.c_str(),(const unsigned char *)names.c_str()+strlen(names.c_str()));
-        memcpy(&name,&mn[0],mn.size());
+        std::vector<unsigned char> mn;
+        unsigned int i=0;
+        for(;i<names.size()&&i<111;i++)
+        {
+            mn.push_back(names[i]);
+        }
+        for(;i<111;i++)
+        {
+            mn.push_back('\0');
+        }
+        memcpy(&name,&mn[0],110);
     }
 
     std::string GetBlockName() const
     {
-        unsigned char mn[111];
-        memcpy(&mn[0],&name,111);
-        return std::string((const char *)mn);
+        std::string ret = "";
+        std::vector<unsigned char> mn;
+        mn.resize(110);
+        memcpy(&mn[0],&name,110);
+        for(unsigned int i=0;i<110;i++)
+        {
+            if(mn[i] == '\0')
+                break;
+
+            ret += mn[i];
+        }
+        return ret;
     }
 
     void SetBlockPubKey(uint160 pubKeys)
@@ -1517,12 +1535,14 @@ public:
 
     void print() const
     {
+        std::string myname = GetBlockName();
+        std::string myPubKey = GetBlockPubKey();
         printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),
             hashMerkleRoot.ToString().c_str(),
-            nTime, nBits, nNonce, GetBlockName().c_str(), GetBlockPubKey().c_str(),
+            nTime, nBits, nNonce, myname.c_str(), myPubKey.c_str(),
             vtx.size());
         for (unsigned int i = 0; i < vtx.size(); i++)
         {
