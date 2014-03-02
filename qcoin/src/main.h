@@ -1369,10 +1369,7 @@ public:
         memcpy(&vch[0],&namePubKey,20);
         CPubKey myPubKey(vch);
         vch.clear();
-        CScriptID keyID = myPubKey.GetID();
-        CScript myscript;
-        myscript.SetDestination((CScriptID)keyID);
-        std::string ret = myscript.GetPubKeyString();
+        std::string ret = myPubKey.ToString();
         return ret;
     }
 
