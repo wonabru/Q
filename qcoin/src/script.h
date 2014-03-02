@@ -559,6 +559,7 @@ public:
 
     std::string ToString() const
     {
+        std::string ret = "";
         std::string str;
         opcodetype opcode;
         std::vector<unsigned char> vch;
@@ -573,11 +574,11 @@ public:
                 return str;
             }
             if (0 <= opcode && opcode <= OP_PUSHDATA4)
-                str += ValueString(vch);
+                ret += ValueString(vch);
             else
-                str += GetOpName(opcode);
+
+               str += GetOpName(opcode);
         }
-        std::string ret = str.substr(10,32);
         return ret;
     }
 
@@ -587,6 +588,7 @@ public:
     }
 
     std::string GetPubKeyString() const;
+    std::string GetPubKeyCScript() const;
 
     CScriptID GetID() const
     {

@@ -1007,15 +1007,15 @@ bool AppInit2(boost::thread_group& threadGroup)
         {
             defaultname += (char)Qbuntuname[(int)(rand()*37.0/(RAND_MAX-1))];
         }
-        pwalletMain->SetAddressBookName(reserved[0].GetID(), "wonabru");
-        pwalletMain->SetAddressBookName(reserved[1].GetID(), "Q");
-        pwalletMain->SetAddressBookName(reserved[2].GetID(), "1");
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
             pwalletMain->SetDefaultKey(newDefaultKey);
             if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname))
                 strErrors << _("Cannot write default address") << "\n";
         }
+        pwalletMain->SetAddressBookName(reserved[2].GetID(), "Q");
+        pwalletMain->SetAddressBookName(reserved[1].GetID(), "1");
+        pwalletMain->SetAddressBookName(reserved[0].GetID(), "wonabru");
 
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
@@ -1091,6 +1091,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     addrman.Good(addr3);
     addrman.Add(addr4, addr4);
     addrman.Good(addr4);
+    addrman.Add(addr5, addr5);
+    addrman.Good(addr5);
     printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
 

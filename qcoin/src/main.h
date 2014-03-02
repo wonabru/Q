@@ -1372,7 +1372,7 @@ public:
         CScriptID keyID = myPubKey.GetID();
         CScript myscript;
         myscript.SetDestination((CScriptID)keyID);
-        std::string ret = myscript.GetPubKeyString();
+        std::string ret = myscript.GetPubKeyCScript();
         return ret;
     }
 

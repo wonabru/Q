@@ -1460,8 +1460,8 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     mapAddressBook[address] = strName;
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-    if (!fFileBacked)
-        return false;
+  //  if (!fFileBacked)
+ //       return false;
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }
 

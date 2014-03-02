@@ -47,6 +47,10 @@ std::string CScript::GetPubKeyString() const
     return spk.ToString();
 }
 
+std::string CScript::GetPubKeyCScript() const
+{
+    return this->ToString();
+}
 
 bool CastToBool(const valtype& vch)
 {

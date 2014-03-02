@@ -43,7 +43,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000007f42039712e79e6cf1168484c5a8130fbea1771ac10f7c70351b8aa8b1");
+uint256 hashGenesisBlock("0x00000048de2527bea761fe64d89073751177423d8430915767b2a507a0eca426");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2287,15 +2287,15 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
+
+
     std::vector<unsigned char> vch;
     vch.resize(20);
     memcpy(&vch[0],&(pblock->namePubKey),20);
-    CScript myPubKey(vch);
+    CPubKey myPubKey(vch);
     vch.clear();
-    CTxDestination myCTx;
-    ExtractDestination(myPubKey,myCTx);
     std::string blockname = pblock->GetBlockName();
-    pwalletMain->SetAddressBookName(myCTx,blockname);
+    pwalletMain->SetAddressBookName(myPubKey.GetID(),blockname);
     names = printNamesInQNetwork(pwalletMain);
     printf("%s\n New account accepted\n",names.c_str());
 
@@ -2797,7 +2797,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 535282432;
+        block.nNonce   = 673407373;
 
         printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
@@ -2808,11 +2808,11 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock,false);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
-        assert(block.hashMerkleRoot == uint256("0x464a5006dd6c8343bf6942ff9d9ed18f7e0599e38c5007c137fa2849eb083748"));
+        assert(block.hashMerkleRoot == uint256("0x7da371ed89a3482b010d3916d39a63f69d9d07ea951dddcf29d1f7e6d1419c2d"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4213,7 +4213,7 @@ std::string printNamesInQNetwork(CWallet *wallet)
                 printf("Invalid Qcoin address");
             CScript scriptPubKey;
             scriptPubKey.SetDestination(address.Get());
-            rets += "Name " + address.ToString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
+            rets += "Name " + item.label.toStdString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
         }
     }
     return rets;
