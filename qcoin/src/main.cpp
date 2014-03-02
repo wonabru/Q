@@ -2292,10 +2292,12 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     std::vector<unsigned char> vch;
     vch.resize(20);
     memcpy(&vch[0],&(pblock->namePubKey),20);
-    CPubKey myPubKey(vch);
+    CScript myCScript(vch);
     vch.clear();
+ //   CPubKey myPubKey();
     std::string blockname = pblock->GetBlockName();
-    pwalletMain->SetAddressBookName(myPubKey.GetID(),blockname);
+ //   std::string strAddress = CQcoinAddress(newKey.GetID()).ToString();
+    pwalletMain->SetAddressBookName(myCScript.GetID(),blockname);
     names = printNamesInQNetwork(pwalletMain);
     printf("%s\n New account accepted\n",names.c_str());
 
