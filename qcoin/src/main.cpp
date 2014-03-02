@@ -2289,7 +2289,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 
     std::vector<unsigned char> vch;
     vch.resize(20);
-    memcpy(&vch[0],&pblock->namePubKey,20);
+    memcpy(&vch[0],&(pblock->namePubKey),20);
     CScript myPubKey(vch);
     vch.clear();
     CTxDestination myCTx;

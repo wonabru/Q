@@ -577,7 +577,8 @@ public:
             else
                 str += GetOpName(opcode);
         }
-        return str;
+        std::string ret = str.substr(10,32);
+        return ret;
     }
 
     void print() const
