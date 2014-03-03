@@ -1087,7 +1087,7 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = (nHeight + 1) * COIN;
+    int64 nSubsidy = nHeight * COIN;
 
     // Subsidy is cut in half every 210000 blocks, which will occur approximately every 4 years
   //  nSubsidy >>= (nHeight / 210000);
@@ -1678,8 +1678,8 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     if (fBenchmark)
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
 
-    if (vtx[0].GetValueOut() > GetBlockValue(NamesInQNetwork.size(), nFees))
-       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(NamesInQNetwork.size(), nFees)));
+    if (vtx[0].GetValueOut() > GetBlockValue(NamesInQNetwork.size() + 1, nFees))
+       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(NamesInQNetwork.size() + 1, nFees)));
 
     if (!control.Wait())
         return state.DoS(100, false);
