@@ -27,6 +27,8 @@
 
 using namespace json_spirit;
 
+std::string yourName;
+
 using namespace std;
 using namespace boost;
 void static QcoinMinerGenesisBlock(CBlock *pblock);
@@ -2297,6 +2299,15 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);
+    if(reserved.size() == 0)
+    {
+        CPubKey newDefaultKey;
+        if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
+            pwalletMain->SetDefaultKey(newDefaultKey);
+            if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), yourName, 0))
+                printf("Reserved.size() == 0 and cannot write default address\n");
+        }
+    }
     names = printNamesInQNetwork();
     printf("%s\n New account accepted\n",names.c_str());
 

@@ -306,6 +306,10 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr)
     return true;
 }
 
+void AddressTableModel::noChanges()
+{
+    editStatus = NO_CHANGES;
+}
 
 QString AddressTableModel::addRow(const QString &type, const QString &label, const QString &address)
 {
@@ -385,6 +389,7 @@ void AddressTableModel::addDefaultReceive()
 
 bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    return false;
     Q_UNUSED(parent);
     AddressTableEntry *rec = priv->index(row);
     if(count != 1 || !rec || rec->type == AddressTableEntry::Receiving)

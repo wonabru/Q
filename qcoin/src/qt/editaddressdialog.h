@@ -27,6 +27,7 @@ public:
     };
 
     explicit EditAddressDialog(Mode mode, QWidget *parent = 0);
+
     ~EditAddressDialog();
 
     void setModel(AddressTableModel *model);
@@ -37,7 +38,7 @@ public:
 signals:
 public slots:
     void accept();
-
+    void acceptAndDestroy();
 private:
     bool saveCurrentRow();
 

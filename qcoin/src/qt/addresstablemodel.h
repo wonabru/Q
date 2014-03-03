@@ -3,10 +3,11 @@
 
 #include <QAbstractTableModel>
 #include <QStringList>
+#include "wallet.h"
+#include "walletmodel.h"
 
 class AddressTableModel;
-class CWallet;
-class WalletModel;
+
 
 struct AddressTableEntry
 {
@@ -49,6 +50,8 @@ class AddressTableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
+    WalletModel *walletModel;
+    CWallet *wallet;
     explicit AddressTableModel(CWallet *wallet, WalletModel *parent = 0);
     ~AddressTableModel();
 
@@ -90,7 +93,7 @@ public:
        Returns the added address on success, and an empty string otherwise.
      */
     QString addRow(const QString &type, const QString &label, const QString &address);
-
+    void noChanges();
     bool changeName(const QString &label, const QString &addr);
 
     void addDefaultReceive();
@@ -106,9 +109,10 @@ public:
 
     EditStatus getEditStatus() const { return editStatus; }
 
+
+
+
 private:
-    WalletModel *walletModel;
-    CWallet *wallet;
     AddressTablePriv *priv;
     QStringList columns;
     EditStatus editStatus;

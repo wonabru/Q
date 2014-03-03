@@ -52,7 +52,7 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
 
     addressBookPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab);
 
-    editName = new EditAddressDialog(EditAddressDialog::EditSendingAddress, parent);
+    editName = new EditAddressDialog(EditAddressDialog::EditReceivingAddress, parent);
 
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
 

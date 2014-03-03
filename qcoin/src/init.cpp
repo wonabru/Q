@@ -1001,13 +1001,13 @@ bool AppInit2(boost::thread_group& threadGroup)
         // Create new keyUser and set as default key
         RandAddSeedPerfmon();
 
-        std::string Qbuntuname = "NameIsYourDestinyWillYouJailbreakThis";
-        std::string defaultname = "Q";
-        for(unsigned i=0;i<17;i++)
-        {
-            defaultname += (char)Qbuntuname[(int)(rand()*37.0/(RAND_MAX-1))];
-        }
-
+      //  std::string Qbuntuname = "NameIsYourDestinyWillYouJailbreakThis";
+        std::string defaultname = "0";
+      //  SetThreadPriority(THREAD_PRIORITY_LOWEST);
+      //  while(yourName == "0")
+      //      sleep(1);
+      //  SetThreadPriority(THREAD_PRIORITY_NORMAL);
+        defaultname = yourName;
 
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {

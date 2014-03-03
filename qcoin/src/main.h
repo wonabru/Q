@@ -9,6 +9,7 @@
 #include "sync.h"
 #include "net.h"
 #include "script.h"
+#include "qstring.h"
 
 #include <list>
 
@@ -115,12 +116,15 @@ class CCoinsView;
 class CCoinsViewCache;
 class CScriptCheck;
 class CValidationState;
-
+class QString;
 
 
 struct CBlockTemplate;
 
 std::string printNamesInQNetwork();
+
+extern std::string yourName;
+
 
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWallet* pwalletIn);

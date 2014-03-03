@@ -98,9 +98,8 @@ void WalletStack::gotoAddressBookPage()
 
 void WalletStack::gotoEditName()
 {
-    QMap<QString, WalletView*>::const_iterator i;
-    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoEditName();
+    WalletView *walletView = (WalletView*)currentWidget();
+    if (walletView) walletView->gotoEditName();
 }
 
 void WalletStack::gotoReceiveCoinsPage()

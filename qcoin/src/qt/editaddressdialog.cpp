@@ -9,7 +9,6 @@
 #include <QDataWidgetMapper>
 #include <QMessageBox>
 
-
 extern void RestartMining();
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
@@ -19,22 +18,28 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     ui->setupUi(this);
 
     GUIUtil::setupAddressWidget(ui->addressEdit, this);
+    GUIUtil::setupAddressWidget(ui->labelEdit, this);
 
     switch(mode)
     {
     case NewReceivingAddress:
-        setWindowTitle(tr("New receiving address"));
+        setWindowTitle(tr("Propose new names"));
         ui->addressEdit->setEnabled(false);
         break;
     case NewSendingAddress:
-        setWindowTitle(tr("New sending address"));
+        setWindowTitle(tr("One can register name only by solving block"));
+        ui->addressEdit->setEnabled(false);
+        ui->labelEdit->setEnabled(false);
         break;
     case EditReceivingAddress:
-        setWindowTitle(tr("Edit receiving address"));
+        setWindowTitle(tr("Put your name"));
         ui->addressEdit->setEnabled(false);
+       // ui->labelEdit->setEnabled(false);
         break;
     case EditSendingAddress:
-        setWindowTitle(tr("Edit sending address"));
+        setWindowTitle(tr("Names registered in Q Network"));
+        ui->addressEdit->setEnabled(false);
+        ui->labelEdit->setEnabled(false);
         break;
     }
 
@@ -68,24 +73,39 @@ bool EditAddressDialog::saveCurrentRow()
     if(!model)
         return false;
 
+    if(yourName == "0")
+        acceptAndDestroy();
+
     switch(mode)
     {
-    case NewReceivingAddress:
-    case NewSendingAddress:
+        case NewSendingAddress:
+            model->noChanges();
+        break;
+        case NewReceivingAddress:
         address = model->addRow(
                 mode == NewSendingAddress ? AddressTableModel::Send : AddressTableModel::Receive,
                 ui->labelEdit->text(),
                 ui->addressEdit->text());
         break;
         case EditSendingAddress:
+            model->noChanges();
+        break;
         case EditReceivingAddress:
-
+        QString addressOld = ui->addressEdit->text();
+        QString nameOld = ui->labelEdit->text();
         if(mapper->submit())
         {
             address = ui->addressEdit->text();
             name = ui->labelEdit->text();
             if(model->changeName(name,address) == false)
+            {
+                if(mapper->submit())
+                {
+                    address = addressOld;
+                    name = nameOld;
+                }
                 return false;
+            }
         }
 
         break;
@@ -97,19 +117,36 @@ bool EditAddressDialog::saveCurrentRow()
     return !address.isEmpty();
 }
 
+void EditAddressDialog::acceptAndDestroy()
+{
+    QString name((const char *)yourName.c_str());
+    CQcoinAddress qaddress((CKeyID)(model->wallet->GetWalletDefaultPubKey()));
+    QString address((const char *)(qaddress.ToString().c_str()));
+    while(name == "0")
+    {
+        sleep(2);
+        name = ui->labelEdit->text();
+        if(name != "0")
+            if(model->changeName(name,address) == false)
+                break;
+    }
+    yourName =name.toStdString();
+    this->hide();
+}
+
+
 void EditAddressDialog::accept()
 {
     if(!model)
         return;
 
     if(!saveCurrentRow())
-    {
-        RestartMining();
+    { 
         switch(model->getEditStatus())
         {
         case AddressTableModel::OK:
             // Failed with unknown reason. Just reject.
-
+            RestartMining();
             break;
         case AddressTableModel::NO_CHANGES:
             // No changes were made during edit operation. Just reject.
