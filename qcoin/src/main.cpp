@@ -4205,9 +4205,10 @@ std::string printNamesInQNetwork(CWallet *wallet)
                           QString::fromStdString(address.ToString())));
             lastmine = NamesInQNetwork.size();
         }else{
-            NamesInQNetwork[lastmine] = AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+             AddressTableEntry atl = AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString()));
+             NamesInQNetwork[lastmine] = atl;
         }
     }
     }
