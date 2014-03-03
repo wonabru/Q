@@ -293,6 +293,20 @@ void AddressTableModel::updateEntry(const QString &address, const QString &label
     priv->updateEntry(address, label, isMine, status);
 }
 
+
+bool AddressTableModel::changeName(const QString &label, const QString &addr)
+{
+    std::string name = label.toStdString();
+    std::string address = addr.toStdString();
+    LOCK(wallet->cs_wallet);
+    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 0) == false)
+    {
+        return false;
+    }
+    return true;
+}
+
+
 QString AddressTableModel::addRow(const QString &type, const QString &label, const QString &address)
 {
     std::string strLabel = label.toStdString();

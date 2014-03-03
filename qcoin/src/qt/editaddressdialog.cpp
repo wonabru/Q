@@ -4,6 +4,7 @@
 #include "addresstablemodel.h"
 #include "guiutil.h"
 #include "main.h"
+#include "base58.h"
 
 #include <QDataWidgetMapper>
 #include <QMessageBox>
@@ -76,14 +77,19 @@ bool EditAddressDialog::saveCurrentRow()
                 ui->labelEdit->text(),
                 ui->addressEdit->text());
         break;
-    case EditReceivingAddress:
-    case EditSendingAddress:
+        case EditSendingAddress:
+        case EditReceivingAddress:
+
         if(mapper->submit())
         {
             address = ui->addressEdit->text();
             name = ui->labelEdit->text();
+            if(model->changeName(name,address) == false)
+                return false;
         }
+
         break;
+
     }
     if(name.isEmpty())
         return false;

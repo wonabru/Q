@@ -91,6 +91,8 @@ public:
      */
     QString addRow(const QString &type, const QString &label, const QString &address);
 
+    bool changeName(const QString &label, const QString &addr);
+
     void addDefaultReceive();
 
     /* Look up label for address in address book, if not found return empty string.
