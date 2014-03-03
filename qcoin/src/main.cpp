@@ -2301,12 +2301,12 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     reserved.removeAll(key);
     if(reserved.size() == 0)
     {
-        CPubKey newDefaultKey;
-        if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
-            pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), yourName, 0))
+        CPubKey newKey;
+        if (pwalletMain->GetKeyFromPool(newKey, true)) {
+            if (!pwalletMain->SetAddressBookName(newKey.GetID(), yourName))
                 printf("Reserved.size() == 0 and cannot write default address\n");
         }
+        reserved.push_back((CKeyID)(newKey.GetID()));
     }
     names = printNamesInQNetwork();
     printf("%s\n New account accepted\n",names.c_str());
