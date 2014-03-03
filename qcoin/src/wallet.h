@@ -264,11 +264,18 @@ public:
         }
         return nChange;
     }
+
+    enum{
+        RECEIVE = 0,
+        SENDING = 1,
+        AUTO = 2
+    };
+
     void SetBestChain(const CBlockLocator& loc);
 
     DBErrors LoadWallet(bool& fFirstRunRet);
 
-    bool SetAddressBookName(const CTxDestination& address, const std::string& strName);
+    bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 2);
 
     bool DelAddressBookName(const CTxDestination& address);
 

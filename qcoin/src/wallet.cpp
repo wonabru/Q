@@ -1454,12 +1454,17 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 }
 
 
-bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName)
+bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
     std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     mapAddressBook[address] = strName;
-    NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-  //  if (!fFileBacked)
+    if(ato == AUTO)
+        NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+    else if(ato == RECEIVE)
+        NotifyAddressBookChanged(this, address, strName, true, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+    else
+        NotifyAddressBookChanged(this, address, strName, false, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+ //   if (!fFileBacked)
  //       return false;
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }

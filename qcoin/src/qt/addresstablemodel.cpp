@@ -347,7 +347,20 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     }
     return QString::fromStdString(strAddress);
 }
-
+/*
+QString AddressTableModel::addDefaultReceive()
+{
+    std::string strLabel = wallet->GetName();
+    CQcoinAddress address(wallet->GetWalletDefaultPubKey());
+    strAddress = address.ToString();
+    // Add entry
+    {
+        LOCK(wallet->cs_wallet);
+        wallet->SetAddressBookName(address.Get(), strLabel);
+    }
+    return QString::fromStdString(strAddress);
+}
+*/
 bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
