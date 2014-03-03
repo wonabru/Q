@@ -132,7 +132,7 @@ public:
     void UnlockAllCoins();
     void ListLockedCoins(std::vector<COutPoint>& vOutpts);
 
-    uint160 GetBlockPubKey() const;
+    uint160 GetWalletDefaultPubKey() const;
     // keystore implementation
     // Generate a new key
     CPubKey GenerateNewKey();

@@ -1364,12 +1364,8 @@ public:
 
     std::string GetBlockPubKey() const
     {
-        std::vector<unsigned char> vch;
-        vch.resize(20);
-        memcpy(&vch[0],&namePubKey,20);
-        CPubKey myPubKey(vch);
-        vch.clear();
-        std::string ret = myPubKey.ToString();
+        CKeyID keyid = namePubKey;
+        std::string ret = keyid.ToString();
         return ret;
     }
 

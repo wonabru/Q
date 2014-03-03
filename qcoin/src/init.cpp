@@ -1007,10 +1007,11 @@ bool AppInit2(boost::thread_group& threadGroup)
         {
             defaultname += (char)Qbuntuname[(int)(rand()*37.0/(RAND_MAX-1))];
         }
+        pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname);
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
             pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname))
+            if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname))
                 strErrors << _("Cannot write default address") << "\n";
         }
         pwalletMain->SetAddressBookName(reserved[2].GetID(), "Q");

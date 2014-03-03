@@ -4238,7 +4238,7 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
     std::string myname = wallet->GetName();
     printf("MyName: %s\n",myname.c_str());
     pblock->SetBlockName(myname);
-    pblock->SetBlockPubKey(wallet->GetBlockPubKey());
+    pblock->SetBlockPubKey((uint160)(wallet->GetWalletDefaultPubKey()));
     myname = pblock->GetBlockName();
     printf("MyName: %s\n",myname.c_str());
     // Create coinbase tx

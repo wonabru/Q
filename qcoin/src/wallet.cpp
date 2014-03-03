@@ -38,10 +38,9 @@ std::string CWallet::getNamePubKey()
     return ret;
 }
 
-uint160 CWallet::GetBlockPubKey() const
+uint160 CWallet::GetWalletDefaultPubKey() const
 {
-    uint160 ret;
-    memcpy(&ret,&vchDefaultKey.Raw()[0],20);
+    uint160 ret = vchDefaultKey.GetID();
     return ret;
 }
 
