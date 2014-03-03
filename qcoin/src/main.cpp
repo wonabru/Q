@@ -4610,7 +4610,7 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    GenerateQcoins(true, reserved[reserved.size()-1]);
+    GenerateQcoins(true, reserved.last());
 }
 
 
