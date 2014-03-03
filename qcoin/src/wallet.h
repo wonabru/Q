@@ -268,7 +268,8 @@ public:
     enum{
         RECEIVE = 0,
         SENDING = 1,
-        AUTO = 2
+        AUTO = 2,
+        OVERWRITE = 3
     };
 
     void SetBestChain(const CBlockLocator& loc);

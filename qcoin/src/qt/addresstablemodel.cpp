@@ -333,6 +333,14 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
             editStatus = KEY_GENERATION_FAILURE;
             return QString();
         }
+        {
+            LOCK(wallet->cs_wallet);
+            if(wallet->mapAddressBook.count(CQcoinAddress(newKey.GetID()).Get()))
+            {
+                editStatus = DUPLICATE_ADDRESS;
+                return QString();
+            }
+        }
         strAddress = CQcoinAddress(newKey.GetID()).ToString();
         reserved.push_back(newKey.GetID());
     }

@@ -1457,6 +1457,13 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 
 bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == strName)
+            if(ato != 3)
+                return false;
+    }
     std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     mapAddressBook[address] = strName;
     if(ato == AUTO)

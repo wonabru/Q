@@ -1015,7 +1015,6 @@ bool AppInit2(boost::thread_group& threadGroup)
             if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
                 strErrors << _("Cannot write default address") << "\n";
         }
-        pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname, 0);
         pwalletMain->SetAddressBookName(reserved[2], "Q", 1);
         pwalletMain->SetAddressBookName(reserved[1], "1", 1);
         pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1);

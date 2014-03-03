@@ -2290,7 +2290,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     CQcoinAddress address;
     address.Set((CKeyID)(pblock->namePubKey));
     std::string blockname = pblock->GetBlockName();
-    pwalletMain->SetAddressBookName(address.Get(),blockname);
+    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
+    {
+        printf("There is a conflict in names.\n In the Q Network it is just registered one of your name!\n I will overwrite your name !!!\n");
+        pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+    }
     names = printNamesInQNetwork();
     printf("%s\n New account accepted\n",names.c_str());
 
