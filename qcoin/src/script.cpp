@@ -47,6 +47,17 @@ std::string CScript::GetPubKeyString() const
     return spk.ToString();
 }
 
+CPubKey CScript::GetPubKey() const
+{
+    CQcoinAddress spk;
+    spk.SetString(this->ToString());
+    std::string pk = spk.ToString();
+    vector<unsigned char> m;
+    m.resize(33);
+    memcpy(&m[0],&pk[0],33);
+    return CPubKey(m);
+}
+
 std::string CScript::GetPubKeyCScript() const
 {
     return this->ToString();

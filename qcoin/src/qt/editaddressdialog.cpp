@@ -3,9 +3,13 @@
 
 #include "addresstablemodel.h"
 #include "guiutil.h"
+#include "main.h"
 
 #include <QDataWidgetMapper>
 #include <QMessageBox>
+
+extern QList<CKeyID> reserved;
+extern void RestartMining();
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -60,12 +64,16 @@ void EditAddressDialog::loadRow(int row)
 
 bool EditAddressDialog::saveCurrentRow()
 {
+    CKeyID key1;
+    CKeyID key2;
     if(!model)
         return false;
 
     switch(mode)
     {
     case NewReceivingAddress:
+        key1.SetHex(ui->addressEdit->text().toStdString());
+        reserved.push_back(key1);
     case NewSendingAddress:
         address = model->addRow(
                 mode == NewSendingAddress ? AddressTableModel::Send : AddressTableModel::Receive,
@@ -73,6 +81,8 @@ bool EditAddressDialog::saveCurrentRow()
                 ui->addressEdit->text());
         break;
     case EditReceivingAddress:
+        key2.SetHex(ui->addressEdit->text().toStdString());
+        reserved.push_back(key2);
     case EditSendingAddress:
         if(mapper->submit())
         {
@@ -83,6 +93,7 @@ bool EditAddressDialog::saveCurrentRow()
     }
     if(name.isEmpty())
         return false;
+
     return !address.isEmpty();
 }
 
@@ -93,10 +104,12 @@ void EditAddressDialog::accept()
 
     if(!saveCurrentRow())
     {
+        RestartMining();
         switch(model->getEditStatus())
         {
         case AddressTableModel::OK:
             // Failed with unknown reason. Just reject.
+
             break;
         case AddressTableModel::NO_CHANGES:
             // No changes were made during edit operation. Just reject.

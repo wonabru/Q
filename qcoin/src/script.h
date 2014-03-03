@@ -590,6 +590,8 @@ public:
     std::string GetPubKeyString() const;
     std::string GetPubKeyCScript() const;
 
+    CPubKey GetPubKey() const;
+
     CScriptID GetID() const
     {
         return CScriptID(Hash160(*this));

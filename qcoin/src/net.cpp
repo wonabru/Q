@@ -1896,7 +1896,7 @@ void StartNode(boost::thread_group& threadGroup)
 bool StopNode()
 {
     printf("StopNode()\n");
-    GenerateQcoins(false, NULL);
+    GenerateQcoins(false, (CKeyID)0);
     MapPort(false);
     nTransactionsUpdated++;
     if (semOutbound)

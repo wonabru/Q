@@ -2283,7 +2283,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-    std::string names = printNamesInQNetwork(pwalletMain);
+    std::string names = printNamesInQNetwork();
     printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
@@ -2291,7 +2291,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     address.Set((CKeyID)(pblock->namePubKey));
     std::string blockname = pblock->GetBlockName();
     pwalletMain->SetAddressBookName(address.Get(),blockname);
-    names = printNamesInQNetwork(pwalletMain);
+    names = printNamesInQNetwork();
     printf("%s\n New account accepted\n",names.c_str());
 
     return true;
@@ -2757,9 +2757,9 @@ bool InitBlockIndex() {
     memcpy(&GodSecret[0],&WonabruSecret[0],16);
     memcpy(&GodSecret[15],&QSecret[0],16);
     WQ1.SetSecret(GodSecret,true);
-    reserved[0] = keyWonabru;
-    reserved[1] = keyQ;
-    reserved[2] = CPubKey(WQ1.GetPubKey());
+    reserved.push_back(keyWonabru.GetID());
+    reserved.push_back(keyQ.GetID());
+    reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
 
     if (pindexGenesisBlock != NULL)
         return true;
@@ -2773,9 +2773,9 @@ bool InitBlockIndex() {
     bnProofOfWorkLimit.SetCompact(0x1d7fffff);
     if (!fReindex) {
 
-        GenesisName.SetDestination(reserved[2].GetID());
+        GenesisName.SetDestination(reserved[2]);
         CScript sign;
-        sign.SetDestination(reserved[0].GetID());
+        sign.SetDestination(reserved[0]);
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vin[0].scriptSig = sign;
@@ -2784,7 +2784,7 @@ bool InitBlockIndex() {
         txNew.vout[0].scriptPubKey = GenesisName;
         CBlock block;
         block.SetBlockName("VIVIVI");
-        block.SetBlockPubKey((uint160)reserved[0].GetID());
+        block.SetBlockPubKey((uint160)reserved[0]);
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
 
@@ -3271,7 +3271,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         pfrom->PushMessage("verack");
         pfrom->ssSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
 
-        if (!pfrom->fInbound)
+    /*    if (!pfrom->fInbound)
         {
             // Advertise our address
             if (!fNoListen && !IsInitialBlockDownload())
@@ -3288,7 +3288,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                 pfrom->fGetAddr = true;
             }
             addrman.Good(pfrom->addr);
-        } else {
+        } else */
+        {
             if (((CNetAddr)pfrom->addr) == (CNetAddr)addrFrom)
             {
                 addrman.Add(addrFrom, addrFrom);
@@ -4178,19 +4179,17 @@ public:
     }
 };
 
-std::string printNamesInQNetwork(CWallet *wallet)
+std::string printNamesInQNetwork()
 {
     std::string rets = "";
     NamesInQNetwork.clear();
     {
-    LOCK(wallet->cs_wallet);
-    bool onemine = false;
-    int lastmine = 0;
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapAddressBook)
+    LOCK(pwalletMain->cs_wallet);
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        bool fMine = IsMine(*wallet, address.Get());
+        bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
         if(fMine == false)
@@ -4198,17 +4197,6 @@ std::string printNamesInQNetwork(CWallet *wallet)
             NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
-        }else if(onemine == false){
-            onemine = true;
-            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
-                          QString::fromStdString(strName),
-                          QString::fromStdString(address.ToString())));
-            lastmine = NamesInQNetwork.size() - 1;
-        }else{
-             AddressTableEntry atl = AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
-                                  QString::fromStdString(strName),
-                                  QString::fromStdString(address.ToString()));
-             NamesInQNetwork[lastmine] = atl;
         }
     }
     }
@@ -4230,10 +4218,10 @@ std::string printNamesInQNetwork(CWallet *wallet)
 
 
 
-CBlockTemplate* CreateNewBlock(CWallet *wallet)
+CBlockTemplate* CreateNewBlock(CKeyID key)
 {
     // Create new block
-    printf("%s",printNamesInQNetwork(wallet).c_str());
+    printf("%s",printNamesInQNetwork().c_str());
     if(NamesInQNetwork.size() <= 0)
         return NULL;
     auto_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
@@ -4241,10 +4229,10 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
 
-    std::string myname = wallet->GetName();
+    std::string myname = pwalletMain->mapAddressBook[key];
     printf("MyName: %s\n",myname.c_str());
     pblock->SetBlockName(myname);
-    pblock->SetBlockPubKey((uint160)(wallet->GetWalletDefaultPubKey()));
+    pblock->SetBlockPubKey((uint160)(key));
     myname = pblock->GetBlockName();
     printf("MyName: %s\n",myname.c_str());
     // Create coinbase tx
@@ -4270,7 +4258,11 @@ CBlockTemplate* CreateNewBlock(CWallet *wallet)
     //        printf("Name %s\n",address.ToString().c_str());
         }
     }
-
+    CScript pubKeyMy;
+    pubKeyMy.SetDestination(key);
+    CTxOut txoutmy;
+    txoutmy.scriptPubKey = pubKeyMy;
+    txNew.vout.push_back(txoutmy);
     // Add our coinbase tx as first transaction
     pblock->vtx.push_back(txNew);
     pblocktemplate->vTxFees.push_back(-1); // updated at end
@@ -4606,16 +4598,22 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     return true;
 }
 
-void static QcoinMiner(CWallet *pwallet)
+void static QcoinMiner(CKeyID key)
 {
-     auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(pwalletMain));
+     auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(key));
      if (!pblocktemplate.get())
         return;
      CBlock *pblock = &pblocktemplate->block;
      QcoinMinerGenesisBlock(pblock);
-     QcoinMiner(pwallet);
+     RestartMining();
      return;
 }
+
+void RestartMining()
+{
+    GenerateQcoins(true, reserved[reserved.size()-1]);
+}
+
 
 void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
@@ -4718,11 +4716,13 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
     }
 }
 
-void GenerateQcoins(bool fGenerate, CWallet* pwallet)
+
+void GenerateQcoins(bool fGenerate, CKeyID key)
 {
+
     static boost::thread_group* minerThreads = NULL;
 
-    int nThreads = GetArg("-genproclimit", 1);
+    int nThreads = 1;//GetArg("-genproclimit", -1);
     if (nThreads < 0)
         nThreads = boost::thread::hardware_concurrency();
 
@@ -4740,7 +4740,7 @@ void GenerateQcoins(bool fGenerate, CWallet* pwallet)
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMiner, pwallet));
+        minerThreads->create_thread(boost::bind(&QcoinMiner, key));
 }
 
 void GenerateQcoinsGenesisBlock(CBlock * pblock)

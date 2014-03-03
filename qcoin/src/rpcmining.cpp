@@ -43,7 +43,7 @@ Value setgenerate(const Array& params, bool fHelp)
     }
     mapArgs["-gen"] = (fGenerate ? "1" : "0");
 
-    GenerateQcoins(true, pwalletMain);
+    GenerateQcoins(true, (CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     return Value::null;
 }
 
@@ -134,7 +134,7 @@ Value getwork(const Array& params, bool fHelp)
 
 
             // Create new block
-            pblocktemplate = CreateNewBlock(pwalletMain);
+            pblocktemplate = CreateNewBlock((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
             if (!pblocktemplate)
                 throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
             vNewBlockTemplate.push_back(pblocktemplate);
@@ -266,7 +266,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
             pblocktemplate = NULL;
         }
 
-        pblocktemplate = CreateNewBlock(pwalletMain);
+        pblocktemplate = CreateNewBlock((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
         if (!pblocktemplate)
             throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
 

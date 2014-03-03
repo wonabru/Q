@@ -29,7 +29,7 @@ using namespace boost;
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
 QList<AddressTableEntry> NamesInQNetwork;
-CPubKey reserved[3];
+QList<CKeyID> reserved;
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -956,7 +956,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     pwalletMain = new CWallet("myq.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
-    std::string names = printNamesInQNetwork(pwalletMain);
+    printf("%s\n",printNamesInQNetwork().c_str());
 
     if (nLoadWalletRet != DB_LOAD_OK)
     {
@@ -1016,10 +1016,11 @@ bool AppInit2(boost::thread_group& threadGroup)
                 strErrors << _("Cannot write default address") << "\n";
         }
         pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), defaultname, 0);
-        pwalletMain->SetAddressBookName(reserved[2].GetID(), "Q");
-        pwalletMain->SetAddressBookName(reserved[1].GetID(), "1");
-        pwalletMain->SetAddressBookName(reserved[0].GetID(), "wonabru");
-
+        pwalletMain->SetAddressBookName(reserved[2], "Q");
+        pwalletMain->SetAddressBookName(reserved[1], "1");
+        pwalletMain->SetAddressBookName(reserved[0], "wonabru");
+        reserved.push_back(pwalletMain->vchDefaultKey.GetID());
+        RestartMining();
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
 
@@ -1137,7 +1138,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
 
     // Generate coins in the background
-    GenerateQcoins(true, pwalletMain);
+   // GenerateQcoins(true,(CKeyID) key)
 
     //Should be like this but one should give an option for someone who would like to check.
 

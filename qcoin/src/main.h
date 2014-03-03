@@ -116,9 +116,11 @@ class CCoinsViewCache;
 class CScriptCheck;
 class CValidationState;
 
+
+
 struct CBlockTemplate;
 
-std::string printNamesInQNetwork(CWallet *wallet);
+std::string printNamesInQNetwork();
 
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWallet* pwalletIn);
@@ -155,9 +157,13 @@ bool SendMessages(CNode* pto, bool fSendTrickle);
 /** Run an instance of the script checking thread */
 void ThreadScriptCheck();
 /** Run the miner threads */
-void GenerateQcoins(bool fGenerate, CWallet* pwallet);
+void GenerateQcoins(bool fGenerate, CKeyID key);
+
+
+void RestartMining();
+
 /** Generate a new block, without valid proof-of-work */
-CBlockTemplate* CreateNewBlock(CWallet *wallet);
+CBlockTemplate* CreateNewBlock(CKeyID key);
 /** Modify the extranonce in a block */
 void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 /** Do mining precalculation */
