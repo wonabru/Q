@@ -350,7 +350,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
 
 void AddressTableModel::addDefaultReceive()
 {
-    std::string strLabel = wallet->GetName();
+    std::string strLabel = wallet->GetName((CKeyID)(wallet->vchDefaultKey.GetID()));
     CQcoinAddress address((CKeyID)(wallet->GetWalletDefaultPubKey()));
     // Add entry
     {

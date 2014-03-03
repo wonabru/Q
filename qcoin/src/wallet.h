@@ -281,7 +281,7 @@ public:
 
     void UpdatedTransaction(const uint256 &hashTx);
 
-    std::string GetName();
+    std::string GetName(CKeyID key);
 
     void PrintWallet(const CBlock& block);
 

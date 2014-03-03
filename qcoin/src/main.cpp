@@ -4228,8 +4228,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     if(!pblocktemplate.get())
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
-
-    std::string myname = pwalletMain->mapAddressBook[key];
+    std::string myname = pwalletMain->GetName(key);
     printf("MyName: %s\n",myname.c_str());
     pblock->SetBlockName(myname);
     pblock->SetBlockPubKey((uint160)(key));

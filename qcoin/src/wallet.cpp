@@ -8,10 +8,11 @@
 #include "crypter.h"
 #include "ui_interface.h"
 #include "base58.h"
+#include "init.h"
 #include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
-
+extern QList<CKeyID> reserved;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -1469,10 +1470,16 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }
 
-std::string CWallet::GetName()
+std::string CWallet::GetName(CKeyID key)
 {
-    CTxDestination address = vchDefaultKey.GetID();
-    return mapAddressBook[address];
+    CTxDestination address = key;
+    std::string name = mapAddressBook[address];
+    if(name.size() <= 0)
+    {
+        address = reserved[0];
+        return mapAddressBook[address];
+    }
+    return name;
 }
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)
