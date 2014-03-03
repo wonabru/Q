@@ -1015,9 +1015,20 @@ bool AppInit2(boost::thread_group& threadGroup)
             if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
                 strErrors << _("Cannot write default address") << "\n";
         }
-        pwalletMain->SetAddressBookName(reserved[2], "Q", 1);
-        pwalletMain->SetAddressBookName(reserved[1], "1", 1);
-        pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1);
+        if(!pwalletMain->SetAddressBookName(reserved[2], "Q", 1))
+        {
+            strErrors << _("Cannot write default address") << "\n";
+        }else{
+            reserved.removeAt(2);
+        }
+        if(!pwalletMain->SetAddressBookName(reserved[1], "1", 1))
+                strErrors << _("Cannot write default address") << "\n";
+        else
+            reserved.removeAt(1);
+        if(!pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1))
+                strErrors << _("Cannot write default address") << "\n";
+        else
+            reserved.removeAt(0);
         reserved.push_back(pwalletMain->vchDefaultKey.GetID());
         RestartMining();
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
