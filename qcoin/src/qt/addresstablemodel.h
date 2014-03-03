@@ -91,6 +91,8 @@ public:
      */
     QString addRow(const QString &type, const QString &label, const QString &address);
 
+    void addDefaultReceive();
+
     /* Look up label for address in address book, if not found return empty string.
      */
     QString labelForAddress(const QString &address) const;

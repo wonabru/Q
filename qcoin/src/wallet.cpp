@@ -1514,12 +1514,13 @@ bool CWallet::GetTransaction(const uint256 &hashTx, CWalletTx& wtx)
 
 bool CWallet::SetDefaultKey(const CPubKey &vchPubKey)
 {
-    if (fFileBacked)
-    {
-        if (!CWalletDB(strWalletFile).WriteDefaultKey(vchPubKey))
-            return false;
-    }
+   // if (fFileBacked)
+  //  {
+
+   // }
     vchDefaultKey = vchPubKey;
+    if (!CWalletDB(strWalletFile).WriteDefaultKey(vchPubKey))
+        return false;
     return true;
 }
 

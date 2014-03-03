@@ -2287,18 +2287,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
-
-
-    std::vector<unsigned char> vch;
-    vch.resize(32);
-
-    std::string blockPubKey = pblock->GetBlockPubKey();
-    memcpy(&vch[0],&blockPubKey[0],20);
-    vch.clear();
-    CPubKey myPubKey(vch);
+    CQcoinAddress address;
+    address.Set((CKeyID)(pblock->namePubKey));
     std::string blockname = pblock->GetBlockName();
- //   std::string strAddress = CQcoinAddress(newKey.GetID()).ToString();
-    pwalletMain->SetAddressBookName(myPubKey.GetID(),blockname);
+    pwalletMain->SetAddressBookName(address.Get(),blockname);
     names = printNamesInQNetwork(pwalletMain);
     printf("%s\n New account accepted\n",names.c_str());
 

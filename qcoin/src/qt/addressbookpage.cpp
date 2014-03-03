@@ -121,7 +121,10 @@ void AddressBookPage::setModel(AddressTableModel *model)
     if(!model)
         return;
 
+
+
     proxyModel = new QSortFilterProxyModel(this);
+
     proxyModel->setSourceModel(model);
     proxyModel->setDynamicSortFilter(true);
     proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
@@ -151,7 +154,7 @@ void AddressBookPage::setModel(AddressTableModel *model)
 
     // Select row for newly created address
     connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(selectNewAddress(QModelIndex,int,int)));
-
+    model->addDefaultReceive();
     selectionChanged();
 }
 
