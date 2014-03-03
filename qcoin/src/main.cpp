@@ -4184,6 +4184,8 @@ std::string printNamesInQNetwork(CWallet *wallet)
     NamesInQNetwork.clear();
     {
     LOCK(wallet->cs_wallet);
+    bool onemine = false;
+    int lastmine = 0;
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapAddressBook)
     {
         const CQcoinAddress address(item.first);
@@ -4191,11 +4193,22 @@ std::string printNamesInQNetwork(CWallet *wallet)
         bool fMine = IsMine(*wallet, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
-        if(scriptPubKey == GenesisName)
-            continue;
-        NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+        if(fMine == false)
+        {
+            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
+        }else if(onemine == false){
+            onemine = true;
+            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                          QString::fromStdString(strName),
+                          QString::fromStdString(address.ToString())));
+            lastmine = NamesInQNetwork.size();
+        }else{
+            NamesInQNetwork[lastmine] = AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                                  QString::fromStdString(strName),
+                                  QString::fromStdString(address.ToString()));
+        }
     }
     }
     BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
