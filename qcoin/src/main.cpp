@@ -2302,8 +2302,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(reserved.size() == 0)
     {
         CPubKey newKey;
-        if (pwalletMain->GetKeyFromPool(newKey, true)) {
-            if (!pwalletMain->SetAddressBookName(newKey.GetID(), yourName))
+        if (pwalletMain->GetKeyFromPool(newKey, false)) {
+            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newKey.ToString()))
                 printf("Reserved.size() == 0 and cannot write default address\n");
         }
         reserved.push_back((CKeyID)(newKey.GetID()));
