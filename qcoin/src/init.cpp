@@ -1019,7 +1019,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         pwalletMain->SetAddressBookName(reserved[2], "Q", 1);
         pwalletMain->SetAddressBookName(reserved[1], "1", 1);
         pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1);
-        reserved.push_back(pwalletMain->vchDefaultKey.GetID(), 0);
+        reserved.push_back(pwalletMain->vchDefaultKey.GetID());
         RestartMining();
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
