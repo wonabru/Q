@@ -4203,7 +4203,7 @@ std::string printNamesInQNetwork(CWallet *wallet)
             NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
-            lastmine = NamesInQNetwork.size();
+            lastmine = NamesInQNetwork.size() - 1;
         }else{
              AddressTableEntry atl = AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                                   QString::fromStdString(strName),
