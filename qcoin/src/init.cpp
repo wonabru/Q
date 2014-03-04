@@ -1013,7 +1013,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         RandAddSeedPerfmon();
 
       //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
-        std::string defaultname = "0";
+        std::string defaultname = "";
 
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
