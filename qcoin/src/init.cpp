@@ -1081,15 +1081,15 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     uiInterface.InitMessage(_("Loading addresses..."));
     CAddress addr1;
-    ConnectNode(addr1, "144.76.238.37");
+    ConnectNode(addr1, "wonabru.com");
     CAddress addr2;
     ConnectNode(addr2, "89.71.82.19");
     CAddress addr3;
-    ConnectNode(addr3, "195.245.104.9");
+    ConnectNode(addr3, "tata.wonabru.com");
  //   CAddress addr4;
  //   ConnectNode(addr4, "192.168.0.207");
     CAddress addr5;
-    ConnectNode(addr5, "195.245.104.23");
+    ConnectNode(addr5, "brat.wonabru.com");
     nStart = GetTimeMillis();
 
   //  {
