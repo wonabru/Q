@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Qcoin developers
+// Copyright (c) 2009-2013 The Bitcoin developers
+// Copyright (c) 2014      wonabru
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -952,7 +953,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
 
     nStart = GetTimeMillis();
-    bool fFirstRun = true;
+    bool fFirstRun = false;
     pwalletMain = new CWallet("myq.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
 
@@ -1001,13 +1002,8 @@ bool AppInit2(boost::thread_group& threadGroup)
         // Create new keyUser and set as default key
         RandAddSeedPerfmon();
 
-      //  std::string Qbuntuname = "NameIsYourDestinyWillYouJailbreakThis";
+      //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
         std::string defaultname = "0";
-      //  SetThreadPriority(THREAD_PRIORITY_LOWEST);
-      //  while(yourName == "0")
-      //      sleep(1);
-      //  SetThreadPriority(THREAD_PRIORITY_NORMAL);
-        defaultname = yourName;
 
         CPubKey newDefaultKey;
         if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
@@ -1015,24 +1011,18 @@ bool AppInit2(boost::thread_group& threadGroup)
             if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
                 strErrors << _("Cannot write default address") << "\n";
         }
-        if(!pwalletMain->SetAddressBookName(reserved[2], "Q", 1))
-        {
-            strErrors << _("Cannot write default address") << "\n";
-        }else{
-            reserved.removeAt(2);
-        }
-        if(!pwalletMain->SetAddressBookName(reserved[1], "1", 1))
-                strErrors << _("Cannot write default address") << "\n";
-        else
-            reserved.removeAt(1);
-        if(!pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1))
-                strErrors << _("Cannot write default address") << "\n";
-        else
-            reserved.removeAt(0);
-        reserved.push_back(pwalletMain->vchDefaultKey.GetID());
-        RestartMining();
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+    }else{
+        yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
+    pwalletMain->SetAddressBookName(reserved[2], "Q", 1);
+    reserved.removeAll(reserved[2]);
+    pwalletMain->SetAddressBookName(reserved[1], "1", 1);
+    reserved.removeAll(reserved[1]);
+    pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1);
+    reserved.removeAll(reserved[0]);
+
+    reserved.push_back(pwalletMain->vchDefaultKey.GetID());
 
     printf("%s", strErrors.str().c_str());
     printf(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
@@ -1149,7 +1139,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Generate coins in the background
    // GenerateQcoins(true,(CKeyID) key)
-
+    RestartMining();
     //Should be like this but one should give an option for someone who would like to check.
 
     //One can always abort here!

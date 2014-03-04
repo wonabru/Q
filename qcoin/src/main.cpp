@@ -27,7 +27,7 @@
 
 using namespace json_spirit;
 
-std::string yourName;
+std::string yourName = "0";
 
 using namespace std;
 using namespace boost;
@@ -2211,6 +2211,36 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
     return (nFound >= nRequired);
 }
 
+void acceptNameInQNetwork(CBlock *pblock)
+{
+    std::string names = printNamesInQNetwork();
+    printf("%s",names.c_str());
+    printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
+
+    CKeyID key = (CKeyID)(pblock->namePubKey);
+    CQcoinAddress address;
+    address.Set(key);
+    std::string blockname = pblock->GetBlockName();
+    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
+    {
+        printf("There is a conflict in names.\n In the Q Network it is just registered one of your name!\n I will overwrite your name !!!\n");
+        pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+    }
+    reserved.removeAll(key);
+    if(reserved.size() == 0)
+    {
+        CPubKey newKey;
+        if (pwalletMain->GetKeyFromPool(newKey, false)) {
+            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newKey.GetID().GetHex(), 0))
+                printf("Reserved.size() == 0 and cannot write default address\n");
+        }
+        reserved.push_back((CKeyID)(newKey.GetID()));
+    }
+    names = printNamesInQNetwork();
+    printf("%s\n New name accepted\n",names.c_str());
+}
+
+
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     // Check for duplicate
@@ -2285,35 +2315,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-    std::string names = printNamesInQNetwork();
-    printf("%s",names.c_str());
-    printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
 
-    CKeyID key = (CKeyID)(pblock->namePubKey);
-    CQcoinAddress address;
-    address.Set(key);
-    std::string blockname = pblock->GetBlockName();
-    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
-    {
-        printf("There is a conflict in names.\n In the Q Network it is just registered one of your name!\n I will overwrite your name !!!\n");
-        pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
-    }
-    reserved.removeAll(key);
-    if(reserved.size() == 0)
-    {
-        CPubKey newKey;
-        if (pwalletMain->GetKeyFromPool(newKey, false)) {
-            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newKey.GetID().GetHex(), 0))
-                printf("Reserved.size() == 0 and cannot write default address\n");
-        }
-        reserved.push_back((CKeyID)(newKey.GetID()));
-    }
-    names = printNamesInQNetwork();
-    printf("%s\n New account accepted\n",names.c_str());
-
+    acceptNameInQNetwork(pblock);
     return true;
 }
-
 
 
 

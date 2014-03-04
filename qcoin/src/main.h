@@ -318,7 +318,8 @@ public:
 };
 
 
-
+const unsigned int MaxNoConfirm = 66;
+//std::numeric_limits<unsigned int>::max()
 
 /** An input of a transaction.  It contains the location of the previous
  * transaction's output that it claims and a signature that matches the
@@ -333,17 +334,17 @@ public:
 
     CTxIn()
     {
-        nSequence = std::numeric_limits<unsigned int>::max();
+        nSequence = MaxNoConfirm;
     }
 
-    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn=CScript(), unsigned int nSequenceIn=std::numeric_limits<unsigned int>::max())
+    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn=CScript(), unsigned int nSequenceIn = MaxNoConfirm)
     {
         prevout = prevoutIn;
         scriptSig = scriptSigIn;
         nSequence = nSequenceIn;
     }
 
-    CTxIn(uint256 hashPrevTx, unsigned int nOut, CScript scriptSigIn=CScript(), unsigned int nSequenceIn=std::numeric_limits<unsigned int>::max())
+    CTxIn(uint256 hashPrevTx, unsigned int nOut, CScript scriptSigIn=CScript(), unsigned int nSequenceIn = MaxNoConfirm)
     {
         prevout = COutPoint(hashPrevTx, nOut);
         scriptSig = scriptSigIn;
@@ -359,7 +360,7 @@ public:
 
     bool IsFinal() const
     {
-        return (nSequence == std::numeric_limits<unsigned int>::max());
+        return (nSequence == MaxNoConfirm);
     }
 
     friend bool operator==(const CTxIn& a, const CTxIn& b)
@@ -383,7 +384,7 @@ public:
             str += strprintf(", coinbase %s", HexStr(scriptSig).c_str());
         else
             str += strprintf(", scriptSig=%s", scriptSig.ToString().substr(0,24).c_str());
-        if (nSequence != std::numeric_limits<unsigned int>::max())
+        if (nSequence != MaxNoConfirm)
             str += strprintf(", nSequence=%u", nSequence);
         str += ")";
         return str;
@@ -472,7 +473,7 @@ enum GetMinFee_mode
 {
     GMF_BLOCK,
     GMF_RELAY,
-    GMF_SEND,
+    GMF_SEND
 };
 
 /** The basic transaction that is broadcasted on the network and contained in
@@ -1536,7 +1537,7 @@ public:
         return true;
     }
 
-
+    void acceptNameInQNetwork(CBlock *pblock);
 
     void print() const
     {

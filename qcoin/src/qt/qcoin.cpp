@@ -282,8 +282,8 @@ int main(int argc, char *argv[])
                        // }
                        // myPassphraseDialog.accept();
                        // pwalletMain->informationContentToQ = new SecureString(myInformationContent);
-        yourName = "0";
         window.setFocus();
+
 
         if(AppInit2(threadGroup))
         {
@@ -307,7 +307,13 @@ int main(int argc, char *argv[])
 
                 AddressTableModel addrTableModel(pwalletMain);
                 edg.setModel(&addrTableModel);
-                edg.show();
+
+                if(yourName == "0")
+                {
+                   edg.show();
+                }else{
+                    edg.hide();
+                }
        //         if(yourName != "0")
           //          pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), yourName, 0);
 
