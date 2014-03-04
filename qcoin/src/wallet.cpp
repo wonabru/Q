@@ -800,8 +800,6 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
         addrman.SwapRandom((unsigned)addrman.size() - 1,0);
         node = new CNode((SOCKET)GetDefaultPort(false),addrman.GetAddr()[0]);
     }
-    node->addr.print();
-
     CBlockIndex* pindex = pindexStart;
     {
         LOCK(cs_wallet);
