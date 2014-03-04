@@ -194,8 +194,7 @@ private:
 
     // list of "new" buckets
     std::vector<std::set<int> > vvNew;
-    // Swap two elements in vRandom.
-    void SwapRandom(unsigned int nRandomPos1, unsigned int nRandomPos2);
+
 
 protected:
 
@@ -395,7 +394,8 @@ public:
     {
         return vRandom.size();
     }
-
+    // Swap two elements in vRandom.
+    void SwapRandom(unsigned int nRandomPos1, unsigned int nRandomPos2);
     // Consistency check
     void Check()
     {
