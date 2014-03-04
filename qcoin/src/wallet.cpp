@@ -792,8 +792,10 @@ bool CWalletTx::WriteToDisk()
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
+    CNetAddr *myip;
+    GetMyExternalIP(myip);
     CNode *node;
-    while(node->addr.IsLocal() == true)
+    while(node->addr.GetHash() == myip->GetHash())
     {
         for(unsigned i=0;i<(unsigned)addrman.size() - 1;i++)
              addrman.SwapRandom(i,i+1);
