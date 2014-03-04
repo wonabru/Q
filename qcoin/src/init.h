@@ -17,7 +17,7 @@ extern QList<CKeyID> reserved;
 void StartShutdown();
 bool ShutdownRequested();
 void Shutdown();
-void rescan();
+void rescan(CWallet *wallet, CBlockIndex *pindexBest, CBlockIndex *pindexGenesisBlock);
 bool AppInit2(boost::thread_group& threadGroup);
 std::string HelpMessage();
 

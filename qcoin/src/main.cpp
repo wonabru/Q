@@ -2317,7 +2317,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
 
     acceptNameInQNetwork(pblock);
-    rescan();
+   // rescan();
     return true;
 }
 
@@ -4634,6 +4634,7 @@ void static QcoinMiner(CKeyID key)
 void RestartMining()
 {
     GenerateQcoins(true, reserved.last());
+    rescan(pwalletMain,pindexBest,pindexGenesisBlock);
 }
 
 
