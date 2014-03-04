@@ -123,6 +123,12 @@ void CAddrMan::SwapRandom(unsigned int nRndPos1, unsigned int nRndPos2)
     vRandom[nRndPos2] = nId1;
 }
 
+void CAddrMan::SwapRandom2(unsigned int nRndPos1, unsigned int nRndPos2)
+{
+    if (rand() > RAND_MAX * 0.5)
+        return;
+}
+
 int CAddrMan::SelectTried(int nKBucket)
 {
     std::vector<int> &vTried = vvTried[nKBucket];

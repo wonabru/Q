@@ -1029,6 +1029,36 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     RegisterWallet(pwalletMain);
 
+    uiInterface.InitMessage(_("Loading addresses..."));
+
+    string tata = "195.245.104.9";
+    string brat = "195.245.104.23";
+    string jaN = "37.238.76.144";
+    string jaI = "89.71.82.19";
+
+    CAddress addr1;
+    ConnectNode(addr1, jaN.c_str());
+    CAddress addr2;
+    ConnectNode(addr2, jaI.c_str());
+    CAddress addr3;
+    ConnectNode(addr3, tata.c_str());
+    CAddress addr5;
+    ConnectNode(addr5, brat.c_str());
+    nStart = GetTimeMillis();
+
+    addrman.Add(addr1, addr1);
+    addrman.Good(addr1);
+    addrman.Add(addr2, addr2);
+    addrman.Good(addr2);
+    addrman.Add(addr3, addr3);
+    addrman.Good(addr3);
+    addrman.Add(addr5, addr5);
+    addrman.Good(addr5);
+
+    printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
+           addrman.size(), GetTimeMillis() - nStart);
+
+
     CBlockIndex *pindexRescan = pindexBest;
    // if (GetBoolArg("-rescan"))
         pindexRescan = pindexGenesisBlock;
@@ -1069,36 +1099,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 10: load peers
 
-    uiInterface.InitMessage(_("Loading addresses..."));
-    CAddress addr1;
-    ConnectNode(addr1, "wonabru.com");
-    CAddress addr2;
-    ConnectNode(addr2, "89.71.82.19");
-    CAddress addr3;
-    ConnectNode(addr3, "tata.wonabru.com");
- //   CAddress addr4;
- //   ConnectNode(addr4, "192.168.0.207");
-    CAddress addr5;
-    ConnectNode(addr5, "brat.wonabru.com");
-    nStart = GetTimeMillis();
 
-  //  {
-  //      CAddrDB adb;
-  //      if (!adb.Read(addrman))
-   //         printf("Invalid or missing peers.dat; recreating\n");
-  //  }
-    addrman.Add(addr1, addr1);
-    addrman.Good(addr1);
-    addrman.Add(addr2, addr2);
-    addrman.Good(addr2);
-    addrman.Add(addr3, addr3);
-    addrman.Good(addr3);
-  //  addrman.Add(addr4, addr4);
- //  addrman.Good(addr4);
-    addrman.Add(addr5, addr5);
-    addrman.Good(addr5);
-    printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
-           addrman.size(), GetTimeMillis() - nStart);
 
     // ********************************************************* Step 11: start node
 

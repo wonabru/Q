@@ -396,6 +396,7 @@ public:
     }
     // Swap two elements in vRandom.
     void SwapRandom(unsigned int nRandomPos1, unsigned int nRandomPos2);
+    void SwapRandom2(unsigned int nRandomPos1, unsigned int nRandomPos2);
     // Consistency check
     void Check()
     {
