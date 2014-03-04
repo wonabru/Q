@@ -15,7 +15,8 @@
 
 using namespace std;
 extern QList<CKeyID> reserved;
-extern void acceptNameInQNetwork(CBlock *pblock);
+extern bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp);
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -822,7 +823,8 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                 {
                     LOCK(cs_main);
                     CValidationState state;
-                    ProcessBlock(state, NULL, &block);
+                    if(acceptNameInQNetwork(state, NULL, &block) == false)
+                        throw "Blocks are orphaned. No way to proceed";
                     if (state.IsError())
                         throw "Error in block process!";
                 }

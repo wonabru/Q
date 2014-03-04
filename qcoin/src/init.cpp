@@ -1015,26 +1015,29 @@ bool AppInit2(boost::thread_group& threadGroup)
       //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
         std::string defaultname = "0";
 
-        CPubKey newDefaultKey;
-        if (pwalletMain->GetKeyFromPool(newDefaultKey, false)) {
-            pwalletMain->SetDefaultKey(newDefaultKey);
-            if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
-                strErrors << _("Cannot write default address") << "\n";
-        }
+        CPubKey newDefaultKey = pwalletMain->GenerateNewKey();
+        pwalletMain->SetDefaultKey(newDefaultKey);
+        if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
+            strErrors << _("Cannot write default address") << "\n";
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }else{
         yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
-    pwalletMain->SetAddressBookName(reserved[2], "Q", 1);
+    pwalletMain->SetAddressBookName(reserved[2], "Q", 3);
     reserved.removeAll(reserved[2]);
-    pwalletMain->SetAddressBookName(reserved[1], "1", 1);
+    pwalletMain->SetAddressBookName(reserved[1], "1", 3);
     reserved.removeAll(reserved[1]);
-    pwalletMain->SetAddressBookName(reserved[0], "wonabru", 1);
+    pwalletMain->SetAddressBookName(reserved[0], "wonabru", 3);
     reserved.removeAll(reserved[0]);
 
     reserved.push_back(pwalletMain->vchDefaultKey.GetID());
 
-    printf("%s", strErrors.str().c_str());
+    CKeyID keyDefault;
+    CSecret secretDefault;
+    bool fcompressed;
+    pwalletMain->GetSecret(keyDefault,secretDefault,fcompressed);
+    printf("%s", (const char *)(&secretDefault));
+    //printf("%d", (int)(*fcompressed));
     printf(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
 
     RegisterWallet(pwalletMain);

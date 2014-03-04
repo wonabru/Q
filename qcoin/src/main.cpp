@@ -2211,8 +2211,9 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
     return (nFound >= nRequired);
 }
 
-void acceptNameInQNetwork(CBlock *pblock)
+bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
+
     std::string names = printNamesInQNetwork();
     printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
@@ -2229,15 +2230,14 @@ void acceptNameInQNetwork(CBlock *pblock)
     reserved.removeAll(key);
     if(reserved.size() == 0)
     {
-        CPubKey newKey;
-        if (pwalletMain->GetKeyFromPool(newKey, false)) {
-            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newKey.GetID().GetHex(), 0))
+        CPubKey newKey = pwalletMain->GenerateNewKey();
+        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newKey.GetID().GetHex(), 0))
                 printf("Reserved.size() == 0 and cannot write default address\n");
-        }
         reserved.push_back((CKeyID)(newKey.GetID()));
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
+    return true;
 }
 
 
@@ -2249,11 +2249,9 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         return state.Invalid(error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString().c_str()));
     if (mapOrphanBlocks.count(hash))
         return state.Invalid(error("ProcessBlock() : already have block (orphan) %s", hash.ToString().c_str()));
-
     // Preliminary checks
     if (!pblock->CheckBlock(state))
         return error("ProcessBlock() : CheckBlock FAILED");
-
     CBlockIndex* pcheckpoint = Checkpoints::GetLastCheckpoint(mapBlockIndex);
     if (pcheckpoint && pblock->hashPrevBlock != hashBestChain)
     {
@@ -2272,8 +2270,6 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             return state.DoS(100, error("ProcessBlock() : block with too little proof-of-work"));
         }
     }
-
-
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock))
     {
@@ -2290,10 +2286,6 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         return true;
     }
-
-    // Store to disk
-    if (!pblock->AcceptBlock(state, dbp))
-        return error("ProcessBlock() : AcceptBlock FAILED");
 
     // Recursively process any orphan blocks that depended on this one
     vector<uint256> vWorkQueue;
@@ -2315,10 +2307,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
+    // Store to disk
+    if (!pblock->AcceptBlock(state, dbp))
+        return error("ProcessBlock() : AcceptBlock FAILED");
 
-    acceptNameInQNetwork(pblock);
-   // rescan();
-    return true;
+    return acceptNameInQNetwork(state, pfrom, pblock, dbp);
 }
 
 
