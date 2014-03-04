@@ -27,7 +27,7 @@
 
 using namespace json_spirit;
 
-std::string yourName = "";
+std::string yourName = "0";
 
 using namespace std;
 using namespace boost;

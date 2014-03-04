@@ -73,7 +73,7 @@ bool EditAddressDialog::saveCurrentRow()
     if(!model)
         return false;
 
-    if(yourName == "")
+    if(yourName == "0")
         acceptAndDestroy();
 
     switch(mode)
