@@ -949,7 +949,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // ********************************************************* Step 8: load wallet
 
-    uiInterface.InitMessage(_("Set your init Name..."));
+    uiInterface.InitMessage(_("Set your init Name to \"0\" ..."));
 
 
     nStart = GetTimeMillis();
@@ -1030,9 +1030,9 @@ bool AppInit2(boost::thread_group& threadGroup)
     RegisterWallet(pwalletMain);
 
     CBlockIndex *pindexRescan = pindexBest;
-    if (GetBoolArg("-rescan"))
+   // if (GetBoolArg("-rescan"))
         pindexRescan = pindexGenesisBlock;
-    else
+  /*  else
     {
         CWalletDB walletdb("myq.dat");
         CBlockLocator locator;
@@ -1040,7 +1040,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             pindexRescan = locator.GetBlockIndex();
         else
             pindexRescan = pindexGenesisBlock;
-    }
+    }*/
     if (pindexBest && pindexBest != pindexRescan)
     {
         uiInterface.InitMessage(_("Rescanning..."));
