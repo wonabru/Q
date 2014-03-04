@@ -792,6 +792,12 @@ bool CWalletTx::WriteToDisk()
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
+    for(unsigned i=0;i<addrman.size() - 1;i++)
+        addrman.SwapRandom(i,i+1);
+
+    CNode node(GetDefaultPort(false),addrman.GetAddr().begin());
+
+    printf("Connect to %s\n",node.addrName);
 
     CBlockIndex* pindex = pindexStart;
     {
@@ -805,7 +811,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                 {
                     LOCK(cs_main);
                     CValidationState state;
-                    ProcessBlock(state, NULL, &block);
+                    ProcessBlock(state, &node, &block);
                     if (state.IsError())
                         throw "Error in block process!";
                 }
