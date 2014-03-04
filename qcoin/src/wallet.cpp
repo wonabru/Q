@@ -792,15 +792,17 @@ bool CWalletTx::WriteToDisk()
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
-    CNetAddr *myip;
+    CNetAddr myip;
     GetMyExternalIP(myip);
     CNode *node;
-    while(node->addr.GetHash() == myip->GetHash())
+    uint64 hash = myip.GetHash();
+    while(hash == myip.GetHash())
     {
         for(unsigned i=0;i<(unsigned)addrman.size() - 1;i++)
              addrman.SwapRandom(i,i+1);
         addrman.SwapRandom((unsigned)addrman.size() - 1,0);
         node = new CNode((SOCKET)GetDefaultPort(false),addrman.GetAddr()[0]);
+        hash = node->addr.GetHash();
     }
     CBlockIndex* pindex = pindexStart;
     {
