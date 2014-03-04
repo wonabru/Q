@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000004aadeedee1566eb162575b45922ffaa74116c7ddfbcccf809586753f89");
+uint256 hashGenesisBlock("0x0000003366004a7d1413650fb6ef1a6d740906b8f18a34b24068bc36a3c92f0b");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2777,6 +2777,8 @@ bool InitBlockIndex() {
     reserved.push_back(keyQ.GetID());
     reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
 
+
+
     if (pindexGenesisBlock != NULL)
         return true;
 
@@ -2800,7 +2802,7 @@ bool InitBlockIndex() {
         txNew.vout[0].scriptPubKey = GenesisName;
         CBlock block;
         block.SetBlockName("");
-        block.SetBlockPubKey((uint160)reserved[0]);
+        block.SetBlockPubKey((uint160)0);
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
 
@@ -2808,7 +2810,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 1521285179;
+        block.nNonce   = 754713429;
 
         printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
