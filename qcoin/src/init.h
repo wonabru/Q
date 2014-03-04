@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Qcoin developers
+// Copyright (c) 2009-2013 The Bitcoin developers
+// Copyright (c) 2014      wonabru
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_INIT_H
@@ -16,6 +17,7 @@ extern QList<CKeyID> reserved;
 void StartShutdown();
 bool ShutdownRequested();
 void Shutdown();
+void rescan();
 bool AppInit2(boost::thread_group& threadGroup);
 std::string HelpMessage();
 

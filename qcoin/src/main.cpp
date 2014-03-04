@@ -2317,6 +2317,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
 
     acceptNameInQNetwork(pblock);
+    rescan();
     return true;
 }
 

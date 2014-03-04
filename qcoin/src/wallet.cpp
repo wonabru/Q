@@ -791,20 +791,25 @@ bool CWalletTx::WriteToDisk()
 // exist in the wallet will be updated.
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
-    //double MaxNodes = addrman.size();
+    double MaxNodes = addrman.size();
     int ret = 0;
-    /*
-    CNetAddr myip;
-    GetMyExternalIP(myip);
     CNode *node;
-    uint64 hash = myip.GetHash();
-    while(hash == myip.GetHash())
+    if(MaxNodes <= 1)
     {
-        unsigned i = (unsigned)(rand() * MaxNodes / (RAND_MAX - 1));
-        CAddress ad = addrman.GetAddr()[i];
-        node = new CNode((SOCKET)8444,ad);
-        hash = node->addr.GetHash();
-    }*/
+         node = NULL;
+    }else{
+         CNetAddr myip;
+         GetMyExternalIP(myip);
+
+         uint64 hash = myip.GetHash();
+         while(hash == myip.GetHash())
+         {
+             unsigned i = (unsigned)(rand() * MaxNodes / (RAND_MAX - 1));
+             CAddress ad = addrman.GetAddr()[i];
+             node = new CNode((SOCKET)8444,ad);
+             hash = node->addr.GetHash();
+          }
+    }
     CBlockIndex* pindex = pindexStart;
     {
         LOCK(cs_wallet);
@@ -817,7 +822,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                 {
                     LOCK(cs_main);
                     CValidationState state;
-                    ProcessBlock(state, NULL, &block);
+                    ProcessBlock(state, node, &block);
                     if (state.IsError())
                         throw "Error in block process!";
                 }

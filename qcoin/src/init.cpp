@@ -440,6 +440,16 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
     }
 }
 
+void rescan()
+{
+    uiInterface.InitMessage(_("Rescanning..."));
+    printf("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexGenesisBlock->nHeight, pindexGenesisBlock->nHeight);
+  //  nStart = GetTimeMillis();
+    pwalletMain->ScanForWalletTransactions(pindexGenesisBlock, true);
+  //  printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+    pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+}
+
 /** Initialize qcoin.
  *  @pre Parameters should be parsed and config file should be read.
  */
@@ -1060,25 +1070,15 @@ bool AppInit2(boost::thread_group& threadGroup)
 
 
     CBlockIndex *pindexRescan = pindexBest;
-   // if (GetBoolArg("-rescan"))
-        pindexRescan = pindexGenesisBlock;
-  /*  else
-    {
-        CWalletDB walletdb("myq.dat");
-        CBlockLocator locator;
-        if (walletdb.ReadBestBlock(locator))
-            pindexRescan = locator.GetBlockIndex();
-        else
-            pindexRescan = pindexGenesisBlock;
-    }*/
+    CWalletDB walletdb("myq.dat");
+    CBlockLocator locator;
+    if (walletdb.ReadBestBlock(locator))
+         pindexRescan = locator.GetBlockIndex();
+    else
+         pindexRescan = pindexGenesisBlock;
     if (pindexBest && pindexBest != pindexRescan)
     {
-        uiInterface.InitMessage(_("Rescanning..."));
-        printf("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexRescan->nHeight, pindexRescan->nHeight);
-        nStart = GetTimeMillis();
-        pwalletMain->ScanForWalletTransactions(pindexRescan, true);
-        printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
-        pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+        rescan();
         nWalletDBUpdated++;
     }
 
