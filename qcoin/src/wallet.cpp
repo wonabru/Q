@@ -794,7 +794,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
     double MaxNodes = addrman.size();
     int ret = 0;
     CNode *node;
-    if(MaxNodes <= 1)
+    if(MaxNodes < 1)
     {
          node = NULL;
     }else{
