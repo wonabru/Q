@@ -27,7 +27,7 @@
 
 using namespace json_spirit;
 
-std::string yourName = "0";
+std::string yourName = "";
 
 using namespace std;
 using namespace boost;
@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x00000048de2527bea761fe64d89073751177423d8430915767b2a507a0eca426");
+uint256 hashGenesisBlock("0x0000004aadeedee1566eb162575b45922ffaa74116c7ddfbcccf809586753f89");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2806,7 +2806,7 @@ bool InitBlockIndex() {
         txNew.vout[0].nValue = COIN;
         txNew.vout[0].scriptPubKey = GenesisName;
         CBlock block;
-        block.SetBlockName("VIVIVI");
+        block.SetBlockName("");
         block.SetBlockPubKey((uint160)reserved[0]);
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
@@ -2815,7 +2815,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 673407373;
+        block.nNonce   = 1521285179;
 
         printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
@@ -2830,7 +2830,7 @@ bool InitBlockIndex() {
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
-        assert(block.hashMerkleRoot == uint256("0x7da371ed89a3482b010d3916d39a63f69d9d07ea951dddcf29d1f7e6d1419c2d"));
+        assert(block.hashMerkleRoot == uint256("0xdd19c2ba1c1e2c9d72bf270f2c046b60c1534d73d7b5db5f8d610da67356a789"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
