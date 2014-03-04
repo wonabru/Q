@@ -800,7 +800,18 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
         {
             CBlock block;
             block.ReadFromDisk(pindex);
-            acceptNameInQNetwork(&block);
+            try {
+                // process block
+                {
+                    LOCK(cs_main);
+                    CValidationState state;
+                    ProcessBlock(state, NULL, &block);
+                    if (state.IsError())
+                        throw "Error in block process!";
+                }
+            } catch (std::exception &e) {
+                printf("%s() : Deserialize or I/O error caught during load\n", __PRETTY_FUNCTION__);
+            }
             BOOST_FOREACH(CTransaction& tx, block.vtx)
             {
                 if (AddToWalletIfInvolvingMe(tx.GetHash(), tx, &block, fUpdate))
