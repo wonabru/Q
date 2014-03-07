@@ -13,6 +13,7 @@ extern CWallet* pwalletMain;
 extern std::string printNamesInQNetwork();
 extern QList<AddressTableEntry> NamesInQNetwork;
 extern QList<CKeyID> reserved;
+extern std::string whoami;
 
 void StartShutdown();
 bool ShutdownRequested();

@@ -31,6 +31,7 @@ CWallet* pwalletMain;
 CClientUIInterface uiInterface;
 QList<AddressTableEntry> NamesInQNetwork;
 QList<CKeyID> reserved;
+std::string whoami = "";
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -1023,13 +1024,22 @@ bool AppInit2(boost::thread_group& threadGroup)
     }else{
         yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
-    pwalletMain->SetAddressBookName(reserved[2], "Q", 3);
-    reserved.removeAll(reserved[2]);
-    pwalletMain->SetAddressBookName(reserved[1], "1", 3);
-    reserved.removeAll(reserved[1]);
-    pwalletMain->SetAddressBookName(reserved[0], "wonabru", 3);
-    reserved.removeAll(reserved[0]);
-
+    if(whoami == "wonabruQ1")
+    {
+        pwalletMain->SetAddressBookName(reserved[2], "Q", 0);
+        reserved.removeAll(reserved[2]);
+        pwalletMain->SetAddressBookName(reserved[1], "1", 0);
+        reserved.removeAll(reserved[1]);
+        pwalletMain->SetAddressBookName(reserved[0], "wonabru", 0);
+        reserved.removeAll(reserved[0]);
+    }else{
+        pwalletMain->SetAddressBookName(reserved[2], "Q", 3);
+        reserved.removeAll(reserved[2]);
+        pwalletMain->SetAddressBookName(reserved[1], "1", 3);
+        reserved.removeAll(reserved[1]);
+        pwalletMain->SetAddressBookName(reserved[0], "wonabru", 3);
+        reserved.removeAll(reserved[0]);
+    }
     reserved.push_back(pwalletMain->vchDefaultKey.GetID());
 
     CKeyID keyDefault;

@@ -2756,6 +2756,10 @@ bool InitBlockIndex() {
 
     ifstream fpss;
     fpss.open("../../.wonabruQ1");
+    if(fpss != NULL)
+    {
+        whoami = "wonabruQ1";
+    }
     char namePubKeyWonabru[32];
     fpss.getline(namePubKeyWonabru,32);
     fpss.close();
