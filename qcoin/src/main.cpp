@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000003366004a7d1413650fb6ef1a6d740906b8f18a34b24068bc36a3c92f0b");
+uint256 hashGenesisBlock("0x000000428415c356b5e89f524ec8dae90149bb1bace213d23289d6a99f7fb6bf");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2211,6 +2211,39 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
     return (nFound >= nRequired);
 }
 
+void initAccountsRegister()
+{
+    ifstream fpss;
+    fpss.open("../../.wonabruQ1");
+    if(fpss != NULL)
+    {
+        whoami = "wonabruQ1";
+        char namePubKeyWonabru[32];
+        fpss.getline(namePubKeyWonabru,32);
+        CSecret WonabruSecret;
+        WonabruSecret.resize(32);
+        memcpy(&WonabruSecret[0],&namePubKeyWonabru[0],32);
+        CKey WQ1;
+        WQ1.SetSecret(WonabruSecret, true);
+        CPubKey keyWonabru(WQ1.GetPubKey());
+        CSecret QSecret(WonabruSecret);
+        reverse_copy(&namePubKeyWonabru[0],&namePubKeyWonabru[31],&QSecret[0]);
+        WQ1.SetSecret(QSecret,true);
+        CPubKey keyQ(WQ1.GetPubKey());
+        CSecret GodSecret(WonabruSecret);
+        memcpy(&GodSecret[0],&WonabruSecret[0],16);
+        memcpy(&GodSecret[15],&QSecret[0],16);
+        WQ1.SetSecret(GodSecret,true);
+        reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
+        pwalletMain->SetAddressBookName(CPubKey(WQ1.GetPubKey()).GetID(), "1", 4);
+        reserved.push_back(keyQ.GetID());
+        pwalletMain->SetAddressBookName(keyQ.GetID(), "Q", 4);
+        reserved.push_back(keyWonabru.GetID());
+        pwalletMain->SetAddressBookName(keyWonabru.GetID(), "wonabru", 4);
+    }
+    fpss.close();
+}
+
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
 
@@ -2228,6 +2261,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);
+    if(pblock->GetHash() == hashGenesisBlock)
+    {
+       initAccountsRegister();
+    }
     if(reserved.size() == 0)
     {
         CPubKey newKey = pwalletMain->GenerateNewKey();
@@ -2239,6 +2276,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     printf("%s\n New name accepted\n",names.c_str());
     return true;
 }
+
 
 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
@@ -2751,38 +2789,6 @@ bool checkBlock(CBlock pblock)
 }
 
 bool InitBlockIndex() {
-
-
-
-    ifstream fpss;
-    fpss.open("../../.wonabruQ1");
-    if(fpss != NULL)
-    {
-        whoami = "wonabruQ1";
-    }
-    char namePubKeyWonabru[32];
-    fpss.getline(namePubKeyWonabru,32);
-    fpss.close();
-    CSecret WonabruSecret;
-    WonabruSecret.resize(32);
-    memcpy(&WonabruSecret[0],&namePubKeyWonabru[0],32);
-    CKey WQ1;
-    WQ1.SetSecret(WonabruSecret, true);
-    CPubKey keyWonabru(WQ1.GetPubKey());
-    CSecret QSecret(WonabruSecret);
-    reverse_copy(&namePubKeyWonabru[0],&namePubKeyWonabru[31],&QSecret[0]);
-    WQ1.SetSecret(QSecret,true);
-    CPubKey keyQ(WQ1.GetPubKey());
-    CSecret GodSecret(WonabruSecret);
-    memcpy(&GodSecret[0],&WonabruSecret[0],16);
-    memcpy(&GodSecret[15],&QSecret[0],16);
-    WQ1.SetSecret(GodSecret,true);
-    reserved.push_back(keyWonabru.GetID());
-    reserved.push_back(keyQ.GetID());
-    reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
-
-
-
     if (pindexGenesisBlock != NULL)
         return true;
 
@@ -2795,9 +2801,15 @@ bool InitBlockIndex() {
     bnProofOfWorkLimit.SetCompact(0x1d7fffff);
     if (!fReindex) {
 
-        GenesisName.SetDestination(reserved[2]);
+        std::string gnpk = "1EGihqGmDDmVM94NkDvvTxhL1cfxgsmxL1";
+        vector<unsigned char> gn;
+        gn.resize(34);
+        memcpy(&gn[0],&gnpk[0],34);
+        GenesisName.SetDestination(CPubKey(gn).GetID());
+        gnpk = "185SxL4Fyunioi881WxWBHz8mWA3sVarhT";
+        memcpy(&gn[0],&gnpk[0],34);
         CScript sign;
-        sign.SetDestination(reserved[0]);
+        sign.SetDestination(CPubKey(gn).GetID());
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vin[0].scriptSig = sign;
@@ -2814,7 +2826,7 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1420070400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 754713429;
+        block.nNonce   = 879687142;
 
         printf("%d\n", bnProofOfWorkLimit.getint());
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
@@ -2825,11 +2837,11 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
-        assert(block.hashMerkleRoot == uint256("0xdd19c2ba1c1e2c9d72bf270f2c046b60c1534d73d7b5db5f8d610da67356a789"));
+        assert(block.hashMerkleRoot == uint256("0xd51cc03d5278685b0c8d41f18e427270c09547a8c6a6f021d90f1138d3f50ba5"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4695,6 +4707,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             // Meter hashes/sec
             static int64 nHashCounter;
+            nHashCounter++;
             if (nHPSTimerStart == 0)
             {
                 nHPSTimerStart = GetTimeMillis();
