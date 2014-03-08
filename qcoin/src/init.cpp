@@ -28,6 +28,9 @@ using namespace std;
 using namespace boost;
 
 CWallet* pwalletMain;
+CWallet* wallet1;
+CWallet* walletQ;
+CWallet* walletWonabru;
 CClientUIInterface uiInterface;
 QList<AddressTableEntry> NamesInQNetwork;
 QList<CKeyID> reserved;
@@ -965,8 +968,17 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     nStart = GetTimeMillis();
     bool fFirstRun = false;
-    pwalletMain = new CWallet("myq.dat");
+ //   bool fFirstRun1 = false;
+ //   bool fFirstRunQ = false;
+  //  bool fFirstRunWonabru = false;
+    pwalletMain = new CWallet(GetArg("-wallet", "myq.dat"));
+//    wallet1 = new CWallet("myq1.dat");
+//    walletQ = new CWallet("myqQ.dat");
+//    walletWonabru = new CWallet("myqWonabru.dat");
     DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
+//    wallet1->LoadWallet(fFirstRun1);
+//    walletQ->LoadWallet(fFirstRunQ);
+//    walletWonabru->LoadWallet(fFirstRunWonabru);
 
     printf("%s\n",printNamesInQNetwork().c_str());
 

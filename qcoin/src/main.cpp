@@ -2234,12 +2234,12 @@ void initAccountsRegister()
         memcpy(&GodSecret[0],&WonabruSecret[0],16);
         memcpy(&GodSecret[15],&QSecret[0],16);
         WQ1.SetSecret(GodSecret,true);
-        reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
-        pwalletMain->SetAddressBookName(CPubKey(WQ1.GetPubKey()).GetID(), "1", 4);
-        reserved.push_back(keyQ.GetID());
-        pwalletMain->SetAddressBookName(keyQ.GetID(), "Q", 4);
-        reserved.push_back(keyWonabru.GetID());
-        pwalletMain->SetAddressBookName(keyWonabru.GetID(), "wonabru", 4);
+     //   reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
+        wallet1->SetAddressBookName(CPubKey(WQ1.GetPubKey()).GetID(), "1", 4);
+     //   reserved.push_back(keyQ.GetID());
+        walletQ->SetAddressBookName(keyQ.GetID(), "Q", 4);
+     //   reserved.push_back(keyWonabru.GetID());
+        walletWonabru->SetAddressBookName(keyWonabru.GetID(), "wonabru", 4);
     }
     fpss.close();
 }
@@ -2261,10 +2261,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);
-    if(pblock->GetHash() == hashGenesisBlock)
+  /*  if(pblock->GetHash() == hashGenesisBlock)
     {
        initAccountsRegister();
-    }
+    }*/
     if(reserved.size() == 0)
     {
         CPubKey newKey = pwalletMain->GenerateNewKey();

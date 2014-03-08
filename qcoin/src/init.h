@@ -10,6 +10,9 @@
 #include "addresstablemodel.h"
 
 extern CWallet* pwalletMain;
+extern CWallet* wallet1;
+extern CWallet* walletQ;
+extern CWallet* walletWonabru;
 extern std::string printNamesInQNetwork();
 extern QList<AddressTableEntry> NamesInQNetwork;
 extern QList<CKeyID> reserved;
