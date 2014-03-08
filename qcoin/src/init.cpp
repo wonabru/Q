@@ -1054,7 +1054,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     string tata = "195.245.104.9";
     string brat = "195.245.104.23";
-    string jaN = "37.238.76.144";
+    string jaN = "144.76.238.37";
     string jaI = "89.71.82.19";
 
     CAddress addr1;
