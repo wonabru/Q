@@ -44,7 +44,7 @@ void QRCodeDialog::setModel(OptionsModel *model)
     if (model)
         connect(model, SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
 
-    // update the display unit, to not use the default ("Q")
+    // update the display unit, to not use the default ("PLM")
     updateDisplayUnit();
 }
 
@@ -92,8 +92,8 @@ QString QRCodeDialog::getURI()
     {
         if (ui->lnReqAmount->validate())
         {
-            // even if we allow a non Q unit input in lnReqAmount, we generate the URI with Q as unit (as defined in BIP21)
-            ret += QString("?amount=%1").arg(QcoinUnits::format(QcoinUnits::Q, ui->lnReqAmount->value()));
+            // even if we allow a non PLM unit input in lnReqAmount, we generate the URI with PLM as unit (as defined in BIP21)
+            ret += QString("?amount=%1").arg(QcoinUnits::format(QcoinUnits::PLM, ui->lnReqAmount->value()));
             paramCount++;
         }
         else

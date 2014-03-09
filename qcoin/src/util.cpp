@@ -1187,7 +1187,7 @@ boost::filesystem::path GetDefaultDataDir()
     // Unix: ~/.qcoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Q";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "PLM";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -1199,10 +1199,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     fs::create_directory(pathRet);
-    return pathRet / "Q";
+    return pathRet / "PLM";
 #else
     // Unix
-    return pathRet / ".Q";
+    return pathRet / ".PLM";
 #endif
 #endif
 }

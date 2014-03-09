@@ -1,7 +1,7 @@
 http://www.q-coin.org
 
 Copyright (c) 2009-2013 Qcoin Developers
-Copyright (c) 2014	Q-coin	Developers
+Copyright (c) 2014	PLM-coin	Developers
 
 License
 -------

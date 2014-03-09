@@ -19,7 +19,7 @@ public:
      */
     enum Unit
     {
-        Q,
+        PLM,
         mQ,
         uQ
     };

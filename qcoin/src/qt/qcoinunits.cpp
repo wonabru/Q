@@ -11,7 +11,7 @@ QcoinUnits::QcoinUnits(QObject *parent):
 QList<QcoinUnits::Unit> QcoinUnits::availableUnits()
 {
     QList<QcoinUnits::Unit> unitlist;
-    unitlist.append(Q);
+    unitlist.append(PLM);
     unitlist.append(mQ);
     unitlist.append(uQ);
     return unitlist;
@@ -21,7 +21,7 @@ bool QcoinUnits::valid(int unit)
 {
     switch(unit)
     {
-    case Q:
+    case PLM:
     case mQ:
     case uQ:
         return true;
@@ -34,7 +34,7 @@ QString QcoinUnits::name(int unit)
 {
     switch(unit)
     {
-    case Q: return QString("Q");
+    case PLM: return QString("PLM");
     case mQ: return QString("mQ");
     case uQ: return QString::fromUtf8("μQ");
     default: return QString("???");
@@ -45,7 +45,7 @@ QString QcoinUnits::description(int unit)
 {
     switch(unit)
     {
-    case Q: return QString("Qcoins");
+    case PLM: return QString("Qcoins");
     case mQ: return QString("Milli-Qcoins (1 / 1,000)");
     case uQ: return QString("Micro-Qcoins (1 / 1,000,000)");
     default: return QString("???");
@@ -56,7 +56,7 @@ qint64 QcoinUnits::factor(int unit)
 {
     switch(unit)
     {
-    case Q:  return 100000000;
+    case PLM:  return 100000000;
     case mQ: return 100000;
     case uQ: return 100;
     default:   return 100000000;
@@ -67,7 +67,7 @@ int QcoinUnits::amountDigits(int unit)
 {
     switch(unit)
     {
-    case Q: return 8; // 21,000,000 (# digits, without commas)
+    case PLM: return 8; // 21,000,000 (# digits, without commas)
     case mQ: return 11; // 21,000,000,000
     case uQ: return 14; // 21,000,000,000,000
     default: return 0;
@@ -78,7 +78,7 @@ int QcoinUnits::decimals(int unit)
 {
     switch(unit)
     {
-    case Q: return 8;
+    case PLM: return 8;
     case mQ: return 5;
     case uQ: return 2;
     default: return 0;

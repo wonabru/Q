@@ -1,6 +1,6 @@
 TEMPLATE = app
-TARGET = Q
-macx:TARGET = "Q"
+TARGET = PLM
+macx:TARGET = "PLM"
 VERSION = 0.4.8
 INCLUDEPATH += src src/json src/qt
 QT += network

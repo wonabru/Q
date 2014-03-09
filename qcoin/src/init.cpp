@@ -923,7 +923,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         return InitError(_("You need to rebuild the databases using -reindex to change -txindex"));
 
     // as LoadBlockIndex can take several minutes, it's possible the user
-    // requested to kill Q during the last operation. If so, exit.
+    // requested to kill PLM during the last operation. If so, exit.
     // As the program has not fully started yet, Shutdown() is possibly overkill.
     if (fRequestShutdown)
     {

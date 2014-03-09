@@ -37,7 +37,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
        // ui->labelEdit->setEnabled(false);
         break;
     case EditSendingAddress:
-        setWindowTitle(tr("Names registered in Q Network"));
+        setWindowTitle(tr("Names registered in PLM Network"));
         ui->addressEdit->setEnabled(false);
         ui->labelEdit->setEnabled(false);
         break;

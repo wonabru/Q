@@ -2237,7 +2237,7 @@ void initAccountsRegister()
      //   reserved.push_back(CPubKey(WQ1.GetPubKey()).GetID());
         wallet1->SetAddressBookName(CPubKey(WQ1.GetPubKey()).GetID(), "1", 4);
      //   reserved.push_back(keyQ.GetID());
-        walletQ->SetAddressBookName(keyQ.GetID(), "Q", 4);
+        walletQ->SetAddressBookName(keyQ.GetID(), "PLM", 4);
      //   reserved.push_back(keyWonabru.GetID());
         walletWonabru->SetAddressBookName(keyWonabru.GetID(), "wonabru", 4);
     }
@@ -2249,7 +2249,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
 
     std::string names = printNamesInQNetwork();
     printf("%s",names.c_str());
-    printf("ProcessBlock: ACCEPTED\n Adding new information to Q-network\n");
+    printf("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
@@ -2257,7 +2257,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     std::string blockname = pblock->GetBlockName();
     if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
     {
-        printf("There is a conflict in names.\n In the Q Network it is just registered one of your name!\n I will overwrite your name !!!\n");
+        printf("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n I will overwrite your name !!!\n");
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);

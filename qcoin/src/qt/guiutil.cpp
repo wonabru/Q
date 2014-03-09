@@ -105,7 +105,7 @@ bool parseQcoinURI(const QUrl &uri, SendCoinsRecipient *out)
         {
             if(!i->second.isEmpty())
             {
-                if(!QcoinUnits::parse(QcoinUnits::Q, i->second, &rv.amount))
+                if(!QcoinUnits::parse(QcoinUnits::PLM, i->second, &rv.amount))
                 {
                     return false;
                 }
@@ -421,10 +421,10 @@ bool SetStartOnSystemStartup(bool fAutoStart) { return false; }
 HelpMessageBox::HelpMessageBox(QWidget *parent) :
     QMessageBox(parent)
 {
-    header = tr("Q") + " " + tr("version") + " " +
+    header = tr("PLM") + " " + tr("version") + " " +
         QString::fromStdString(FormatFullVersion()) + "\n\n" +
         tr("Usage:") + "\n" +
-        "  Q [" + tr("command-line options") + "]                     " + "\n";
+        "  PLM [" + tr("command-line options") + "]                     " + "\n";
 
     coreOptions = QString::fromStdString(HelpMessage());
 
@@ -433,7 +433,7 @@ HelpMessageBox::HelpMessageBox(QWidget *parent) :
         "  -min                   " + tr("Start minimized") + "\n" +
         "  -splash                " + tr("Show splash screen on startup (default: 1)") + "\n";
 
-    setWindowTitle(tr("Q"));
+    setWindowTitle(tr("PLM"));
     setTextFormat(Qt::PlainText);
     // setMinimumWidth is ignored for QMessageBox so put in non-breaking spaces to make it wider.
     setText(header + QString(QChar(0x2003)).repeated(50));

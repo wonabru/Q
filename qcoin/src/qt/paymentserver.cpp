@@ -32,7 +32,7 @@ const QString Q_IPC_PREFIX("qcoin:");
 //
 static QString ipcServerName()
 {
-    QString name("Q");
+    QString name("PLM");
 
     // Append a simple hash of the datadir
     // Note that GetDataDir(true) returns a different path

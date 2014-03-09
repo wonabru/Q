@@ -154,9 +154,9 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName("Qcoin");
     QApplication::setOrganizationDomain("q-coin.org");
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
-        QApplication::setApplicationName("Q-testnet");
+        QApplication::setApplicationName("PLM-testnet");
     else
-        QApplication::setApplicationName("Q");
+        QApplication::setApplicationName("PLM");
 
     // ... then GUI settings:
     OptionsModel optionsModel;
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
                 window.removeAllWallets();
                 guiref = 0;
             }
-            // Shutdown the core and its threads, but don't exit Q here
+            // Shutdown the core and its threads, but don't exit PLM here
             threadGroup.interrupt_all();
             threadGroup.join_all();
             Shutdown();

@@ -64,7 +64,7 @@ int ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const unsigned ch
     BIGNUM *field = NULL;
     EC_POINT *R = NULL;
     EC_POINT *O = NULL;
-    EC_POINT *Q = NULL;
+    EC_POINT *PLM = NULL;
     BIGNUM *rr = NULL;
     BIGNUM *zero = NULL;
     int n = 0;
@@ -90,7 +90,7 @@ int ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const unsigned ch
         if (!EC_POINT_mul(group, O, NULL, R, order, ctx)) { ret=-2; goto err; }
         if (!EC_POINT_is_at_infinity(group, O)) { ret = 0; goto err; }
     }
-    if ((Q = EC_POINT_new(group)) == NULL) { ret = -2; goto err; }
+    if ((PLM = EC_POINT_new(group)) == NULL) { ret = -2; goto err; }
     n = EC_GROUP_get_degree(group);
     e = BN_CTX_get(ctx);
     if (!BN_bin2bn(msg, msglen, e)) { ret=-1; goto err; }
@@ -104,8 +104,8 @@ int ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const unsigned ch
     if (!BN_mod_mul(sor, ecsig->s, rr, order, ctx)) { ret=-1; goto err; }
     eor = BN_CTX_get(ctx);
     if (!BN_mod_mul(eor, e, rr, order, ctx)) { ret=-1; goto err; }
-    if (!EC_POINT_mul(group, Q, eor, R, sor, ctx)) { ret=-2; goto err; }
-    if (!EC_KEY_set_public_key(eckey, Q)) { ret=-2; goto err; }
+    if (!EC_POINT_mul(group, PLM, eor, R, sor, ctx)) { ret=-2; goto err; }
+    if (!EC_KEY_set_public_key(eckey, PLM)) { ret=-2; goto err; }
 
     ret = 1;
 
@@ -116,7 +116,7 @@ err:
     }
     if (R != NULL) EC_POINT_free(R);
     if (O != NULL) EC_POINT_free(O);
-    if (Q != NULL) EC_POINT_free(Q);
+    if (PLM != NULL) EC_POINT_free(PLM);
     return ret;
 }
 
