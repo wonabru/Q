@@ -109,7 +109,7 @@ void AskPassphraseDialog::accept()
                 {
                     QMessageBox::warning(this, tr("Root encrypted"),
                                          "<qt>" +
-                                         tr("Qcoin will close now to finish the encryption process. "
+                                         tr("Marka will close now to finish the encryption process. "
                                          "Remember that encrypting your wallet cannot fully protect "
                                          "your qcoins from being stolen by malware infecting your computer.") +
                                          "<br><br><b>" +

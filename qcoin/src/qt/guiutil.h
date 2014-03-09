@@ -16,7 +16,7 @@ class QUrl;
 class QAbstractItemView;
 QT_END_NAMESPACE
 
-/** Utility functions used by the Qcoin Qt UI.
+/** Utility functions used by the Marka Qt UI.
  */
 namespace GUIUtil
 {
@@ -24,7 +24,7 @@ namespace GUIUtil
     QString dateTimeStr(const QDateTime &datetime);
     QString dateTimeStr(qint64 nTime);
 
-    // Render Qcoin addresses in monospace font
+    // Render Marka addresses in monospace font
     QFont qcoinAddressFont();
 
     // Set up widgets for address and amounts
@@ -32,7 +32,7 @@ namespace GUIUtil
     void setupAmountWidget(QLineEdit *widget, QWidget *parent);
 
     // Parse "qcoin:" URI into recipient object, return true on successful parsing
-    // See Qcoin URI definition discussion here: https://qcointalk.org/index.php?topic=33490.0
+    // See Marka URI definition discussion here: https://qcointalk.org/index.php?topic=33490.0
     bool parseQcoinURI(const QUrl &uri, SendCoinsRecipient *out);
     bool parseQcoinURI(QString uri, SendCoinsRecipient *out);
 

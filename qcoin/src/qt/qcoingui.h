@@ -34,7 +34,7 @@ class QAction;
 QT_END_NAMESPACE
 
 /**
-  Qcoin GUI main class. This class represents the main window of the Qcoin UI. It communicates with both the client and
+  Marka GUI main class. This class represents the main window of the Marka UI. It communicates with both the client and
   wallet models to give the user an up-to-date view of the current core state.
 */
 class QcoinGUI : public QMainWindow

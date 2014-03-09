@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Qcoin developers
+// Copyright (c) 2012 The Marka developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_LEVELDB_H

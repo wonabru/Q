@@ -1454,7 +1454,7 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, int64 nVal
     if (nValue + nTransactionFee > GetBalance())
         return _("Insufficient funds");
 
-    // Parse Qcoin address
+    // Parse Marka address
     CScript scriptPubKey;
     scriptPubKey.SetDestination(address);
 

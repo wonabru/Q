@@ -57,7 +57,7 @@ public:
 
     enum ColumnIndex {
         Label = 0,   /**< User specified label */
-        Address = 1  /**< Qcoin address */
+        Address = 1  /**< Marka address */
     };
 
     enum RoleIndex {

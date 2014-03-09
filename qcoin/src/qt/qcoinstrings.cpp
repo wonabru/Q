@@ -17,7 +17,7 @@ QT_TRANSLATE_NOOP("qcoin-core", ""
 "If the file does not exist, create it with owner-readable-only file "
 "permissions.\n"
 "It is also recommended to set alertnotify so you are notified of problems;\n"
-"for example: alertnotify=echo %%s | mail -s \"Qcoin Alert\" admin@foo.com\n"),
+"for example: alertnotify=echo %%s | mail -s \"Marka Alert\" admin@foo.com\n"),
 QT_TRANSLATE_NOOP("qcoin-core", ""
 "Acceptable ciphers (default: TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!AH:!3DES:"
 "@STRENGTH)"),
@@ -30,7 +30,7 @@ QT_TRANSLATE_NOOP("qcoin-core", ""
 "Bind to given address and always listen on it. Use [host]:port notation for "
 "IPv6"),
 QT_TRANSLATE_NOOP("qcoin-core", ""
-"Cannot obtain a lock on data directory %s. Qcoin is probably already "
+"Cannot obtain a lock on data directory %s. Marka is probably already "
 "running."),
 QT_TRANSLATE_NOOP("qcoin-core", ""
 "Error: The transaction was rejected! This might happen if some of the coins "
@@ -63,7 +63,7 @@ QT_TRANSLATE_NOOP("qcoin-core", ""
 "This is a pre-release test build - use at your own risk - do not use for "
 "mining or merchant applications"),
 QT_TRANSLATE_NOOP("qcoin-core", ""
-"Unable to bind to %s on this computer. Qcoin is probably already running."),
+"Unable to bind to %s on this computer. Marka is probably already running."),
 QT_TRANSLATE_NOOP("qcoin-core", ""
 "Warning: -paytxfee is set very high! This is the transaction fee you will "
 "pay if you send a transaction."),
@@ -72,7 +72,7 @@ QT_TRANSLATE_NOOP("qcoin-core", ""
 "or other nodes may need to upgrade."),
 QT_TRANSLATE_NOOP("qcoin-core", ""
 "Warning: Please check that your computer's date and time are correct! If "
-"your clock is wrong Qcoin will not work properly."),
+"your clock is wrong Marka will not work properly."),
 QT_TRANSLATE_NOOP("qcoin-core", ""
 "Warning: error reading myq.dat! All keys read correctly, but transaction "
 "data or address book entries might be missing or incorrect."),
@@ -91,7 +91,7 @@ QT_TRANSLATE_NOOP("qcoin-core", "Add a node to connect to and attempt to keep th
 QT_TRANSLATE_NOOP("qcoin-core", "Allow DNS lookups for -addnode, -seednode and -connect"),
 QT_TRANSLATE_NOOP("qcoin-core", "Allow JSON-RPC connections from specified IP address"),
 QT_TRANSLATE_NOOP("qcoin-core", "Attempt to recover private keys from a corrupt myq.dat"),
-QT_TRANSLATE_NOOP("qcoin-core", "Qcoin version"),
+QT_TRANSLATE_NOOP("qcoin-core", "Marka version"),
 QT_TRANSLATE_NOOP("qcoin-core", "Block creation options:"),
 QT_TRANSLATE_NOOP("qcoin-core", "Cannot downgrade wallet"),
 QT_TRANSLATE_NOOP("qcoin-core", "Cannot resolve -bind address: '%s'"),
@@ -109,7 +109,7 @@ QT_TRANSLATE_NOOP("qcoin-core", "Error initializing root.database environment %s
 QT_TRANSLATE_NOOP("qcoin-core", "Error loading block database"),
 QT_TRANSLATE_NOOP("qcoin-core", "Error loading myq.dat"),
 QT_TRANSLATE_NOOP("qcoin-core", "Error loading myq.dat: Root corrupted"),
-QT_TRANSLATE_NOOP("qcoin-core", "Error loading myq.dat: Root requires newer version of Qcoin"),
+QT_TRANSLATE_NOOP("qcoin-core", "Error loading myq.dat: Root requires newer version of Marka"),
 QT_TRANSLATE_NOOP("qcoin-core", "Error opening block database"),
 QT_TRANSLATE_NOOP("qcoin-core", "Error"),
 QT_TRANSLATE_NOOP("qcoin-core", "Error: Disk space is low!"),
@@ -162,7 +162,7 @@ QT_TRANSLATE_NOOP("qcoin-core", "Rebuild block chain index from current blk000??
 QT_TRANSLATE_NOOP("qcoin-core", "Rescan the block chain for missing wallet transactions"),
 QT_TRANSLATE_NOOP("qcoin-core", "Rescanning..."),
 QT_TRANSLATE_NOOP("qcoin-core", "Run in the background as a daemon and accept commands"),
-QT_TRANSLATE_NOOP("qcoin-core", "SSL options: (see the Qcoin Wiki for SSL setup instructions)"),
+QT_TRANSLATE_NOOP("qcoin-core", "SSL options: (see the Marka Wiki for SSL setup instructions)"),
 QT_TRANSLATE_NOOP("qcoin-core", "Select the version of socks proxy to use (4-5, default: 5)"),
 QT_TRANSLATE_NOOP("qcoin-core", "Send command to -server or qcoind"),
 QT_TRANSLATE_NOOP("qcoin-core", "Send commands to node running on <ip> (default: 127.0.0.1)"),
@@ -202,7 +202,7 @@ QT_TRANSLATE_NOOP("qcoin-core", "Use the test network"),
 QT_TRANSLATE_NOOP("qcoin-core", "Username for JSON-RPC connections"),
 QT_TRANSLATE_NOOP("qcoin-core", "Verifying blocks..."),
 QT_TRANSLATE_NOOP("qcoin-core", "Verifying wallet..."),
-QT_TRANSLATE_NOOP("qcoin-core", "Root needed to be rewritten: restart Qcoin to complete"),
+QT_TRANSLATE_NOOP("qcoin-core", "Root needed to be rewritten: restart Marka to complete"),
 QT_TRANSLATE_NOOP("qcoin-core", "Warning"),
 QT_TRANSLATE_NOOP("qcoin-core", "Warning: This version is obsolete, upgrade required!"),
 QT_TRANSLATE_NOOP("qcoin-core", "You need to rebuild the databases using -reindex to change -txindex"),

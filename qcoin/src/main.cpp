@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Qcoin developers
+// Copyright (c) 2009-2012 The Marka developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -80,7 +80,7 @@ CScript COINBASE_FLAGS;
 CScript GenesisName;
 
 
-const string strMessageMagic = "Qcoin Signed Message:\n";
+const string strMessageMagic = "Marka Signed Message:\n";
 
 double dHashesPerSec = 0.0;
 int64 nHPSTimerStart = 0;
@@ -4241,7 +4241,7 @@ std::string printNamesInQNetwork()
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
-                printf("Invalid Qcoin address");
+                printf("Invalid Marka address");
             CScript scriptPubKey;
             scriptPubKey.SetDestination(address.Get());
             rets += "Name " + item.label.toStdString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
@@ -4282,7 +4282,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
-                printf("Invalid Qcoin address");
+                printf("Invalid Marka address");
             CScript pubKey;
             pubKey.SetDestination(address.Get());
             CTxOut txout;

@@ -2,7 +2,7 @@
  * Qt4 qcoin GUI.
  *
  * W.J. van der Laan 2011-2012
- * The Qcoin Developers 2011-2013
+ * The Marka Developers 2011-2013
  */
 #ifndef WALLETSTACK_H
 #define WALLETSTACK_H
