@@ -120,7 +120,8 @@ void WalletModel::updateAddressBook(const QString &address, const QString &label
 
 bool WalletModel::validateAddress(const QString &address)
 {
-    CQcoinAddress addressParsed(address.toStdString());
+    CKeyID key = this->getWallet()->GetKeyID(address.toStdString());
+    CQcoinAddress addressParsed(key);
     return addressParsed.IsValid();
 }
 

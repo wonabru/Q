@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Marka developers
+// Copyright (c) 2009-2012 The Mark developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -80,7 +80,7 @@ CScript COINBASE_FLAGS;
 CScript GenesisName;
 
 
-const string strMessageMagic = "Marka Signed Message:\n";
+const string strMessageMagic = "Mark Signed Message:\n";
 
 double dHashesPerSec = 0.0;
 int64 nHPSTimerStart = 0;
@@ -4241,7 +4241,7 @@ std::string printNamesInQNetwork()
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
-                printf("Invalid Marka address");
+                printf("Invalid Mark address");
             CScript scriptPubKey;
             scriptPubKey.SetDestination(address.Get());
             rets += "Name " + item.label.toStdString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
@@ -4282,7 +4282,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
-                printf("Invalid Marka address");
+                printf("Invalid Mark address");
             CScript pubKey;
             pubKey.SetDestination(address.Get());
             CTxOut txout;
@@ -4644,7 +4644,7 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    GenerateQcoins(true, reserved.last());
+    GenerateMarks(true, reserved.last());
     rescan(pwalletMain,pindexBest,pindexGenesisBlock);
 }
 
@@ -4752,7 +4752,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 }
 
 
-void GenerateQcoins(bool fGenerate, CKeyID key)
+void GenerateMarks(bool fGenerate, CKeyID key)
 {
 
     static boost::thread_group* minerThreads = NULL;
@@ -4778,7 +4778,7 @@ void GenerateQcoins(bool fGenerate, CKeyID key)
         minerThreads->create_thread(boost::bind(&QcoinMiner, key));
 }
 
-void GenerateQcoinsGenesisBlock(CBlock * pblock)
+void GenerateMarksGenesisBlock(CBlock * pblock)
 {
     static boost::thread_group* minerThreads = NULL;
     RandAddSeedPerfmon();

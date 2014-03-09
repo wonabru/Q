@@ -20,7 +20,7 @@ enum BlockSource {
     BLOCK_SOURCE_NETWORK
 };
 
-/** Model for Marka network client. */
+/** Model for Mark network client. */
 class ClientModel : public QObject
 {
     Q_OBJECT

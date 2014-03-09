@@ -4,7 +4,7 @@
 #include <QString>
 #include <QAbstractListModel>
 
-/** Marka unit definitions. Encapsulates parsing and formatting
+/** Mark unit definitions. Encapsulates parsing and formatting
    and serves as list model for drop-down selection boxes.
 */
 class QcoinUnits: public QAbstractListModel
@@ -14,7 +14,7 @@ class QcoinUnits: public QAbstractListModel
 public:
     explicit QcoinUnits(QObject *parent);
 
-    /** Marka units.
+    /** Mark units.
       @note Source: https://en.qcoin.it/wiki/Units . Please add only sensible ones
      */
     enum Unit

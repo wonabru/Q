@@ -22,7 +22,7 @@ public:
     qint64 amount;
 };
 
-/** Interface to Marka wallet from Qt view code. */
+/** Interface to Mark wallet from Qt view code. */
 class WalletModel : public QObject
 {
     Q_OBJECT
@@ -106,6 +106,11 @@ public:
 
         void CopyFrom(const UnlockContext& rhs);
     };
+
+    CWallet* getWallet()
+    {
+        return wallet;
+    }
 
     UnlockContext requestUnlock();
 

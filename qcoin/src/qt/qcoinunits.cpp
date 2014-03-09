@@ -45,9 +45,9 @@ QString QcoinUnits::description(int unit)
 {
     switch(unit)
     {
-    case PLM: return QString("Qcoins");
-    case mQ: return QString("Milli-Qcoins (1 / 1,000)");
-    case uQ: return QString("Micro-Qcoins (1 / 1,000,000)");
+    case PLM: return QString("Marks");
+    case mQ: return QString("Milli-Marks (1 / 1,000)");
+    case uQ: return QString("Micro-Marks (1 / 1,000,000)");
     default: return QString("???");
     }
 }

@@ -8,7 +8,7 @@ namespace Ui {
 }
 class ClientModel;
 
-/** Local Marka RPC console. */
+/** Local Mark RPC console. */
 class RPCConsole: public QDialog
 {
     Q_OBJECT

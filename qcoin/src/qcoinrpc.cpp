@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Marka developers
+// Copyright (c) 2009-2012 The Mark developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -183,10 +183,10 @@ Value stop(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "Stop Marka server.");
+            "Stop Mark server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Marka server stopping";
+    return "Mark server stopping";
 }
 
 
@@ -483,7 +483,7 @@ bool HTTPAuthorized(map<string, string>& mapHeaders)
 }
 
 //
-// JSON-RPC protocol.  Marka speaks version 1.0 for maximum compatibility,
+// JSON-RPC protocol.  Mark speaks version 1.0 for maximum compatibility,
 // but uses JSON-RPC 1.1/2.0 standards for parts of the 1.0 standard that were
 // unspecified (HTTP errors and contents of 'error').
 //
@@ -752,7 +752,7 @@ void StartRPCThreads()
               "The username and password MUST NOT be the same.\n"
               "If the file does not exist, create it with owner-readable-only file permissions.\n"
               "It is also recommended to set alertnotify so you are notified of problems;\n"
-              "for example: alertnotify=echo %%s | mail -s \"Marka Alert\" admin@foo.com\n"),
+              "for example: alertnotify=echo %%s | mail -s \"Mark Alert\" admin@foo.com\n"),
                 strWhatAmI.c_str(),
                 GetConfigFile().string().c_str(),
                 EncodeBase64(&rand_pwd[0],(size_t)(&rand_pwd[0]+32)).c_str()),

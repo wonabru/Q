@@ -277,12 +277,12 @@ bool ToolTipToRichTextFilter::eventFilter(QObject *obj, QEvent *evt)
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
-    return GetSpecialFolderPath(CSIDL_STARTUP) / "Marka.lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / "Mark.lnk";
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for Marka.lnk
+    // check for Mark.lnk
     return boost::filesystem::exists(StartupShortcutPath());
 }
 
@@ -400,7 +400,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         // Write a qcoin.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
-        optionFile << "Name=Marka\n";
+        optionFile << "Name=Mark\n";
         optionFile << "Exec=" << pszExePath << " -min\n";
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";

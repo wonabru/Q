@@ -1454,7 +1454,7 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, int64 nVal
     if (nValue + nTransactionFee > GetBalance())
         return _("Insufficient funds");
 
-    // Parse Marka address
+    // Parse Mark address
     CScript scriptPubKey;
     scriptPubKey.SetDestination(address);
 
@@ -1524,6 +1524,22 @@ std::string CWallet::GetName(CKeyID key)
         return mapAddressBook[address];
     }
     return name;
+}
+
+CKeyID CWallet::GetKeyID(std::string name)
+{
+    uint160 address((uint160)0);
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == name)
+        {
+            memcpy(&address,&item.first,20);
+            break;
+        }
+    }
+    CKeyID ret(address);
+    return ret;
 }
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)

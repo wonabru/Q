@@ -23,8 +23,8 @@ SendCoinsEntry::SendCoinsEntry(QWidget *parent) :
 #endif
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
-    ui->payTo->setPlaceholderText(tr("Enter a Marka address (e.g. 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L)"));
+  //  ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
+    ui->payTo->setPlaceholderText(tr("Enter an account name (e.g. wonabru)"));
 #endif
     setFocusPolicy(Qt::TabFocus);
     setFocusProxy(ui->payTo);
@@ -62,8 +62,8 @@ void SendCoinsEntry::on_payTo_textChanged(const QString &address)
         return;
     // Fill in label from address book, if address has an associated label
     QString associatedLabel = model->getAddressTableModel()->labelForAddress(address);
-    if(!associatedLabel.isEmpty())
-        ui->addAsLabel->setText(associatedLabel);
+  //  if(!associatedLabel.isEmpty())
+ //       ui->addAsLabel->setText(associatedLabel);
 }
 
 void SendCoinsEntry::setModel(WalletModel *model)
@@ -84,7 +84,7 @@ void SendCoinsEntry::setRemoveEnabled(bool enabled)
 void SendCoinsEntry::clear()
 {
     ui->payTo->clear();
-    ui->addAsLabel->clear();
+ //   ui->addAsLabel->clear();
     ui->payAmount->clear();
     ui->payTo->setFocus();
     // update the display unit, to not use the default ("PLM")
@@ -130,7 +130,6 @@ SendCoinsRecipient SendCoinsEntry::getValue()
     SendCoinsRecipient rv;
 
     rv.address = ui->payTo->text();
-    rv.label = ui->addAsLabel->text();
     rv.amount = ui->payAmount->value();
 
     return rv;
@@ -142,14 +141,13 @@ QWidget *SendCoinsEntry::setupTabChain(QWidget *prev)
     QWidget::setTabOrder(ui->payTo, ui->addressBookButton);
     QWidget::setTabOrder(ui->addressBookButton, ui->pasteButton);
     QWidget::setTabOrder(ui->pasteButton, ui->deleteButton);
-    QWidget::setTabOrder(ui->deleteButton, ui->addAsLabel);
-    return ui->payAmount->setupTabChain(ui->addAsLabel);
+  //  QWidget::setTabOrder(ui->deleteButton, ui->addAsLabel);
+    return ui->payAmount->setupTabChain(ui->payTo);
 }
 
 void SendCoinsEntry::setValue(const SendCoinsRecipient &value)
 {
-    ui->payTo->setText(value.address);
-    ui->addAsLabel->setText(value.label);
+    ui->payTo->setText(value.label);
     ui->payAmount->setValue(value.amount);
 }
 
