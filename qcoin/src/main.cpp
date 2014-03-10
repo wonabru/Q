@@ -2269,18 +2269,14 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     if(reserved.size() == 0)
     {
         CPubKey newKey = pwalletMain->GenerateNewKey();
-        if (!pwalletMain->SetAddressBookName(newKey.GetID(), yourName + newKey.GetID().GetHex(), 0))
+        std::string newName = yourName + "." + newKey.GetID().GetHex();
+        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
                 printf("Reserved.size() == 0 and cannot write default address\n");
         reserved.push_back((CKeyID)(newKey.GetID()));
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
     return true;
-}
-
-std::string getNextName(std::string myName)
-{
-
 }
 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
