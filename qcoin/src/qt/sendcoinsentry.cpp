@@ -7,6 +7,7 @@
 #include "walletmodel.h"
 #include "optionsmodel.h"
 #include "addresstablemodel.h"
+#include "base58.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -125,11 +126,13 @@ bool SendCoinsEntry::validate()
     return retval;
 }
 
-SendCoinsRecipient SendCoinsEntry::getValue()
+SendCoinsRecipient SendCoinsEntry::getValue(CWallet *wallet)
 {
     SendCoinsRecipient rv;
+    CQcoinAddress addr(wallet->GetKeyID(ui->payTo->text().toStdString()));
 
-    rv.address = ui->payTo->text();
+    rv.address = QString((const char *)addr.ToString().c_str());
+    rv.label = ui->payTo->text();
     rv.amount = ui->payAmount->value();
 
     return rv;

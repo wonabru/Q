@@ -2,6 +2,7 @@
 #define SENDCOINSENTRY_H
 
 #include <QFrame>
+#include "wallet.h"
 
 namespace Ui {
     class SendCoinsEntry;
@@ -20,7 +21,7 @@ public:
 
     void setModel(WalletModel *model);
     bool validate();
-    SendCoinsRecipient getValue();
+    SendCoinsRecipient getValue(CWallet *wallet);
 
     /** Return whether the entry is still empty and unedited */
     bool isClear();

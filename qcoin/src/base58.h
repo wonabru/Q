@@ -23,7 +23,7 @@
 #include "script.h"
 #include "allocators.h"
 
-static const char* pszBase58 = "M123456789ABCDEFGHJKLNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
 // Encode a byte sequence as a base58-encoded string
 inline std::string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)
@@ -273,7 +273,7 @@ class CQcoinAddress : public CBase58Data
 public:
     enum
     {
-        PUBKEY_ADDRESS = 0,
+        PUBKEY_ADDRESS = 50,
         SCRIPT_ADDRESS = 5,
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,

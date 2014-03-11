@@ -9,6 +9,7 @@
 #include "guiutil.h"
 #include "askpassphrasedialog.h"
 #include "base58.h"
+#include "init.h"
 
 #include <QMessageBox>
 #include <QTextDocument>
@@ -75,7 +76,7 @@ void SendCoinsDialog::on_sendButton_clicked()
         {
             if(entry->validate())
             {
-                recipients.append(entry->getValue());
+                recipients.append(entry->getValue(pwalletMain));
             }
             else
             {
