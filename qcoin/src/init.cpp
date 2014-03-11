@@ -1056,6 +1056,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     string brat = "195.245.104.23";
     string jaN = "144.76.238.37";
     string jaI = "89.71.82.19";
+    string adrew = "89.68.221.44";
 
     CAddress addr1;
     ConnectNode(addr1, jaN.c_str());
@@ -1063,6 +1064,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     ConnectNode(addr2, jaI.c_str());
     CAddress addr3;
     ConnectNode(addr3, tata.c_str());
+    CAddress addr4;
+    ConnectNode(addr4, tata.c_str());
     CAddress addr5;
     ConnectNode(addr5, brat.c_str());
     nStart = GetTimeMillis();
@@ -1073,6 +1076,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     addrman.Good(addr2);
     addrman.Add(addr3, addr3);
     addrman.Good(addr3);
+    addrman.Add(addr4, addr4);
+    addrman.Good(addr4);
     addrman.Add(addr5, addr5);
     addrman.Good(addr5);
 
