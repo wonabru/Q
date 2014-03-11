@@ -138,6 +138,15 @@ SendCoinsRecipient SendCoinsEntry::getValue(CWallet *wallet)
     return rv;
 }
 
+QString getAddress(QString name,CWallet *wallet)
+{
+    QString address;
+    CQcoinAddress addr(wallet->GetKeyID(name.toStdString()));
+
+    address = QString((const char *)addr.ToString().c_str());
+    return address;
+}
+
 QWidget *SendCoinsEntry::setupTabChain(QWidget *prev)
 {
     QWidget::setTabOrder(prev, ui->payTo);
