@@ -333,18 +333,18 @@ inline int64 GetPerformanceCounter()
 }
 
 const int64 shifttemp = 3600000;
-const int64 hourtemp = 18;
+const int64 hourtemp = 2;
 
 inline int64 GetTimeMicros()
 {
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1969,9,18))).total_microseconds() - shifttemp * 1000 * hourtemp;
+            boost::posix_time::ptime(boost::gregorian::date(1970,7,1))).total_microseconds() - shifttemp * 1000 * hourtemp;
 }
 
 inline int64 GetTimeMillis()
 {
     return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1969,9,18))).total_milliseconds() - shifttemp * hourtemp;
+            boost::posix_time::ptime(boost::gregorian::date(1970,7,1))).total_milliseconds() - shifttemp * hourtemp;
 }
 
 

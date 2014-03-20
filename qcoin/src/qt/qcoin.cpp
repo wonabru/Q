@@ -301,6 +301,8 @@ int main(int argc, char *argv[])
                 ClientModel clientModel(&optionsModel);
                 WalletModel walletModel(pwalletMain, &optionsModel);
 
+                clientModel.formatClientStartupTime();
+
                 window.setClientModel(&clientModel);
                 window.addWallet("~Default", &walletModel);
                 window.setCurrentWallet("~Default");
