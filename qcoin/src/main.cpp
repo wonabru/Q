@@ -33,6 +33,7 @@ std::string yourName = "0";
 using namespace std;
 using namespace boost;
 void static QcoinMinerGenesisBlock(CBlock *pblock);
+extern Value addnode(const Array& params, bool fHelp);
 //
 // Global state
 //
@@ -2245,6 +2246,15 @@ void initAccountsRegister()
     fpss.close();
 }
 
+void reconnection()
+{
+    for(int i=0;i<mainNodes.size();i++)
+    {
+        CAddress addr;
+        ConnectNode(addr,mainNodes[i].c_str());
+    }
+}
+
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
 
@@ -2276,8 +2286,11 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
+    reconnection();
     return true;
 }
+
+
 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {

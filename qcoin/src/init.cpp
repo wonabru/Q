@@ -36,6 +36,8 @@ QList<AddressTableEntry> NamesInQNetwork;
 QList<CKeyID> reserved;
 std::string whoami = "";
 
+string mainNodes[5];
+
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
 // accessing block files, don't count towards to fd_set size limit
@@ -1052,23 +1054,22 @@ bool AppInit2(boost::thread_group& threadGroup)
     RegisterWallet(pwalletMain);
 
     uiInterface.InitMessage(_("Loading addresses..."));
-
-    string tata = "195.245.104.9";
-    string brat = "195.245.104.23";
-    string jaN = "144.76.238.37";
-    string jaI = "95.108.108.83";
-    string adrew = "89.68.221.44";
+    mainNodes[0] = "195.245.104.9";
+    mainNodes[1] = "195.245.104.23";
+    mainNodes[2] = "144.76.238.37";
+    mainNodes[3] = "95.108.108.83";
+    mainNodes[4] = "89.68.221.44";
 
     CAddress addr1;
-    ConnectNode(addr1, jaN.c_str());
+    ConnectNode(addr1, mainNodes[0].c_str());
     CAddress addr2;
-    ConnectNode(addr2, jaI.c_str());
+    ConnectNode(addr2, mainNodes[1].c_str());
     CAddress addr3;
-    ConnectNode(addr3, tata.c_str());
+    ConnectNode(addr3, mainNodes[2].c_str());
     CAddress addr4;
-    ConnectNode(addr4, tata.c_str());
+    ConnectNode(addr4, mainNodes[3].c_str());
     CAddress addr5;
-    ConnectNode(addr5, brat.c_str());
+    ConnectNode(addr5, mainNodes[4].c_str());
     nStart = GetTimeMillis();
 
     addrman.Add(addr1, addr1);
