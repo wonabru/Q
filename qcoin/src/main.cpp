@@ -46,7 +46,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000003606a991d5d7de51624770c776cf87190918fab88d1ebfcf3e683d868b");
+uint256 hashGenesisBlock("0x00000051f7d824fea92da48f1ab4eb8754ae83ab98591afc8384f728b73b5974");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2068,7 +2068,7 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
         return state.DoS(50, error("CheckBlock() : proof of work failed"));
 
     // Check timestamp
-    if (GetBlockTime() > GetAdjustedTime() + 24 * 60 * 60)
+    if (GetBlockTime() > GetAdjustedTime() + 48 * 60 * 60)
         return state.Invalid(error("CheckBlock() : block timestamp too far in the future"));
 
     // First transaction must be coinbase, the rest must not be
@@ -2828,9 +2828,9 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1379703600;
+        block.nTime    = 1379840400;
         block.nBits    = 0x1d7fffff;
-        block.nNonce   = 1415780756;
+        block.nNonce   = 1418491094;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%x\n", bnProofOfWorkLimit.GetCompact());
@@ -2841,7 +2841,7 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-    //    CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
 
