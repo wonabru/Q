@@ -17,7 +17,8 @@ extern std::string printNamesInQNetwork();
 extern QList<AddressTableEntry> NamesInQNetwork;
 extern QList<CKeyID> reserved;
 extern std::string whoami;
-extern std::string mainNodes[5];
+const int mainNodesNumber=5;
+extern std::string mainNodes[mainNodesNumber];
 
 void StartShutdown();
 bool ShutdownRequested();

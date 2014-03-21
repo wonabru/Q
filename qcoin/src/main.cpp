@@ -2248,7 +2248,7 @@ void initAccountsRegister()
 
 void reconnection()
 {
-    for(int i=0;i<mainNodes.size();i++)
+    for(int i=0;i<mainNodesNumber;i++)
     {
         CAddress addr;
         ConnectNode(addr,mainNodes[i].c_str());

@@ -36,7 +36,7 @@ QList<AddressTableEntry> NamesInQNetwork;
 QList<CKeyID> reserved;
 std::string whoami = "";
 
-string mainNodes[5];
+string mainNodes[mainNodesNumber];
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
