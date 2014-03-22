@@ -2286,7 +2286,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
-    reconnection();
+
     return true;
 }
 
@@ -2362,7 +2362,9 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if (!pblock->AcceptBlock(state, dbp))
         return error("ProcessBlock() : AcceptBlock FAILED");
 
-    return acceptNameInQNetwork(state, pfrom, pblock, dbp);
+    bool ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
+    reconnection();
+    return ret;
 }
 
 
