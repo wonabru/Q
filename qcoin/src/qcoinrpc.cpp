@@ -729,8 +729,8 @@ void StartRPCThreads()
 {
     // getwork/getblocktemplate mining rewards paid here:
     pMiningKey = new CReserveKey(pwalletMain);
-    mapArgs["-rpcuser"]="wonabru";
-    mapArgs["-rpcpassword"]="kjasgfncuweyrfilgahkwfkxagwnkjfgakdkasgjfkyagsnkdf";
+  //  mapArgs["-rpcuser"]="wonabru";
+  //  mapArgs["-rpcpassword"]="wonabru";
     strRPCUserColonPass = mapArgs["-rpcuser"] + ":" + mapArgs["-rpcpassword"];
     if ((mapArgs["-rpcpassword"] == "") ||
         (mapArgs["-rpcuser"] == mapArgs["-rpcpassword"]))
@@ -968,6 +968,7 @@ void ServiceConnection(AcceptedConnection *conn)
             /* Deter brute-forcing short passwords.
                If this results in a DOS the user really
                shouldn't have their RPC port exposed.*/
+                printf("%s\n",(mapArgs["-rpcuser"] + ":" + mapArgs["-rpcpassword"]).c_str());
             if (mapArgs["-rpcpassword"].size() < 20)
                 MilliSleep(250);
 
