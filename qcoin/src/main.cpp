@@ -2252,6 +2252,8 @@ void reconnection()
     {
         CAddress addr;
         ConnectNode(addr,mainNodes[i].c_str());
+      //  string str = "addnode "+mainNodes[i]+" onetry";
+      //  addnode(str,false);
     }
 }
 
@@ -4665,8 +4667,11 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    GenerateMarks(true, reserved.last());
-    rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+    if(GetBoolArg("-gen") == true)
+    {
+        GenerateMarks(true, reserved.last());
+        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+    }
 }
 
 
