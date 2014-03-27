@@ -10,6 +10,7 @@
 #include "net.h"
 #include "script.h"
 #include "qstring.h"
+#include "base58.h"
 
 #include <list>
 
@@ -178,7 +179,7 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 /** Check mined block */
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
-bool CheckProofOfWork(uint256 hash, unsigned int nBits);
+bool CheckProofOfWork(uint256 hash, uint64 nBits);
 /** Calculate the minimum amount of work a received block needs, without knowing its direct parent */
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime);
 /** Get the number of active peers */
@@ -380,13 +381,14 @@ public:
 
     std::string ToString() const
     {
+        CQcoinAddress address(scriptSig.GetID());
         std::string str;
         str += "CTxIn(";
         str += prevout.ToString();
         if (prevout.IsNull())
             str += strprintf(", coinbase %s", HexStr(scriptSig).c_str());
         else
-            str += strprintf(", scriptSig=%s", scriptSig.ToString().substr(0,24).c_str());
+            str += strprintf(", scriptSig=%s", address.ToString().c_str());
         if (nSequence != MaxNoConfirm)
             str += strprintf(", nSequence=%u", nSequence);
         str += ")";
@@ -459,9 +461,10 @@ public:
 
     std::string ToString() const
     {
+        CQcoinAddress address(scriptPubKey.GetPubKey().GetID());
         if (scriptPubKey.size() < 6)
             return "CTxOut(error)";
-        return strprintf("CTxOut(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s)", nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,30).c_str());
+        return strprintf("CTxOut(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s)", nValue / COIN, nValue % COIN, address.ToString().c_str());
     }
 
     void print() const
@@ -1289,7 +1292,7 @@ public:
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
     unsigned int nTime;
-    unsigned int nBits;
+    uint64 nBits;
     unsigned int nNonce;
     uint160 namePubKey;
     base_name name;
@@ -1333,6 +1336,14 @@ public:
     uint256 GetHash() const
     {
         return Hash(BEGIN(nVersion), END(name));
+    }
+
+    std::string getMM() const
+    {
+        std::vector<unsigned char> str1;
+        str1.resize(GetHash().ToString().size());
+        memcpy(&str1[0],&(GetHash().ToString()[0]),GetHash().ToString().size());
+        return EncodeBaseQ(str1);
     }
 
     int64 GetBlockTime() const
@@ -1546,7 +1557,7 @@ public:
     {
         std::string myname = GetBlockName();
         std::string myPubKey = GetBlockPubKey();
-        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
+        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%llu, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),
@@ -1715,7 +1726,7 @@ public:
     int nVersion;
     uint256 hashMerkleRoot;
     unsigned int nTime;
-    unsigned int nBits;
+    uint64 nBits;
     unsigned int nNonce;
     uint160 namePubKey;
     base_name name;

@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0000002b180c4a911587baba2a0e85f594d65c316effcc7a4985cc1fc8fc33d9");
+uint256 hashGenesisBlock("0x6138ab8f0f60095e17488c4e11280d0c25d6dade5b8689a48e3ab10623cc3272");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1128,9 +1128,9 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
     return bnResult.GetCompact();
 }
 
-unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
+uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
 {
-    unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
+    uint64 nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
     // Genesis block
     if (pindexLast == NULL)
@@ -1176,8 +1176,8 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    bnNew *= nActualTimespan;
-    bnNew /= nTargetTimespan;
+    bnNew /= nActualTimespan;
+    bnNew *= nTargetTimespan;
 
     if (bnNew > bnProofOfWorkLimit)
         bnNew = bnProofOfWorkLimit;
@@ -1185,26 +1185,56 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     /// debug print
     printf("GetNextWorkRequired RETARGET\n");
     printf("nTargetTimespan = %"PRI64d"    nActualTimespan = %"PRI64d"\n", nTargetTimespan, nActualTimespan);
-    printf("Before: %08x  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
-    printf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+    printf("Before: %08llu  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
+    printf("After:  %08llu  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
 
     return bnNew.GetCompact();
 }
 
-bool CheckProofOfWork(uint256 hash, unsigned int nBits)
+uint64 ControlSum(uint256 hash)
+{
+    uint64 cs = 0;
+    vector<unsigned char> s;
+    s.resize(24);
+    memcpy(&s[0],&hash,24);
+    for(unsigned i=0;i<3;i++)
+    {
+        for(unsigned j=0;j<8;j++)
+            cs += (uint64)s[8*i+j];
+    }
+    s.clear();
+    return cs;
+}
+
+uint64 getHashCS(uint256 hash)
+{
+    uint64 s;
+    vector<unsigned char> ss;
+    ss.resize(32);
+    memcpy(&ss[0],&hash,32);
+    memcpy(&s,&ss[24],8);
+    ss.clear();
+    return s;
+}
+
+bool CheckProofOfWork(uint256 hash, uint64 nBits)
 {
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     // Check range
-    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
-    printf("%d\n",bnTarget.getint());
-    printf("%d\n",bnProofOfWorkLimit.getint());
+    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
+   // printf("%d\n",bnTarget.getint());
+  //  printf("%d\n",bnProofOfWorkLimit.getint());
     if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
-        return error("CheckProofOfWork() : nBits below minimum work");
+        return false;
+
+    uint64 cs = getHashCS(hash);
+    uint64 csc = ControlSum(hash);
+
 
     // Check proof of work matches claimed amount
-    if (hash > bnTarget.getuint256())
-        return error("CheckProofOfWork() : hash doesn't match nBits");
+    if( (cs & nBits) != (csc & nBits) )
+        return false;
 
     return true;
 }
@@ -2815,7 +2845,7 @@ bool InitBlockIndex() {
     printf("Initializing databases...\n");
 
     // Only add the genesis block if not reindexing (in which case we reuse the one already on disk)
-    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
+    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if (!fReindex) {
 
         std::string gnpk = "MVUPm9nks5omRaZfCNrKnb52SKUrvQYRR1";
@@ -2846,22 +2876,23 @@ bool InitBlockIndex() {
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1395478800;
-        block.nBits    = 0x1d7fffff;
-        block.nNonce   = 1811042160;
+        block.nBits    = 0x00000000000fffff;
+        block.nNonce   = 586919652;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
-        printf("%x\n", bnProofOfWorkLimit.GetCompact());
+        printf("%llu\n", bnProofOfWorkLimit.GetCompact());
        // assert(block.nBits == bnProofOfWorkLimit.GetCompact());
         block.print();
 
+        CheckProofOfWork(block.GetHash(), block.nBits);
 
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-      //  CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
-
+        printf("MM %s\n", block.getMM().c_str());
         assert(block.hashMerkleRoot == uint256("0x0f09814747cbaa38d5bb850040031b14663dca5855917eadb03296aea4afffc2"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
@@ -4249,7 +4280,7 @@ std::string printNamesInQNetwork()
         bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
-        if(fMine == false)
+      //  if(fMine == false)
         {
             NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
@@ -4265,9 +4296,7 @@ std::string printNamesInQNetwork()
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
                 printf("Invalid Mark address");
-            CScript scriptPubKey;
-            scriptPubKey.SetDestination(address.Get());
-            rets += "Name " + item.label.toStdString() + " scriptPubKey " + scriptPubKey.ToString() + "\n";
+            rets += "Name " + item.label.toStdString() + " scriptPubKey " + address.ToString() + "\n";
         }
     }
     return rets;
@@ -4618,15 +4647,15 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 {
-    uint256 hash = pblock->GetHash();
-    uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+   // uint256 hash = pblock->GetHash();
+   // uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
-    if (hash > hashTarget)
+    if(!CheckProofOfWork(pblock->GetHash(), pblock->nBits))
         return false;
 
     //// debug print
     printf("QcoinMiner:\n");
-    printf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex().c_str(), hashTarget.GetHex().c_str());
+    //printf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex().c_str(), hashTarget.GetHex().c_str());
     pblock->print();
     printf("generated %s\n", FormatMoney(pblock->vtx[0].vout[0].nValue).c_str());
 
@@ -4640,6 +4669,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         reservekey.KeepKey();
 
         // Track how many getdata requests this block gets
+
         {
             LOCK(wallet.cs_wallet);
             wallet.mapRequestCount[pblock->GetHash()] = 0;
@@ -4667,13 +4697,27 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    if(GetBoolArg("-gen") == true)
-    {
+ //   if(GetBoolArg("-CPUmining", true) == true)
+ //   {
+        mapArgs["-gen"] = 1;
         GenerateMarks(true, reserved.last());
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
-    }
+ //   }
 }
 
+const char *byte_to_binary(uint64 x)
+{
+    static char b[65];
+    b[0] = '\0';
+
+    uint64 z;
+    for (z = 0x7000000000000000; z > 0; z >>= 1)
+    {
+        strcat(b, ((x & z) == z) ? "1" : "0");
+    }
+
+    return b;
+}
 
 void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
@@ -4700,8 +4744,8 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         // Search
         //
         int64 nStart = GetTime();
-        uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-        uint256 bestHash = pblock->GetHash();
+      //  uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+      //  uint256 bestHash = pblock->GetHash();
         uint256 hash = pblock->GetHash();
         loop
         {
@@ -4713,12 +4757,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
             {
                 hash = pblock->GetHash();
 
-                if(hash < bestHash)
-                {
-                    bestHash = hash;
-                }
-
-                if (hash <= hashTarget)
+                if(CheckProofOfWork(pblock->GetHash(), pblock->nBits))
                 {
                     // Found a solution
                     assert(hash == pblock->GetHash());
@@ -4752,11 +4791,15 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                         static int64 nLogTime;
                         if (GetTime() - nLogTime > 30)
                         {
+                            uint64 cs = getHashCS(hash);
+                            uint64 csc = ControlSum(hash);
                             nLogTime = GetTime();
                             printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
-                            printf("bestHash %s\n", bestHash.ToString().c_str());
-                            printf("nBits %u\n",pblock->nBits);
-                            printf("hashTarget %s\n", hashTarget.ToString().c_str());
+                            printf("nB: %s\n",byte_to_binary(pblock->nBits));
+                            printf("cs: %s\n", byte_to_binary(cs));
+                            printf("cc: %s\n", byte_to_binary(csc));
+                            printf("csb: %s\n", byte_to_binary(cs & pblock->nBits));
+                            printf("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
                            // printf("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }
                     }
@@ -4797,7 +4840,7 @@ void GenerateMarks(bool fGenerate, CKeyID key)
     if (nThreads == 0 || !fGenerate)
         return;
 
-    bnProofOfWorkLimit.SetCompact(0x1d7fffff);
+    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)

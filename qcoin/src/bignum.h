@@ -286,45 +286,33 @@ public:
     //
     // This implementation directly uses shifts instead of going
     // through an intermediate MPI representation.
-    CBigNum& SetCompact(unsigned int nCompact)
+    CBigNum& SetCompact(uint64 nCompact)
     {
-        unsigned int nSize = nCompact >> 24;
-        bool fNegative     =(nCompact & 0x00000001) == 0;
-        unsigned int nWord = nCompact & 0x00fffffe;
-        if (nSize <= 3)
-        {
-            nWord >>= 8*(3-nSize);
-            BN_set_word(this, nWord);
-        }
-        else
-        {
-            BN_set_word(this, nWord);
-            BN_lshift(this, this, 8*(nSize-3));
-        }
-        BN_set_negative(this, fNegative);
+        /*unsigned int nSize = nCompact >> 20;
+        bool fNegative     = (nCompact & 0x00000001) == 0;
+        unsigned int nWord = nCompact & 0x000fffff;
+        BN_set_word(this, nWord);
+        BN_lshift(this, this, nSize);
+        BN_set_negative(this, fNegative);*/
+        BN_set_word(this, nCompact);
         return *this;
     }
 
-    unsigned int GetCompact() const
+    uint64 GetCompact() const
     {
-        unsigned int nSize = BN_num_bytes(this);
+    /*    unsigned int nSize = BN_num_bytes(this);
         unsigned int nCompact = 0;
-        if (nSize <= 3)
-            nCompact = BN_get_word(this) << 8*(3-nSize);
-        else
-        {
-            CBigNum bn;
-            BN_rshift(&bn, this, 8*(nSize-3));
-            nCompact = BN_get_word(&bn);
-        }
-        // The 0x00800000 bit denotes the sign.
-        // Thus, if it is already set, divide the mantissa by 256 and increase the exponent.
+        CBigNum bn;
+        BN_rshift(&bn, this, nSize);
+        nCompact = BN_get_word(&bn);
         if (nCompact & 0x00000001)
         {
             nSize++;
         }
-        nCompact |= nSize << 24;
+        nCompact |= nSize << 20;
         nCompact |= (BN_is_negative(this) ? 0 : 1);
+        return nCompact;*/
+        unsigned int nCompact = BN_get_word(this);
         return nCompact;
     }
 

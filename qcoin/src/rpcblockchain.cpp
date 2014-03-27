@@ -22,7 +22,7 @@ double GetDifficulty(const CBlockIndex* blockindex)
         else
             blockindex = pindexBest;
     }
-
+/*
     int nShift = (blockindex->nBits >> 24) & 0xff;
 
     double dDiff =
@@ -38,8 +38,8 @@ double GetDifficulty(const CBlockIndex* blockindex)
         dDiff /= 256.0;
         nShift--;
     }
-
-    return dDiff;
+*/
+    return blockindex->nBits;
 }
 
 
