@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x6138ab8f0f60095e17488c4e11280d0c25d6dade5b8689a48e3ab10623cc3272");
+uint256 hashGenesisBlock("0x2c643b803a000b82cbd0865c44a201952f90224a6ca11dcac7ce1f1276ea79cb");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2876,20 +2876,20 @@ bool InitBlockIndex() {
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1395478800;
-        block.nBits    = 0x00000000000fffff;
-        block.nNonce   = 586919652;
+        block.nBits    = 0x0000000001ffffff;
+        block.nNonce   = 555707045;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
        // assert(block.nBits == bnProofOfWorkLimit.GetCompact());
         block.print();
 
-        CheckProofOfWork(block.GetHash(), block.nBits);
+     //   CheckProofOfWork(block.GetHash(), block.nBits);
 
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
@@ -4280,7 +4280,7 @@ std::string printNamesInQNetwork()
         bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
-      //  if(fMine == false)
+        if(fMine == false)
         {
             NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
