@@ -1054,7 +1054,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     RegisterWallet(pwalletMain);
 
     uiInterface.InitMessage(_("Loading addresses..."));
-    mainNodes[0] = "195.245.104.9";
+    mainNodes[0] = "195.245.104.3";
     mainNodes[1] = "195.245.104.23";
     mainNodes[2] = "144.76.238.37";
     mainNodes[3] = "95.108.108.83";
