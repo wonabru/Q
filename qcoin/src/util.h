@@ -173,7 +173,7 @@ bool ATTR_WARN_PRINTF(1,2) error(const char *format, ...);
  * __attribute__((format(printf,X,Y))) gets expanded to __attribute__((format(printf,X,Y)))
  * which confuses gcc.
  */
-#define printf printf
+//#define printf printf
 
 void LogException(std::exception* pex, const char* pszThread);
 void PrintException(std::exception* pex, const char* pszThread);

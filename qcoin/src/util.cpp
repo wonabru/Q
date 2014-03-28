@@ -232,7 +232,7 @@ static void DebugPrintInit()
 
     mutexDebugLog = new boost::mutex();
 }
-
+/*
 int printf(const char* pszFormat, ...)
 {
     int ret = 0; // Returns total number of characters written
@@ -306,7 +306,7 @@ int printf(const char* pszFormat, ...)
 #endif
     return ret;
 }
-
+*/
 string vstrprintf(const char *format, va_list ap)
 {
     char buffer[50000];
