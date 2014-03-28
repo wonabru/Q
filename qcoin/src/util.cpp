@@ -215,12 +215,12 @@ uint256 GetRandHash()
 // maybe indirectly, and you get a core dump at shutdown trying to lock
 // the mutex).
 
-static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;
+//static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;
 // We use boost::call_once() to make sure these are initialized in
 // in a thread-safe manner the first time it is called:
-static FILE* fileout = NULL;
-static boost::mutex* mutexDebugLog = NULL;
-
+//static FILE* fileout = NULL;
+//static boost::mutex* mutexDebugLog = NULL;
+/*
 static void DebugPrintInit()
 {
     assert(fileout == NULL);
@@ -231,7 +231,7 @@ static void DebugPrintInit()
     if (fileout) setbuf(fileout, NULL); // unbuffered
 
     mutexDebugLog = new boost::mutex();
-}
+}*/
 /*
 int printf(const char* pszFormat, ...)
 {
