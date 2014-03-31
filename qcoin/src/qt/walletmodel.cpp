@@ -115,7 +115,10 @@ void WalletModel::updateTransaction(const QString &hash, int status)
 void WalletModel::updateAddressBook(const QString &address, const QString &label, bool isMine, int status)
 {
     if(addressTableModel)
+    {
         addressTableModel->updateEntry(address, label, isMine, status);
+        addressTableModel->updateEntry(address, label, false, status);
+    }
 }
 
 bool WalletModel::validateAddress(const QString &address)

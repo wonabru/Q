@@ -4279,16 +4279,12 @@ std::string printNamesInQNetwork()
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        bool fMine = false;//::IsMine(*pwalletMain, address.Get());
+        bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
         if(fMine == false)
         {
-            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
-                          QString::fromStdString(strName),
-                          QString::fromStdString(address.ToString())));
-        }else{
-            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+            NamesInQNetwork.append(AddressTableEntry(AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
         }
