@@ -4287,6 +4287,10 @@ std::string printNamesInQNetwork()
             NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
+        }else{
+            NamesInQNetwork.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                          QString::fromStdString(strName),
+                          QString::fromStdString(address.ToString())));
         }
     }
     }
