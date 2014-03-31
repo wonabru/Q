@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x2c643b803a000b82cbd0865c44a201952f90224a6ca11dcac7ce1f1276ea79cb");
+uint256 hashGenesisBlock("0x0cbbd52580000b3c82e791f72e2fb17d290cfd426f4c546ce35c1a55d5934378");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1099,9 +1099,9 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 86400; // a day
-static const int64 nTargetSpacing = 180;
-static const int64 nInterval = nTargetTimespan / nTargetSpacing;
+static const int64 nTargetTimespan = 150; // 2.5 min.
+static const int64 nTargetSpacing = 34560 * 14;// a 2 weeks
+static const int64 nInterval = nTargetSpacing / nTargetTimespan;
 
 //
 // minimum amount of work that could possibly be required nTime after
@@ -1111,8 +1111,8 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 {
     // Testnet has min-difficulty blocks
     // after nTargetSpacing*2 time between blocks:
-    if (fTestNet && nTime > nTargetSpacing*2)
-        return bnProofOfWorkLimit.GetCompact();
+   // if (fTestNet && nTime > nTargetSpacing*2)
+    //    return bnProofOfWorkLimit.GetCompact();
 
     CBigNum bnResult;
     bnResult.SetCompact(nBase);
@@ -1144,9 +1144,9 @@ uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHea
         {
             // If the new block's timestamp is more than 2* 10 minutes
             // then allow mining of a min-difficulty block.
-            if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
-                return nProofOfWorkLimit;
-            else
+          //  if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
+          //      return nProofOfWorkLimit;
+          //  else
             {
                 // Return the last non-special-min-difficulty-rules-block
                 const CBlockIndex* pindex = pindexLast;
@@ -1176,8 +1176,10 @@ uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHea
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    bnNew /= nActualTimespan;
-    bnNew *= nTargetTimespan;
+    if(nActualTimespan > nTargetTimespan * 1.5)
+        bnNew /= 2;
+    else if(nActualTimespan < nTargetTimespan * 0.75)
+        bnNew *= 2;
 
     if (bnNew > bnProofOfWorkLimit)
         bnNew = bnProofOfWorkLimit;
@@ -2876,8 +2878,8 @@ bool InitBlockIndex() {
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
         block.nTime    = 1395478800;
-        block.nBits    = 0x0000000001ffffff;
-        block.nNonce   = 555707045;
+        block.nBits    = 0x0000000000ffffff;
+        block.nNonce   = 1783602348;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2889,7 +2891,7 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+        //CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
