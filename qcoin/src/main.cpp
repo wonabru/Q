@@ -4703,6 +4703,7 @@ void RestartMining()
  //   {
         mapArgs["-gen"] = 1;
         GenerateMarks(true, reserved.last());
+        reconnection();
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
  //   }
 }
