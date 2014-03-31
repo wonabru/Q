@@ -4279,7 +4279,7 @@ std::string printNamesInQNetwork()
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        bool fMine = ::IsMine(*pwalletMain, address.Get());
+        bool fMine = false;//::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
         if(fMine == false)
