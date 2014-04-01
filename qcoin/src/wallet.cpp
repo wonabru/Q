@@ -1506,8 +1506,10 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
         NotifyAddressBookChanged(this, address, strName, true, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     else if(ato == OVERWRITE)
         NotifyAddressBookChanged(this, address, strName, false, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-    else
+    else if(ato == OVERWRITERECEIVE)
         NotifyAddressBookChanged(this, address, strName, true, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+    else
+        NotifyAddressBookChanged(this, address, strName, false, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
 
  //   if (!fFileBacked)
  //       return false;
