@@ -580,6 +580,7 @@ bool CNode::IsBanned(CNetAddr ip)
 
 bool CNode::Misbehaving(int howmuch)
 {
+    /*
     if (addr.IsLocal())
     {
         printf("Warning: Local node %s misbehaving (delta: %d)!\n", addrName.c_str(), howmuch);
@@ -600,6 +601,7 @@ bool CNode::Misbehaving(int howmuch)
         return true;
     } else
         printf("Misbehaving: %s (%d -> %d)\n", addr.ToString().c_str(), nMisbehavior-howmuch, nMisbehavior);
+        */
     return false;
 }
 
@@ -757,7 +759,7 @@ void ThreadSocketHandler()
         // Disconnect nodes
         //
         {
-            /*LOCK(cs_vNodes);
+            LOCK(cs_vNodes);
             // Disconnect unused nodes
             vector<CNode*> vNodesCopy = vNodes;
             BOOST_FOREACH(CNode* pnode, vNodesCopy)
@@ -780,7 +782,7 @@ void ThreadSocketHandler()
                         pnode->Release();
                     vNodesDisconnected.push_back(pnode);
                 }
-            }*/
+            }
 
             // Delete disconnected nodes
             list<CNode*> vNodesDisconnectedCopy = vNodesDisconnected;
