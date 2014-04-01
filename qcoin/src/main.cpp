@@ -2280,14 +2280,14 @@ void initAccountsRegister()
 
 void reconnection()
 {
-    /*
+
     for(int i=0;i<mainNodesNumber;i++)
     {
         CAddress addr;
         ConnectNode(addr,mainNodes[i].c_str());
       //  string str = "addnode "+mainNodes[i]+" onetry";
       //  addnode(str,false);
-    }*/
+    }
 }
 
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
@@ -4359,7 +4359,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     // Largest block you're willing to create:
     unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
-    nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+    nBlockMaxSize = std::max((unsigned int)10000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
 
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
@@ -4456,7 +4456,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
         }
 
         // Collect transactions into block
-        uint64 nBlockSize = 1000;
+        uint64 nBlockSize = 10000;
         uint64 nBlockTx = 0;
         int nBlockSigOps = 100;
         bool fSortedByFee = (nBlockPrioritySize <= 0);
