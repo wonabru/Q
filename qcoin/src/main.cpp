@@ -2280,13 +2280,14 @@ void initAccountsRegister()
 
 void reconnection()
 {
+    /*
     for(int i=0;i<mainNodesNumber;i++)
     {
         CAddress addr;
         ConnectNode(addr,mainNodes[i].c_str());
       //  string str = "addnode "+mainNodes[i]+" onetry";
       //  addnode(str,false);
-    }
+    }*/
 }
 
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
