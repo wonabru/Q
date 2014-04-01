@@ -621,6 +621,11 @@ bool CNetAddr::IsRFC1918() const
         (GetByte(3) == 172 && (GetByte(2) >= 16 && GetByte(2) <= 31)));
 }
 
+bool CNetAddr::IsRFC100() const
+{
+    return IsIPv4() && (GetByte(3) == 10 && GetByte(2) == 0);
+}
+
 bool CNetAddr::IsVirtualGod() const
 {
     return (GetByte(3) == 10 || GetByte(3) == 0);

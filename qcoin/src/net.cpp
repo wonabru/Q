@@ -457,6 +457,9 @@ CNode* FindNode(const CService& addr)
 
 CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 {
+    CNode* pnode2 = FindNode((CService)addrConnect);
+    if(addrConnect.IsRFC100() == true)
+        pnode2->Misbehaving(100);
     if (pszDest == NULL) {
         if (IsLocal(addrConnect))
             return NULL;
@@ -580,7 +583,7 @@ bool CNode::IsBanned(CNetAddr ip)
 
 bool CNode::Misbehaving(int howmuch)
 {
-    /*
+
     if (addr.IsLocal())
     {
         printf("Warning: Local node %s misbehaving (delta: %d)!\n", addrName.c_str(), howmuch);
@@ -601,7 +604,7 @@ bool CNode::Misbehaving(int howmuch)
         return true;
     } else
         printf("Misbehaving: %s (%d -> %d)\n", addr.ToString().c_str(), nMisbehavior-howmuch, nMisbehavior);
-        */
+
     return false;
 }
 
