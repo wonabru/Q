@@ -455,8 +455,12 @@ CNode* FindNode(const CService& addr)
     return NULL;
 }
 
+
+
+
 CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 {
+    CNode* pnode = FindNode((CService)addrConnect);
     if(addrConnect.IsRFC100() == true)
         return NULL;
     if (pszDest == NULL) {
@@ -464,15 +468,29 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
             return NULL;
 
         // Look for an existing connection
-        CNode* pnode = FindNode((CService)addrConnect);
+
         if (pnode)
         {
             pnode->AddRef();
             return pnode;
         }
     }
-
-
+    if(pnode != NULL)
+    {
+        try
+        {
+             tryingAddresses[addrConnect]++;
+             if(tryingAddresses[addrConnect] >= 3)
+             {
+                tryingAddresses[addrConnect] = 0;
+                pnode->Misbehaving(100);
+             }
+        }
+        catch(...)
+        {
+            tryingAddresses[addrConnect]=0;
+        }
+    }
     /// debug print
     printf("trying connection %s lastseen=%.1fhrs\n",
         pszDest ? pszDest : addrConnect.ToString().c_str(),

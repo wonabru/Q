@@ -16,6 +16,7 @@ extern CWallet* walletWonabru;
 extern std::string printNamesInQNetwork();
 extern QList<AddressTableEntry> NamesInQNetwork;
 extern QList<CKeyID> reserved;
+extern QMap<CAddress,int> tryingAddresses;
 extern std::string whoami;
 const int mainNodesNumber=5;
 extern bool synchronizingComplete;
