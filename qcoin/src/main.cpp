@@ -4577,7 +4577,10 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
         CCoinsViewCache viewNew(*pcoinsTip, true);
         CValidationState state;
         if (!pblock->ConnectBlock(state, &indexDummy, viewNew, true))
-            throw std::runtime_error("CreateNewBlock() : ConnectBlock failed");
+        {
+            printf("CreateNewBlock() : ConnectBlock failed");
+            return NULL;
+        }
     }
 
     return pblocktemplate.release();
