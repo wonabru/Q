@@ -68,10 +68,10 @@ QcoinGUI::QcoinGUI(QWidget *parent) :
     prevBlocks(0)
 {
     restoreWindowGeometry();
-    setWindowTitle(tr("Mark") + " - " + tr("Root"));
+    setWindowTitle(tr("Mark") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
-    QApplication::setWindowIcon(QIcon(":icons/qcoin"));
-    setWindowIcon(QIcon(":icons/qcoin"));
+    QApplication::setWindowIcon(QIcon(":icons/PLM"));
+    setWindowIcon(QIcon(":icons/PLM"));
 #else
     setUnifiedTitleAndToolBarOnMac(true);
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
