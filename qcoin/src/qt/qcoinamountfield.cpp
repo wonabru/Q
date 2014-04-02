@@ -145,7 +145,7 @@ void QcoinAmountField::unitChanged(int idx)
     amount->setDecimals(QcoinUnits::decimals(currentUnit));
     amount->setMaximum(qPow(10, QcoinUnits::amountDigits(currentUnit)) - qPow(10, -amount->decimals()));
 
-    if(currentUnit == QcoinUnits::uQ)
+    if(currentUnit == QcoinUnits::uPLM)
         amount->setSingleStep(0.01);
     else
         amount->setSingleStep(0.001);

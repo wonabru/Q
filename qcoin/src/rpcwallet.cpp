@@ -251,11 +251,11 @@ Value sendtoaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-            "sendtoaddress <qcoinaddress> <amount> [comment] [comment-to]\n"
+            "sendtoaddress <name> <amount> [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.00000001"
             + HelpRequiringPassphrase());
 
-    CQcoinAddress address(params[0].get_str());
+    CQcoinAddress address(pwalletMain->GetAddress(params[0].get_str()));
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Mark address");
 
@@ -322,7 +322,7 @@ Value signmessage(const Array& params, bool fHelp)
     string strAddress = params[0].get_str();
     string strMessage = params[1].get_str();
 
-    CQcoinAddress addr(strAddress);
+    CQcoinAddress addr(pwalletMain->GetAddress(strAddress));
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 
@@ -356,7 +356,7 @@ Value verifymessage(const Array& params, bool fHelp)
     string strSign     = params[1].get_str();
     string strMessage  = params[2].get_str();
 
-    CQcoinAddress addr(strAddress);
+    CQcoinAddress addr(pwalletMain->GetAddress(strAddress));
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 
@@ -386,11 +386,11 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress <qcoinaddress> [minconf=1]\n"
-            "Returns the total amount received by <qcoinaddress> in transactions with at least [minconf] confirmations.");
+            "getreceivedbyaddress <name> [minconf=1]\n"
+            "Returns the total amount received by <name> in transactions with at least [minconf] confirmations.");
 
     // Mark address
-    CQcoinAddress address = CQcoinAddress(params[0].get_str());
+    CQcoinAddress address = CQcoinAddress(pwalletMain->GetAddress(params[0].get_str()));
     CScript scriptPubKey;
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Mark address");
@@ -607,12 +607,12 @@ Value sendfrom(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-            "sendfrom <fromaccount> <toqcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
+            "sendfrom <fromaccount> <name> <amount> [minconf=1] [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.00000001"
             + HelpRequiringPassphrase());
 
     string strAccount = AccountFromValue(params[0]);
-    CQcoinAddress address(params[1].get_str());
+    CQcoinAddress address(pwalletMain->GetAddress(params[1].get_str()));
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Mark address");
     int64 nAmount = AmountFromValue(params[2]);
@@ -647,7 +647,7 @@ Value sendmany(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-            "sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]\n"
+            "sendmany <fromaccount> {name:amount,...} [minconf=1] [comment]\n"
             "amounts are double-precision floating point numbers"
             + HelpRequiringPassphrase());
 
@@ -668,9 +668,9 @@ Value sendmany(const Array& params, bool fHelp)
     int64 totalAmount = 0;
     BOOST_FOREACH(const Pair& s, sendTo)
     {
-        CQcoinAddress address(s.name_);
+        CQcoinAddress address(pwalletMain->GetAddress(s.name_));
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Mark address: ")+s.name_);
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid name: ")+s.name_);
 
         if (setAddress.count(address))
             throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+s.name_);
@@ -714,7 +714,7 @@ static CScript _createmultisig(const Array& params)
 
     // Gather public keys
     if (nRequired < 1)
-        throw runtime_error("a multisignature address must require at least one key to redeem");
+        throw runtime_error("a multisignature names must require at least one key to redeem");
     if ((int)keys.size() < nRequired)
         throw runtime_error(
             strprintf("not enough keys supplied "
@@ -726,7 +726,7 @@ static CScript _createmultisig(const Array& params)
         const std::string& ks = keys[i].get_str();
 
         // Case 1: Mark address and we have full public key:
-        CQcoinAddress address(ks);
+        CQcoinAddress address(pwalletMain->GetAddress(ks));
         if (address.IsValid())
         {
             CKeyID keyID;

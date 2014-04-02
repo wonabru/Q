@@ -462,7 +462,10 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 {
     CNode* pnode = FindNode((CService)addrConnect);
     if(addrConnect.IsRFC100() == true)
+    {
+        pnode->Misbehaving(100);
         return NULL;
+    }
     if (pszDest == NULL) {
         if (IsLocal(addrConnect))
             return NULL;
@@ -938,6 +941,9 @@ void ThreadSocketHandler()
             CAddress addr;
             int nInbound = 0;
 
+            if(addr.IsRFC100())
+                closesocket(hSocket);
+
             if (hSocket != INVALID_SOCKET)
                 if (!addr.SetSockAddr((const struct sockaddr*)&sockaddr))
                     printf("Warning: Unknown socket family\n");
@@ -1049,7 +1055,7 @@ void ThreadSocketHandler()
                 if (lockSend)
                     SocketSendData(pnode);
             }
-/*
+
             //
             // Inactivity checking
             //
@@ -1072,7 +1078,7 @@ void ThreadSocketHandler()
                     printf("socket inactivity timeout\n");
                     pnode->fDisconnect = true;
                 }
-            }*/
+            }
         }
         {
             LOCK(cs_vNodes);

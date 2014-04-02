@@ -35,11 +35,13 @@
         <file alias="filesave">res/icons/filesave.png</file>
         <file alias="qrcode">res/icons/qrcode.png</file>
         <file alias="debugwindow">res/icons/debugwindow.png</file>
-        <file>res/icons/PLM.ico</file>
-        <file>res/icons/Q_testnet.ico</file>
-        <file>res/icons/Q_testnet.png</file>
-        <file>res/icons/PLM.png</file>
-        <file>res/icons/favicon.ico</file>
+        <file alias="PLM_icon">res/icons/PLM.ico</file>
+        <file alias="Q_testnet">res/icons/Q_testnet.ico</file>
+        <file alias="PLM_testnet">res/icons/Q_testnet.png</file>
+        <file alias="PLM">res/icons/PLM.png</file>
+        <file alias="icon">res/icons/favicon.ico</file>
+        <file alias="send">res/icons/send.png</file>
+        <file alias="address-book">res/icons/address-book.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>

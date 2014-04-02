@@ -12,8 +12,8 @@ QList<QcoinUnits::Unit> QcoinUnits::availableUnits()
 {
     QList<QcoinUnits::Unit> unitlist;
     unitlist.append(PLM);
-    unitlist.append(mQ);
-    unitlist.append(uQ);
+    unitlist.append(mPLM);
+    unitlist.append(uPLM);
     return unitlist;
 }
 
@@ -22,8 +22,8 @@ bool QcoinUnits::valid(int unit)
     switch(unit)
     {
     case PLM:
-    case mQ:
-    case uQ:
+    case mPLM:
+    case uPLM:
         return true;
     default:
         return false;
@@ -35,8 +35,8 @@ QString QcoinUnits::name(int unit)
     switch(unit)
     {
     case PLM: return QString("PLM");
-    case mQ: return QString("mQ");
-    case uQ: return QString::fromUtf8("μQ");
+    case mPLM: return QString("mPLM");
+    case uPLM: return QString::fromUtf8("μPLM");
     default: return QString("???");
     }
 }
@@ -46,8 +46,8 @@ QString QcoinUnits::description(int unit)
     switch(unit)
     {
     case PLM: return QString("Marks");
-    case mQ: return QString("Milli-Marks (1 / 1,000)");
-    case uQ: return QString("Micro-Marks (1 / 1,000,000)");
+    case mPLM: return QString("Milli-Marks (1 / 1,000)");
+    case uPLM: return QString("Micro-Marks (1 / 1,000,000)");
     default: return QString("???");
     }
 }
@@ -57,8 +57,8 @@ qint64 QcoinUnits::factor(int unit)
     switch(unit)
     {
     case PLM:  return 100000000;
-    case mQ: return 100000;
-    case uQ: return 100;
+    case mPLM: return 100000;
+    case uPLM: return 100;
     default:   return 100000000;
     }
 }
@@ -68,8 +68,8 @@ int QcoinUnits::amountDigits(int unit)
     switch(unit)
     {
     case PLM: return 8; // 21,000,000 (# digits, without commas)
-    case mQ: return 11; // 21,000,000,000
-    case uQ: return 14; // 21,000,000,000,000
+    case mPLM: return 11; // 21,000,000,000
+    case uPLM: return 14; // 21,000,000,000,000
     default: return 0;
     }
 }
@@ -79,8 +79,8 @@ int QcoinUnits::decimals(int unit)
     switch(unit)
     {
     case PLM: return 8;
-    case mQ: return 5;
-    case uQ: return 2;
+    case mPLM: return 5;
+    case uPLM: return 2;
     default: return 0;
     }
 }

@@ -194,7 +194,7 @@ void AddressBookPage::onEditAction()
 void AddressBookPage::on_signMessage_clicked()
 {
     QTableView *table = ui->tableView;
-    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Label);
 
     foreach (QModelIndex index, indexes)
     {
@@ -206,7 +206,7 @@ void AddressBookPage::on_signMessage_clicked()
 void AddressBookPage::on_verifyMessage_clicked()
 {
     QTableView *table = ui->tableView;
-    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Label);
 
     foreach (QModelIndex index, indexes)
     {
@@ -218,7 +218,7 @@ void AddressBookPage::on_verifyMessage_clicked()
 void AddressBookPage::onSendCoinsAction()
 {
     QTableView *table = ui->tableView;
-    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Label);
 
     foreach (QModelIndex index, indexes)
     {

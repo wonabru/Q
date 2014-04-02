@@ -20,8 +20,8 @@ public:
     enum Unit
     {
         PLM,
-        mQ,
-        uQ
+        mPLM,
+        uPLM
     };
 
     //! @name Static API
