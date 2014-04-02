@@ -554,6 +554,15 @@ void QcoinGUI::setNumBlocks(int count, int nTotalBlocks)
         tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
     }
 
+    if(count >= nTotalBlocks)
+    {
+        synchronizingComplete = true;
+    }else
+    {
+        synchronizingComplete = false;
+    }
+
+
     // Set icon state: spinning if catching up, tick otherwise
     if(secs < 90*60 && count >= nTotalBlocks)
     {

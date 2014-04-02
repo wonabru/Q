@@ -3110,9 +3110,6 @@ string GetWarnings(string strFor)
     {
         nPriority = 2000;
         strStatusBar = strRPC = _("Warning: Displayed transactions may not be correct! You may need to upgrade, or other nodes may need to upgrade.");
-        synchronizingComplete = false;
-    }else{
-        synchronizingComplete = true;
     }
 
     // Alerts
