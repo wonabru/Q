@@ -457,9 +457,8 @@ CNode* FindNode(const CService& addr)
 
 CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 {
-    CNode* pnode2 = FindNode((CService)addrConnect);
     if(addrConnect.IsRFC100() == true)
-        pnode2->Misbehaving(100);
+        return NULL;
     if (pszDest == NULL) {
         if (IsLocal(addrConnect))
             return NULL;

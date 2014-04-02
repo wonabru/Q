@@ -1654,6 +1654,8 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     if (!CheckBlock(state, !fJustCheck, !fJustCheck))
         return false;
 
+    if(synchronizingComplete == false)
+        return false;
     // verify that the view's current state corresponds to the previous block
     assert(pindex->pprev == view.GetBestBlock());
 
@@ -2147,6 +2149,8 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
 
 bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 {
+    if(synchronizingComplete == false)
+        return false;
     // Check for duplicate
     uint256 hash = GetHash();
     if (mapBlockIndex.count(hash))
@@ -2321,7 +2325,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
-
+    RestartMining();
     return true;
 }
 
@@ -3106,6 +3110,9 @@ string GetWarnings(string strFor)
     {
         nPriority = 2000;
         strStatusBar = strRPC = _("Warning: Displayed transactions may not be correct! You may need to upgrade, or other nodes may need to upgrade.");
+        synchronizingComplete = false;
+    }else{
+        synchronizingComplete = true;
     }
 
     // Alerts
@@ -4700,13 +4707,14 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
- //   if(GetBoolArg("-CPUmining", true) == true)
- //   {
+    if(GetBoolArg("-CPUmining", true) == true)
+    {
         mapArgs["-gen"] = 1;
+        reconnection();
         GenerateMarks(true, reserved.last());
         reconnection();
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
- //   }
+    }
 }
 
 const char *byte_to_binary(uint64 x)
@@ -4836,9 +4844,10 @@ void GenerateMarks(bool fGenerate, CKeyID key)
 
     if (minerThreads != NULL)
     {
-        minerThreads->interrupt_all();
-        delete minerThreads;
-        minerThreads = NULL;
+        return;
+       // minerThreads->interrupt_all();
+       // delete minerThreads;
+       // minerThreads = NULL;
     }
 
     if (nThreads == 0 || !fGenerate)

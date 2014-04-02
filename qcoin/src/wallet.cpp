@@ -839,6 +839,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
             pindex = pindex->pnext;
         }
     }
+    synchronizingComplete = true;
     return ret;
 }
 

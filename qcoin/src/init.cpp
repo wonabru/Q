@@ -34,6 +34,7 @@ CWallet* walletWonabru;
 CClientUIInterface uiInterface;
 QList<AddressTableEntry> NamesInQNetwork;
 QList<CKeyID> reserved;
+bool synchronizingComplete = false;
 std::string whoami = "";
 
 string mainNodes[mainNodesNumber];

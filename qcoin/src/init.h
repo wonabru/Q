@@ -18,6 +18,7 @@ extern QList<AddressTableEntry> NamesInQNetwork;
 extern QList<CKeyID> reserved;
 extern std::string whoami;
 const int mainNodesNumber=5;
+extern bool synchronizingComplete;
 extern std::string mainNodes[mainNodesNumber];
 
 void StartShutdown();
