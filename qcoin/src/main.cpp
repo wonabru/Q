@@ -37,7 +37,7 @@ extern Value addnode(const Array& params, bool fHelp);
 //
 // Global state
 //
-
+static boost::thread_group* minerThreads = NULL;
 CCriticalSection cs_setpwalletRegistered;
 set<CWallet*> setpwalletRegistered;
 
@@ -2321,7 +2321,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     names = printNamesInQNetwork();
     printf("%s\n New name accepted\n",names.c_str());
-    RestartMining();
+    //RestartMining();
     return true;
 }
 
@@ -2398,7 +2398,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         return error("ProcessBlock() : AcceptBlock FAILED");
 
     bool ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
-    reconnection();
+    RestartMining();
+    //reconnection();
     return ret;
 }
 
@@ -2839,9 +2840,12 @@ bool checkBlock(CBlock pblock)
 }
 
 bool InitBlockIndex() {
-    if (pindexGenesisBlock != NULL)
-        return true;
 
+    if (pindexGenesisBlock != NULL)
+    {
+        //RestartMining();
+        return true;
+}
     // Use the provided setting for -txindex in the new database
     fTxIndex = GetBoolArg("-txindex", true);
     pblocktree->WriteFlag("txindex", fTxIndex);
@@ -2917,7 +2921,7 @@ bool InitBlockIndex() {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());
         }
     }
-
+    //RestartMining();
     return true;
 }
 
@@ -4314,8 +4318,8 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
 {
     // Create new block
     printf("%s",printNamesInQNetwork().c_str());
-    if(NamesInQNetwork.size() <= 0)
-        return NULL;
+  //  if(NamesInQNetwork.size() <= 0)
+ //       return NULL;
     auto_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
     if(!pblocktemplate.get())
         return NULL;
@@ -4692,6 +4696,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 
 void static QcoinMiner(CKeyID key)
 {
+    printf("QcoinMiner started...........\n");
      auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(key));
      if (!pblocktemplate.get())
         return;
@@ -4703,13 +4708,22 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    if(synchronizingComplete == true)
+    if(synchronizingComplete == true || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
     {
         mapArgs["-gen"] = 1;
-        reconnection();
+       // reconnection();
+        printf("Restart mining!\n");
         GenerateMarks(true, reserved.last());
         reconnection();
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+    }else{
+        if (minerThreads != NULL)
+        {
+            printf("Kill thread mining.\n");
+           minerThreads->interrupt_all();
+           delete minerThreads;
+           minerThreads = NULL;
+        }
     }
 }
 
@@ -4829,10 +4843,11 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 }
 
 
+
 void GenerateMarks(bool fGenerate, CKeyID key)
 {
 
-    static boost::thread_group* minerThreads = NULL;
+
 
     int nThreads = 1;//GetArg("-genproclimit", -1);
     if (nThreads < 0)
@@ -4840,6 +4855,7 @@ void GenerateMarks(bool fGenerate, CKeyID key)
 
     if (minerThreads != NULL)
     {
+        printf("minerThreads not NULL\n");
         return;
        // minerThreads->interrupt_all();
        // delete minerThreads;
