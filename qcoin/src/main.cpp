@@ -4710,6 +4710,13 @@ void RestartMining()
         mapArgs["-gen"] = 1;
        // reconnection();
         printf("Restart mining!\n");
+        if (minerThreads != NULL)
+        {
+           printf("Kill thread mining.\n");
+           minerThreads->interrupt_all();
+           delete minerThreads;
+           minerThreads = NULL;
+        }
         GenerateMarks(true, reserved.last());
         reconnection();
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
