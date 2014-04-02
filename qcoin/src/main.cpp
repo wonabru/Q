@@ -1654,8 +1654,6 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     if (!CheckBlock(state, !fJustCheck, !fJustCheck))
         return false;
 
-    if(synchronizingComplete == false)
-        return false;
     // verify that the view's current state corresponds to the previous block
     assert(pindex->pprev == view.GetBestBlock());
 
@@ -2149,8 +2147,6 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
 
 bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 {
-    if(synchronizingComplete == false)
-        return false;
     // Check for duplicate
     uint256 hash = GetHash();
     if (mapBlockIndex.count(hash))
@@ -4707,7 +4703,7 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    if(GetBoolArg("-CPUmining", true) == true)
+    if(synchronizingComplete == true)
     {
         mapArgs["-gen"] = 1;
         reconnection();
