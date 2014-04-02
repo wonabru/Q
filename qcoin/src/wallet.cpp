@@ -792,6 +792,7 @@ bool CWalletTx::WriteToDisk()
 // exist in the wallet will be updated.
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
+    synchronizingComplete =false;
     //double MaxNodes = addrman.size();
     int ret = 0;
    /* CNode *node;
@@ -813,6 +814,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
     }*/
     CBlockIndex* pindex = pindexStart;
     {
+
         LOCK(cs_wallet);
         while (pindex)
         {
