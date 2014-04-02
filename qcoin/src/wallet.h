@@ -132,7 +132,7 @@ public:
     void UnlockAllCoins();
     void ListLockedCoins(std::vector<COutPoint>& vOutpts);
 
-    CKeyID GetKeyID(std::string name);
+    CQcoinAddress GetAddress(std::string name);
 
     uint160 GetWalletDefaultPubKey() const;
     // keystore implementation

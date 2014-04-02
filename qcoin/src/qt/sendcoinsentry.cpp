@@ -129,9 +129,18 @@ bool SendCoinsEntry::validate()
 SendCoinsRecipient SendCoinsEntry::getValue(CWallet *wallet)
 {
     SendCoinsRecipient rv;
-    CQcoinAddress addr(wallet->GetKeyID(ui->payTo->text().toStdString()));
+    CQcoinAddress address(wallet->GetAddress(ui->payTo->text().toStdString()));
+    CKeyID r;
+    address.GetKeyID(r);
+    if(r == (CKeyID)0)
+    {
+        rv.address = "";
+        rv.label = "";
+        rv.amount = 0;
+        return rv;
+    }
 
-    rv.address = QString((const char *)addr.ToString().c_str());
+    rv.address = QString((const char *)address.ToString().c_str());
     rv.label = ui->payTo->text();
     rv.amount = ui->payAmount->value();
 
@@ -141,7 +150,7 @@ SendCoinsRecipient SendCoinsEntry::getValue(CWallet *wallet)
 QString getAddress(QString name,CWallet *wallet)
 {
     QString address;
-    CQcoinAddress addr(wallet->GetKeyID(name.toStdString()));
+    CQcoinAddress addr(wallet->GetAddress(name.toStdString()));
 
     address = QString((const char *)addr.ToString().c_str());
     return address;
