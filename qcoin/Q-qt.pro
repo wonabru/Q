@@ -7,6 +7,7 @@ QT += network
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
+USE_UPNP = 0
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -65,11 +66,11 @@ contains(USE_QRCODE, 1) {
 #  or: qmake "USE_UPNP=0" (disabled by default)
 #  or: qmake "USE_UPNP=-" (not supported)
 # miniupnpc (http://miniupnp.free.fr/files/) must be installed for support
-contains(USE_UPNP, -) {
+contains(USE_UPNP, 0) {
     message(Building without UPNP support)
 } else {
     message(Building with UPNP support)
-    count(USE_UPNP, 0) {
+    count(USE_UPNP, -) {
         USE_UPNP=1
     }
     DEFINES += USE_UPNP=$$USE_UPNP STATICLIB
