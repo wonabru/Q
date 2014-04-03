@@ -463,7 +463,6 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
     CNode* pnode = FindNode((CService)addrConnect);
     if(addrConnect.IsRFC100() == true)
     {
-        pnode->Misbehaving(100);
         return NULL;
     }
     if (pszDest == NULL) {
@@ -1982,7 +1981,7 @@ instance_of_cnetcleanup;
 void RelayTransaction(const CTransaction& tx, const uint256& hash)
 {
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-    ss.reserve(10000);
+    ss.reserve(1000);
     ss << tx;
     RelayTransaction(tx, hash, ss);
 }

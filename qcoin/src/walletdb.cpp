@@ -357,8 +357,9 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             ssValue >> pwallet->nOrderPosNext;
         }
-    } catch (...)
+    } catch (std::exception &ex)
     {
+     //   printf("%s\n",ex);
         return false;
     }
     return true;

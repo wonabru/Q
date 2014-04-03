@@ -53,19 +53,19 @@ public:
     bool WriteKey(const CPubKey& vchPubKey, const CPrivKey& vchPrivKey)
     {
         nWalletDBUpdated++;
-        return Write(std::make_pair(std::string("key"), vchPubKey.Raw()), vchPrivKey, false);
+        return Write(std::make_pair(std::string("key"), vchPubKey.Raw()), vchPrivKey, true);
     }
 
     bool WriteCryptedKey(const CPubKey& vchPubKey, const std::vector<unsigned char>& vchCryptedSecret, bool fEraseUnencryptedKey = true)
     {
         nWalletDBUpdated++;
-        if (!Write(std::make_pair(std::string("ckey"), vchPubKey.Raw()), vchCryptedSecret, false))
+        if (!Write(std::make_pair(std::string("ckey"), vchPubKey.Raw()), vchCryptedSecret, true))
             return false;
-        if (fEraseUnencryptedKey)
+       /* if (fEraseUnencryptedKey)
         {
             Erase(std::make_pair(std::string("key"), vchPubKey.Raw()));
             Erase(std::make_pair(std::string("wkey"), vchPubKey.Raw()));
-        }
+        }*/
         return true;
     }
 

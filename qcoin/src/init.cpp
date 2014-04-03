@@ -1011,7 +1011,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (GetBoolArg("-upgradewallet", fFirstRun))
     {
-        int nMaxVersion = GetArg("-upgradewallet", 1);
+        int nMaxVersion = GetArg("-upgradewallet", 90909);
         if (nMaxVersion == 0) // the -upgradewallet without argument case
         {
             printf("Performing wallet upgrade to %i\n", FEATURE_LATEST);

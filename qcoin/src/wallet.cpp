@@ -218,7 +218,7 @@ bool CWallet::SetMinVersion(enum WalletFeature nVersion, CWalletDB* pwalletdbIn,
             CCorruptAddress corruptAddress;
             pwalletdb->WriteSetting("addrIncoming", corruptAddress);
         }*/
-        if (nWalletVersion >= 00001)
+        if (nWalletVersion >= 90909)
             pwalletdb->WriteMinVersion(nWalletVersion);
         if (!pwalletdbIn)
             delete pwalletdb;
@@ -1521,11 +1521,11 @@ std::string CWallet::GetName(CKeyID key)
 {
     CTxDestination address = key;
     std::string name = mapAddressBook[address];
-    if(name.size() <= 0)
+    /*if(name.size() <= 0)
     {
         address = reserved[0];
         return mapAddressBook[address];
-    }
+    }*/
     return name;
 }
 

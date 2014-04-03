@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0cbbd52580000b3c82e791f72e2fb17d290cfd426f4c546ce35c1a55d5934378");
+uint256 hashGenesisBlock("0x2971e43e5e000b0862116dba44ab6768dbab1eb06ef33394ae3823062dede229");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2881,10 +2881,10 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
 
         block.hashMerkleRoot = block.BuildMerkleTree();
-        block.nVersion = 1;
+        block.nVersion = 2;
         block.nTime    = 1395478800;
         block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 1783602348;
+        block.nNonce   = 1959580;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2896,7 +2896,7 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-        //CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());

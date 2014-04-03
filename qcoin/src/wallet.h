@@ -26,12 +26,12 @@ class COutput;
 /** (client) version numbers for particular wallet features */
 enum WalletFeature
 {
-    FEATURE_BASE = 00001, // the earliest version new wallets supports (only useful for getinfo's clientversion output)
+    FEATURE_BASE = 90909, // the earliest version new wallets supports (only useful for getinfo's clientversion output)
 
-    FEATURE_WALLETCRYPT = 00001, // wallet encryption
-    FEATURE_COMPRPUBKEY = 00001, // compressed public keys
+    FEATURE_WALLETCRYPT = 90909, // wallet encryption
+    FEATURE_COMPRPUBKEY = 90909, // compressed public keys
 
-    FEATURE_LATEST = 00001
+    FEATURE_LATEST = 90909
 };
 
 
