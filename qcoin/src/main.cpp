@@ -4284,7 +4284,7 @@ std::string printNamesInQNetwork()
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        bool fMine = ::IsMine(*pwalletMain, address.Get());
+        bool fMine = false;//::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
         if(fMine == false)
@@ -4713,16 +4713,9 @@ void RestartMining()
         mapArgs["-gen"] = 1;
        // reconnection();
         printf("Restart mining!\n");
-        if (minerThreads != NULL)
-        {
-           printf("Kill thread mining.\n");
-           minerThreads->interrupt_all();
-           delete minerThreads;
-           minerThreads = NULL;
-        }
         GenerateMarks(true, reserved.last());
-        reconnection();
-        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+     //   reconnection();
+       // rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     }else{
         if (minerThreads != NULL)
         {
@@ -4862,11 +4855,9 @@ void GenerateMarks(bool fGenerate, CKeyID key)
 
     if (minerThreads != NULL)
     {
-        printf("minerThreads not NULL\n");
-        return;
-       // minerThreads->interrupt_all();
-       // delete minerThreads;
-       // minerThreads = NULL;
+       minerThreads->interrupt_all();
+       delete minerThreads;
+       minerThreads = NULL;
     }
 
     if (nThreads == 0 || !fGenerate)
@@ -4879,23 +4870,6 @@ void GenerateMarks(bool fGenerate, CKeyID key)
         minerThreads->create_thread(boost::bind(&QcoinMiner, key));
 }
 
-void GenerateMarksGenesisBlock(CBlock * pblock)
-{
-    static boost::thread_group* minerThreads = NULL;
-    RandAddSeedPerfmon();
-    int nThreads = boost::thread::hardware_concurrency();
-
-    if (minerThreads != NULL)
-    {
-        minerThreads->interrupt_all();
-        delete minerThreads;
-        minerThreads = NULL;
-    }
-
-    minerThreads = new boost::thread_group();
-    for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMinerGenesisBlock, pblock));
-}
 
 // Amount compression:
 // * If the amount is 0, output 0

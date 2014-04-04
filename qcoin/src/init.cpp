@@ -1062,31 +1062,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     mainNodes[3] = "95.108.108.83";
     mainNodes[4] = "89.68.221.44";
 
-    CAddress addr1;
-    ConnectNode(addr1, mainNodes[0].c_str());
-    CAddress addr2;
-    ConnectNode(addr2, mainNodes[1].c_str());
-    CAddress addr3;
-    ConnectNode(addr3, mainNodes[2].c_str());
-    CAddress addr4;
-    ConnectNode(addr4, mainNodes[3].c_str());
-    CAddress addr5;
-    ConnectNode(addr5, mainNodes[4].c_str());
-    nStart = GetTimeMillis();
 
-    addrman.Add(addr1, addr1);
-    addrman.Good(addr1);
-    addrman.Add(addr2, addr2);
-    addrman.Good(addr2);
-    addrman.Add(addr3, addr3);
-    addrman.Good(addr3);
-    addrman.Add(addr4, addr4);
-    addrman.Good(addr4);
-    addrman.Add(addr5, addr5);
-    addrman.Good(addr5);
-
-    printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
-           addrman.size(), GetTimeMillis() - nStart);
 
 
     CBlockIndex *pindexRescan = pindexBest;
@@ -1139,7 +1115,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     printf("mapWallet.size() = %"PRIszu"\n",       pwalletMain->mapWallet.size());
     printf("mapAddressBook.size() = %"PRIszu"\n",  pwalletMain->mapAddressBook.size());
 
-    StartNode(threadGroup);
+
 
     if (fServer)
         StartRPCThreads();
@@ -1157,6 +1133,35 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Run a thread to flush wallet periodically
     threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
+    CAddress addr1;
+    ConnectNode(addr1, mainNodes[0].c_str());
+    CAddress addr2;
+    ConnectNode(addr2, mainNodes[1].c_str());
+    CAddress addr3;
+    ConnectNode(addr3, mainNodes[2].c_str());
+    CAddress addr4;
+    ConnectNode(addr4, mainNodes[3].c_str());
+    CAddress addr5;
+    ConnectNode(addr5, mainNodes[4].c_str());
+    nStart = GetTimeMillis();
+
+    addrman.GetAddr().clear();
+
+    addrman.Add(addr1, addr1);
+    addrman.Good(addr1);
+    addrman.Add(addr2, addr2);
+    addrman.Good(addr2);
+    addrman.Add(addr3, addr3);
+    addrman.Good(addr3);
+    addrman.Add(addr4, addr4);
+    addrman.Good(addr4);
+    addrman.Add(addr5, addr5);
+    addrman.Good(addr5);
+
+    printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
+           addrman.size(), GetTimeMillis() - nStart);
+
+    StartNode(threadGroup);
 
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)
@@ -1165,6 +1170,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     //One can always abort here!
     //GenerateMarksGenesisBlock(block);
+
 
     return !fRequestShutdown;
 }
