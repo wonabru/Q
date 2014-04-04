@@ -2398,7 +2398,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         return error("ProcessBlock() : AcceptBlock FAILED");
 
     bool ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
-    RestartMining();
+    //RestartMining();
     //reconnection();
     return ret;
 }
@@ -4702,6 +4702,7 @@ void static QcoinMiner(CKeyID key)
         return;
      CBlock *pblock = &pblocktemplate->block;
      QcoinMinerGenesisBlock(pblock);
+     sleep(60);
      RestartMining();
      return;
 }
@@ -4724,6 +4725,8 @@ void RestartMining()
            delete minerThreads;
            minerThreads = NULL;
         }
+        sleep(60);
+        RestartMining();
     }
 }
 
