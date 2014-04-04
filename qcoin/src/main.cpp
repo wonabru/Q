@@ -84,7 +84,7 @@ const string strMessageMagic = "Mark Signed Message:\n";
 
 double dHashesPerSec = 0.0;
 int64 nHPSTimerStart = 0;
-
+int64 nHPSTimerStart2 = 0;
 // Settings
 int64 nTransactionFee = 0;
 
@@ -4700,13 +4700,15 @@ void static QcoinMiner(CKeyID key)
         return;
      CBlock *pblock = &pblocktemplate->block;
      QcoinMinerGenesisBlock(pblock);
-     sleep(60);
+     printf("QcoinMiner restarted\n");
      RestartMining();
      return;
 }
 
 void RestartMining()
 {
+    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+    RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if(synchronizingComplete == true || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
     {
@@ -4753,8 +4755,7 @@ const char *byte_to_binary(uint64 x)
 void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
 
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    RenameThread("qcoin-miner");
+
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwalletMain);
@@ -4774,7 +4775,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         //
         // Search
         //
-        int64 nStart = GetTime();
+      //  int64 nStart = GetTime();
       //  uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
       //  uint256 bestHash = pblock->GetHash();
         uint256 hash = pblock->GetHash();
@@ -4793,9 +4794,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                     // Found a solution
                     assert(hash == pblock->GetHash());
                     printf("nNonce InitBlock = %u\n",pblock->nNonce);
-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
                     CheckWork(pblock, *pwalletMain, reservekey);
-                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
                     return;
 
                 }
@@ -4808,6 +4807,11 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
             {
                 nHPSTimerStart = GetTimeMillis();
                 nHashCounter = 0;
+            }
+            if(GetTimeMillis() - nHPSTimerStart2 > 10)
+            {
+                nHPSTimerStart2 = GetTimeMillis();
+                printf(".");
             }
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
@@ -4839,15 +4843,15 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-            if (GetTime() - nStart > 666)
-                break;
+          //  if (GetTime() - nStart > 666)
+          //      break;
 
         }
     } }
     catch (boost::thread_interrupted)
     {
         printf("QcoinMiner terminated\n");
-        throw;
+        return;
     }
 }
 
