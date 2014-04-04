@@ -21,6 +21,7 @@ extern std::string whoami;
 const int mainNodesNumber=5;
 extern bool synchronizingComplete;
 extern std::string mainNodes[mainNodesNumber];
+extern boost::thread_group* minerThreads;
 
 void StartShutdown();
 bool ShutdownRequested();

@@ -37,6 +37,7 @@ QList<CKeyID> reserved;
 QMap<CAddress,int> tryingAddresses;
 bool synchronizingComplete = false;
 std::string whoami = "";
+boost::thread_group* minerThreads = NULL;
 
 string mainNodes[mainNodesNumber];
 
@@ -1165,7 +1166,8 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)
-    RestartMining();
+    minerThreads = new boost::thread_group();
+    minerThreads->create_thread(boost::bind(&RestartMining));
     //Should be like this but one should give an option for someone who would like to check.
 
     //One can always abort here!

@@ -100,7 +100,8 @@ extern int nScriptCheckThreads;
 extern bool fTxIndex;
 extern unsigned int nCoinCacheSize;
 extern bool synchronizingComplete;
-
+void RestartMining();
+extern boost::thread_group* minerThreads;
 // Settings
 extern int64 nTransactionFee;
 
@@ -167,9 +168,6 @@ bool SendMessages(CNode* pto, bool fSendTrickle);
 void ThreadScriptCheck();
 /** Run the miner threads */
 void GenerateMarks(bool fGenerate, CKeyID key);
-
-
-void RestartMining();
 
 /** Generate a new block, without valid proof-of-work */
 CBlockTemplate* CreateNewBlock(CKeyID key);

@@ -37,12 +37,10 @@ extern Value addnode(const Array& params, bool fHelp);
 //
 // Global state
 //
-static boost::thread_group* minerThreads = NULL;
 CCriticalSection cs_setpwalletRegistered;
 set<CWallet*> setpwalletRegistered;
 
 CCriticalSection cs_main;
-
 CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
@@ -4709,18 +4707,26 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
+    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if(synchronizingComplete == true || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
     {
         mapArgs["-gen"] = 1;
        // reconnection();
         printf("Restart mining!\n");
+        if (minerThreads != NULL)
+        {
+           minerThreads->interrupt_all();
+           delete minerThreads;
+           minerThreads = NULL;
+        }
+
         GenerateMarks(true, reserved.last());
      //   reconnection();
        // rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     }else{
         if (minerThreads != NULL)
         {
-            printf("Kill thread mining.\n");
+           printf("Kill thread mining.\n");
            minerThreads->interrupt_all();
            delete minerThreads;
            minerThreads = NULL;
@@ -4849,28 +4855,9 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
 void GenerateMarks(bool fGenerate, CKeyID key)
 {
-
-
-
-    int nThreads = 1;//GetArg("-genproclimit", -1);
-    if (nThreads < 0)
-        nThreads = boost::thread::hardware_concurrency();
-
-    if (minerThreads != NULL)
-    {
-       minerThreads->interrupt_all();
-       delete minerThreads;
-       minerThreads = NULL;
-    }
-
-    if (nThreads == 0 || !fGenerate)
+   if (!fGenerate)
         return;
-
-    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
-
-    minerThreads = new boost::thread_group();
-    for (int i = 0; i < nThreads; i++)
-        minerThreads->create_thread(boost::bind(&QcoinMiner, key));
+    QcoinMiner(key);
 }
 
 

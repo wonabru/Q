@@ -9,7 +9,7 @@
 #include <QDataWidgetMapper>
 #include <QMessageBox>
 
-extern void RestartMining();
+
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -146,7 +146,14 @@ void EditAddressDialog::accept()
         {
         case AddressTableModel::OK:
             // Failed with unknown reason. Just reject.
-            RestartMining();
+            if (minerThreads != NULL)
+            {
+               minerThreads->interrupt_all();
+               delete minerThreads;
+               minerThreads = NULL;
+            }
+            minerThreads = new boost::thread_group();
+            minerThreads->create_thread(boost::bind(&RestartMining));
             break;
         case AddressTableModel::NO_CHANGES:
             // No changes were made during edit operation. Just reject.
