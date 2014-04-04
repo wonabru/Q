@@ -4808,11 +4808,11 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 nHPSTimerStart = GetTimeMillis();
                 nHashCounter = 0;
             }
-            if(GetTimeMillis() - nHPSTimerStart2 > 10)
+          /*  if(GetTimeMillis() - nHPSTimerStart2 > 100)
             {
                 nHPSTimerStart2 = GetTimeMillis();
                 printf(".");
-            }
+            }*/
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
                 static CCriticalSection cs;
