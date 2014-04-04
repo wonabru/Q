@@ -477,7 +477,7 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
             return pnode;
         }
     }
-    if(pnode != NULL)
+   /* if(pnode != NULL)
     {
         try
         {
@@ -492,7 +492,7 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
         {
             tryingAddresses[addrConnect]=0;
         }
-    }
+    }*/
     /// debug print
     printf("trying connection %s lastseen=%.1fhrs\n",
         pszDest ? pszDest : addrConnect.ToString().c_str(),
