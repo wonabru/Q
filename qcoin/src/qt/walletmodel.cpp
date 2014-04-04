@@ -116,8 +116,8 @@ void WalletModel::updateAddressBook(const QString &address, const QString &label
 {
     if(addressTableModel)
     {
-      //  addressTableModel->updateEntry(address, label, isMine, status);
-        addressTableModel->updateEntry(address, label, false, status);
+        addressTableModel->updateEntry(address, label, isMine, status);
+      //  addressTableModel->updateEntry(address, label, false, status);
     }
 }
 

@@ -38,7 +38,7 @@ struct AddressTableEntryLessThan
             {
                 const CQcoinAddress& address = item.first;
                 const std::string& strName = item.second;
-                bool fMine = false;//IsMine(*wallet, address.Get());
+                bool fMine = IsMine(*wallet, address.Get());
                 cachedAddressTable.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString())));
@@ -290,8 +290,8 @@ QModelIndex AddressTableModel::index(int row, int column, const QModelIndex &par
 void AddressTableModel::updateEntry(const QString &address, const QString &label, bool isMine, int status)
 {
     // Update address book model from Mark core
- //   priv->updateEntry(address, label, isMine, status);
-    priv->updateEntry(address, label, false, status);
+    priv->updateEntry(address, label, isMine, status);
+ //   priv->updateEntry(address, label, false, status);
 }
 
 

@@ -591,9 +591,9 @@ bool AppInit2(boost::thread_group& threadGroup)
 #if !defined(QT_GUI)
     fServer = true;
 #endif
-    fPrintToConsole = GetBoolArg("-printtoconsole",true);
-    fPrintToDebugger = GetBoolArg("-printtodebugger", true);
-    fLogTimestamps = GetBoolArg("-logtimestamps", true);
+    fPrintToConsole = GetBoolArg("-printtoconsole",false);
+    fPrintToDebugger = GetBoolArg("-printtodebugger", false);
+    fLogTimestamps = GetBoolArg("-logtimestamps", false);
 
     if (mapArgs.count("-timeout"))
     {

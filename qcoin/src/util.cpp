@@ -70,12 +70,13 @@ using namespace std;
 
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
-bool fDebug = true;
+bool fDebug = false;
 bool fDebugNet = false;
-bool fPrintToConsole = true;
-bool fPrintToDebugger = true;
-bool fDaemon = true;
-bool fServer = true;
+bool fPrintToDebugger = false;
+bool fPrintToConsole = false;
+bool fPrintToDebugLog = true;
+bool fDaemon = false;
+bool fServer = false;
 bool fCommandLine = false;
 string strMiscWarning;
 bool fTestNet = false;
@@ -199,7 +200,11 @@ uint256 GetRandHash()
 }
 
 
-
+static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;
+// We use boost::call_once() to make sure these are initialized in
+// in a thread-safe manner the first time it is called:
+static FILE* fileout = NULL;
+static boost::mutex* mutexDebugLog = NULL;
 
 
 
@@ -220,7 +225,6 @@ uint256 GetRandHash()
 // in a thread-safe manner the first time it is called:
 //static FILE* fileout = NULL;
 //static boost::mutex* mutexDebugLog = NULL;
-/*
 static void DebugPrintInit()
 {
     assert(fileout == NULL);
@@ -231,22 +235,18 @@ static void DebugPrintInit()
     if (fileout) setbuf(fileout, NULL); // unbuffered
 
     mutexDebugLog = new boost::mutex();
-}*/
-/*
-int printf(const char* pszFormat, ...)
+}
+
+
+int LogPrintStr(const std::string &str)
 {
     int ret = 0; // Returns total number of characters written
-  //  cout << pszFormat << endl;
-  //  cout.flush();
     if (fPrintToConsole)
     {
         // print to console
-        va_list arg_ptr;
-        va_start(arg_ptr, pszFormat);
-        ret += vprintf(pszFormat, arg_ptr);
-        va_end(arg_ptr);
+        ret = fwrite(str.data(), 1, str.size(), stdout);
     }
-    else if (!fPrintToDebugger)
+    else if (fPrintToDebugLog)
     {
         static bool fStartedNewLine = true;
         boost::call_once(&DebugPrintInit, debugPrintInitFlag);
@@ -267,46 +267,19 @@ int printf(const char* pszFormat, ...)
         // Debug print useful for profiling
         if (fLogTimestamps && fStartedNewLine)
             ret += fprintf(fileout, "%s ", DateTimeStrFormat("%Y-%m-%d %H:%M:%S", GetTime()).c_str());
-        if (pszFormat[strlen(pszFormat) - 1] == '\n')
+        if (!str.empty() && str[str.size()-1] == '\n')
             fStartedNewLine = true;
         else
             fStartedNewLine = false;
 
-        va_list arg_ptr;
-        va_start(arg_ptr, pszFormat);
-        ret += vfprintf(fileout, pszFormat, arg_ptr);
-        va_end(arg_ptr);
+        ret = fwrite(str.data(), 1, str.size(), fileout);
     }
 
-#ifdef WIN32
-    if (fPrintToDebugger)
-    {
-        static CCriticalSection cs_printf;
-
-        // accumulate and output a line at a time
-        {
-            LOCK(cs_printf);
-            static std::string buffer;
-
-            va_list arg_ptr;
-            va_start(arg_ptr, pszFormat);
-            buffer += vstrprintf(pszFormat, arg_ptr);
-            va_end(arg_ptr);
-
-            int line_start = 0, line_end;
-            while((line_end = buffer.find('\n', line_start)) != -1)
-            {
-                OutputDebugStringA(buffer.substr(line_start, line_end - line_start).c_str());
-                line_start = line_end + 1;
-                ret += line_end-line_start;
-            }
-            buffer.erase(0, line_start);
-        }
-    }
-#endif
     return ret;
 }
-*/
+
+
+
 string vstrprintf(const char *format, va_list ap)
 {
     char buffer[50000];

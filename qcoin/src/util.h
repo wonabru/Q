@@ -147,8 +147,9 @@ extern volatile bool fReopenDebugLog;
 
 void RandAddSeed();
 void RandAddSeedPerfmon();
-int ATTR_WARN_PRINTF(1,2) printf(const char* pszFormat, ...);
+//int ATTR_WARN_PRINTF(1,2) printf(const char* pszFormat, ...);
 
+//#define printf LogPrint
 /*
   Rationale for the real_strprintf / strprintf construction:
     It is not allowed to use va_start with a pass-by-reference argument.
@@ -233,11 +234,9 @@ void AddTimeData(const CNetAddr& ip, int64 nTime);
 void runCommand(std::string strCommand);
 
 
+int LogPrintStr(const std::string &str);
 
-
-
-
-
+//#define printf(format, ...) {char *logstr;try{sprintf(logstr,format,__VA_ARGS__);LogPrintStr(logstr);}catch(...){LogPrintStr(format);}}
 
 
 inline std::string i64tostr(int64 n)
@@ -336,19 +335,16 @@ inline int64 GetPerformanceCounter()
     return nCounter;
 }
 
-const int64 shifttemp = 3600000;
-const int64 hourtemp = 2;
-
-inline int64 GetTimeMicros()
+inline int64_t GetTimeMillis()
 {
-    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds() - shifttemp * 1000 * hourtemp;
+    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds();
 }
 
-inline int64 GetTimeMillis()
+inline int64_t GetTimeMicros()
 {
-    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds() - shifttemp * hourtemp;
+    return (boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time()) -
+            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds();
 }
 
 
