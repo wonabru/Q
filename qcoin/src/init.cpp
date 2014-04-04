@@ -1160,7 +1160,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)
-    //RestartMining();
+    RestartMining();
     //Should be like this but one should give an option for someone who would like to check.
 
     //One can always abort here!

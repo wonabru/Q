@@ -604,6 +604,9 @@ public:
         }
     }
 
+   // static void RecordBytesRecv(uint64_t bytes);
+   // static void RecordBytesSent(uint64_t bytes);
+
     void PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd);
     bool IsSubscribed(unsigned int nChannel);
     void Subscribe(unsigned int nChannel, unsigned int nHops=0);
