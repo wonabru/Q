@@ -113,6 +113,8 @@ bool EditAddressDialog::saveCurrentRow()
                     addressOld = "";
                     nameOld = name;
                 }
+            }else{
+                nameOld = "";
             }
         }
         if(address != addressOld && name == nameOld)
@@ -126,6 +128,9 @@ bool EditAddressDialog::saveCurrentRow()
         recipients.append(toChn);
         if(this->model->walletModel != NULL)
            this->model->walletModel->changePubKey(recipients);
+        }else if(address == addressOld && name == nameOld)
+        {
+            return false;
         }
         break;
 

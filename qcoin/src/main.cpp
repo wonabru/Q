@@ -2323,8 +2323,6 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             pwalletMain->DelAddressBookName((CKeyID)keydel);
             if(address.IsValid() == true)
                 pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
-            bool firstLoad = false;
-            pwalletMain->LoadWallet(firstLoad);
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)

@@ -299,7 +299,7 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr)
 {
     std::string name = label.toStdString();
     std::string address = addr.toStdString();
-    if(CQcoinAddress(address).IsValid() == true)
+    if(CQcoinAddress(address).IsValid() == true && IsMine(*wallet, CQcoinAddress(address).Get()) == true)
     {
     LOCK(wallet->cs_wallet);
     if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 0) == false)
@@ -321,6 +321,11 @@ bool AddressTableModel::changeAddress(const QString &label, const QString &addr)
     {
     LOCK(wallet->cs_wallet);
     {
+        if(IsMine(*wallet, wallet->GetAddress(name).Get()) == false)
+        {
+                return false;
+        }
+
         wallet->DelAddressBookName(wallet->GetAddress(name).Get());
 
         if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)

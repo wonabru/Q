@@ -1577,8 +1577,8 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     else
         NotifyAddressBookChanged(this, address, strName, false, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
 
- //   if (!fFileBacked)
- //       return false;
+    if (!fFileBacked)
+        return false;
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }
 
