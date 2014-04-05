@@ -96,6 +96,7 @@ public:
     QString addRow(const QString &type, const QString &label, const QString &address);
     void noChanges();
     bool changeName(const QString &label, const QString &addr);
+    bool changeAddress(const QString &label, const QString &addr);
 
     void addDefaultReceive();
 

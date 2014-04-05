@@ -2312,7 +2312,12 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             key = (CKeyID)(vchn.scriptPubKey.GetID());
             address.Set(key);
             blockname = vchn.name;
+            CKeyID keydel;
+            pwalletMain->GetAddress(blockname).GetKeyID(keydel);
+            pwalletMain->DelAddressBookName((CKeyID)keydel);
             pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+            bool firstLoad = false;
+            pwalletMain->LoadWallet(firstLoad);
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)
@@ -4292,10 +4297,10 @@ std::string printNamesInQNetwork()
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        bool fMine = false;//::IsMine(*pwalletMain, address.Get());
+        //bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
-        if(fMine == false)
+    //    if(fMine == false)
         {
             NamesInQNetwork.append(AddressTableEntry(AddressTableEntry::Sending,
                           QString::fromStdString(strName),

@@ -99,14 +99,19 @@ bool EditAddressDialog::saveCurrentRow()
             name = ui->labelEdit->text();
             if(model->changeName(name,address) == false)
             {
-                if(mapper->submit())
+                if(model->changeAddress(name,address) == false)
                 {
-                    address = addressOld;
-                    name = nameOld;
+                    if(mapper->submit())
+                    {
+                        address = addressOld;
+                        name = nameOld;
+                    }
+                    return false;
                 }
-                return false;
             }
         }
+        if(address != addressOld && name == nameOld)
+        {
         SendCoinsRecipient toChn;
         toChn.address = address;
         toChn.amount = -100;
@@ -116,6 +121,7 @@ bool EditAddressDialog::saveCurrentRow()
         recipients.append(toChn);
         if(this->model->walletModel != NULL)
            this->model->walletModel->changePubKey(recipients);
+        }
         break;
 
     }

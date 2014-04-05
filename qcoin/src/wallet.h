@@ -276,7 +276,8 @@ public:
         SENDING = 1,
         AUTO = 2,
         OVERWRITE = 3,
-        OVERWRITERECEIVE = 4
+        OVERWRITERECEIVE = 4,
+        UPDATE = 5
     };
 
     void SetBestChain(const CBlockLocator& loc);

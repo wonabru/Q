@@ -300,9 +300,28 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr)
     std::string name = label.toStdString();
     std::string address = addr.toStdString();
     LOCK(wallet->cs_wallet);
-    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 3) == false)
+    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 0) == false)
     {
         return false;
+    }
+    editStatus = OK;
+    return true;
+}
+
+bool AddressTableModel::changeAddress(const QString &label, const QString &addr)
+{
+    std::string name = label.toStdString();
+    std::string address = addr.toStdString();
+    LOCK(wallet->cs_wallet);
+    {
+        if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 0) == false)
+        {
+             return false;
+        }
+        if(wallet->DelAddressBookName(wallet->GetAddress(name).Get()) == false)
+        {
+            return false;
+        }
     }
     editStatus = OK;
     return true;

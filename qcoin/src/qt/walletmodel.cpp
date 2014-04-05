@@ -245,7 +245,12 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
     // Pre-check input data for validity
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
+        CQcoinAddress address(rcp.address.toStdString());
         if(!validateAddress(rcp.address))
+        {
+            return InvalidAddress;
+        }
+        if(::IsMine(*(this->wallet),address.Get()) == false)
         {
             return InvalidAddress;
         }
