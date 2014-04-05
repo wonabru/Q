@@ -2303,10 +2303,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
     {
         printf("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n Overwrite your name !!!\n");
-        CKeyID keydel;
-        pwalletMain->GetAddress(blockname).GetKeyID(keydel);
-        pwalletMain->DelAddressBookName((CKeyID)keydel);
-        pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+     //   CKeyID keydel;
+    //    pwalletMain->GetAddress(blockname).GetKeyID(keydel);
+     //   pwalletMain->DelAddressBookName((CKeyID)keydel);
+      //  pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     }
     reserved.removeAll(key);
