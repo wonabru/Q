@@ -73,6 +73,7 @@ Optional:
 
 miniupnpc
 ---------
+	
 	tar -xzvf miniupnpc-1.6.tar.gz
 	cd miniupnpc-1.6
 	make
@@ -83,10 +84,12 @@ Berkeley DB
 -----------
 You need Berkeley DB 4.8.  If you have to build Berkeley DB yourself:
 
+	tar xfz db-4.8.30.NC.tar.gz
+	cd db-4.8.30.NC/build_unix
 	../dist/configure --enable-cxx
 	make
 	sudo make install
-	sudo echo "/usr/local/BerkeleyDB.4.8/lib" /etc/ld.so.conf.d/db.conf
+	sudo echo "/usr/local/BerkeleyDB.4.8/lib" > /etc/ld.so.conf.d/db.conf
 	sudo ldconfig
 
 
@@ -94,12 +97,17 @@ Boost
 -----
 If you need to build Boost yourself:
 
+	tar xfz boost_1_50_0.tar.gz
+	cd boost_1_50_0
 	./bootstrap.sh
 	./b2
 	sudo ./b2 install
 
 OpenSSL
 -----
+
+	tar xfz openssl-1.0.1c.tar.gz
+	cd openssl-1.0.1c
 	./config
 	make
 	sudo make install
