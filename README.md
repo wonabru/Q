@@ -89,8 +89,10 @@ You need Berkeley DB 4.8.  If you have to build Berkeley DB yourself:
 	../dist/configure --enable-cxx
 	make
 	sudo make install
-	sudo echo "/usr/local/BerkeleyDB.4.8/lib" > /etc/ld.so.conf.d/db.conf
-	sudo ldconfig
+	sudo su
+	echo "/usr/local/BerkeleyDB.4.8/lib" > /etc/ld.so.conf.d/db.conf
+	ldconfig
+	exit
 
 
 Boost
