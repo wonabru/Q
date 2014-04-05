@@ -10,6 +10,8 @@
 #include <QDataWidgetMapper>
 #include <QMessageBox>
 
+QString addressOld = "";
+QString nameOld = "";
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -91,8 +93,8 @@ bool EditAddressDialog::saveCurrentRow()
      //       model->noChanges();
      //   break;
         case EditReceivingAddress:
-        QString addressOld = ui->addressEdit->text();
-        QString nameOld = ui->labelEdit->text();
+        addressOld = ui->addressEdit->text();
+        nameOld = ui->labelEdit->text();
         if(mapper->submit())
         {
             address = ui->addressEdit->text();
@@ -107,6 +109,9 @@ bool EditAddressDialog::saveCurrentRow()
                         name = nameOld;
                     }
                     return false;
+                }else{
+                    addressOld = "";
+                    nameOld = name;
                 }
             }
         }

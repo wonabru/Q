@@ -1573,7 +1573,7 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     else if(ato == OVERWRITERECEIVE)
         NotifyAddressBookChanged(this, address, strName, true, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     else if(ato == UPDATE)
-        NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), CT_UPDATED);
+        NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     else
         NotifyAddressBookChanged(this, address, strName, false, (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
 
