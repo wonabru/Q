@@ -38,7 +38,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
         break;
     case EditSendingAddress:
         setWindowTitle(tr("Names registered in PLM Network"));
-        ui->addressEdit->setEnabled(false);
+        ui->addressEdit->setEnabled(true);
         ui->labelEdit->setEnabled(false);
         break;
     }
@@ -88,8 +88,8 @@ bool EditAddressDialog::saveCurrentRow()
                 ui->addressEdit->text());
         break;
         case EditSendingAddress:
-            model->noChanges();
-        break;
+     //       model->noChanges();
+     //   break;
         case EditReceivingAddress:
         QString addressOld = ui->addressEdit->text();
         QString nameOld = ui->labelEdit->text();

@@ -567,10 +567,13 @@ int CMerkleTx::SetMerkleBranch(const CBlock* pblock)
 bool CTransaction::CheckTransaction(CValidationState &state) const
 {
     // Basic checks that don't depend on any context
-    if (vin.empty())
-        return state.DoS(10, error("CTransaction::CheckTransaction() : vin empty"));
-    if (vout.empty())
-        return state.DoS(10, error("CTransaction::CheckTransaction() : vout empty"));
+    if(vchn.empty())
+    {
+        if (vin.empty())
+            return state.DoS(10, error("CTransaction::CheckTransaction() : vin empty"));
+        if (vout.empty())
+            return state.DoS(10, error("CTransaction::CheckTransaction() : vout empty"));
+    }
     // Size limits
     if (::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return state.DoS(100, error("CTransaction::CheckTransaction() : size limits failed"));

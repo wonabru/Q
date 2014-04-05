@@ -76,7 +76,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         BOOST_FOREACH(const CTxOut& txout, wtx.vout)
             fAllToMe = fAllToMe && wallet->IsMine(txout);
 
-        if (fAllFromMe && fAllToMe)
+      /*  if (fAllFromMe && fAllToMe)
         {
             // Payment to self
             int64 nChange = wtx.GetChange();
@@ -85,7 +85,8 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                             -(nDebit - nChange), nCredit - nChange));
         }
         else if (fAllFromMe)
-        {
+
+        {*/
             //
             // Debit
             //
@@ -129,14 +130,14 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
 
                 parts.append(sub);
             }
-        }
+       /*}
         else
         {
             //
             // Mixed debit transaction, can't break down payees
             //
             parts.append(TransactionRecord(hash, nTime, TransactionRecord::Other, "", nNet, 0));
-        }
+        }*/
     }
 
     return parts;
