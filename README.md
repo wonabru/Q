@@ -112,3 +112,15 @@ OpenSSL
 	make
 	sudo make install
 
+Qt
+-----
+
+	sudo apt-get install qtcreator libqt4-dev
+
+Building
+-----
+
+	cd Q/qcoin
+	qtcreator Q-qt.pro
+	[Build -> Rebuild All]
+
