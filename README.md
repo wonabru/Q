@@ -49,13 +49,13 @@ Dependency Build Instructions: Ubuntu & Debian
 Build requirements:
 
 	sudo apt-get update
-	sudo apt-get upgrade
-	sudo apt-get install build-essential
-	sudo apt-get install libssl-dev
+	sudo apt-get upgrade -y
+	sudo apt-get install build-essential -y
+	sudo apt-get install libssl-dev -y
 
 for Ubuntu 12.04:
 
-	sudo apt-get install libboost-all-dev
+	sudo apt-get install libboost-all-dev -y
 
  db4.8 packages are available [here](https://launchpad.net/~Q/+archive/Q).
 
@@ -64,14 +64,14 @@ for Ubuntu 12.04:
 
 for other Ubuntu & Debian:
 
-	sudo apt-get install libdb4.8-dev
-	sudo apt-get install libdb4.8++-dev
-	sudo apt-get install libboost1.37-dev
+	sudo apt-get install libdb4.8-dev -y
+	sudo apt-get install libdb4.8++-dev -y
+	sudo apt-get install libboost1.37-dev -y
  (If using Boost 1.37, append -mt to the boost libraries in the makefile)
 
 Optional:
 
-	sudo apt-get install libminiupnpc-dev (see USE_UPNP compile flag)
+	sudo apt-get install libminiupnpc-dev -y (see USE_UPNP compile flag)
 
 miniupnpc
 ---------
@@ -119,7 +119,7 @@ OpenSSL
 Qt
 -----
 
-	sudo apt-get install qtcreator libqt4-dev
+	sudo apt-get install qtcreator libqt4-dev -y
 
 Building
 -----
