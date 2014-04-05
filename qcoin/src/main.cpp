@@ -4719,8 +4719,8 @@ void RestartMining()
         }
 
         GenerateMarks(true, reserved.last());
-     //   reconnection();
-       // rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+        reconnection();
+        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     }else{
         if (minerThreads != NULL)
         {
