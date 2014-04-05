@@ -1366,7 +1366,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
         strFailReason = _("Transaction amounts must be positive");
         return false;
     }
-
+    wtxNew.vchn.clear();
     wtxNew.BindWallet(this);
 
     {
@@ -1375,9 +1375,6 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
             nFeeRet = nTransactionFee;
             loop
             {
-                wtxNew.vin.clear();
-                wtxNew.vout.clear();
-                wtxNew.vchn.clear();
                 wtxNew.fFromMe = true;
                 double dPriority = 1;
                 // vouts to the payees
