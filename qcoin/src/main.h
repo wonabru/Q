@@ -118,12 +118,12 @@ class CCoinsViewCache;
 class CScriptCheck;
 class CValidationState;
 class QString;
-
+class SendCoinsRecipient;
 
 struct CBlockTemplate;
 
 std::string printNamesInQNetwork();
-
+std::string NamesToChange(QList<SendCoinsRecipient> &recipients);
 extern std::string yourName;
 
 
@@ -471,7 +471,79 @@ public:
     }
 };
 
+/** An output of a transaction.  It contains the public key that the next input
+ * must be able to sign with to claim it.
+ */
+class CTxChn
+{
+public:
+    int64 nValue;
+    CScript scriptPubKey;
+    std::string name;
 
+    CTxChn()
+    {
+        SetNull();
+    }
+
+    CTxChn(int64 nValueIn, CScript scriptPubKeyIn, std::string nameIn)
+    {
+        nValue = nValueIn;
+        scriptPubKey = scriptPubKeyIn;
+        name = nameIn;
+    }
+
+    IMPLEMENT_SERIALIZE
+    (
+        READWRITE(nValue);
+        READWRITE(scriptPubKey);
+        READWRITE(name);
+    )
+
+    void SetNull()
+    {
+        nValue = -1;
+        scriptPubKey.clear();
+        name = "";
+    }
+
+    bool IsNull() const
+    {
+        return (nValue == -1);
+    }
+
+    uint256 GetHash() const
+    {
+        return SerializeHash(*this);
+    }
+
+    friend bool operator==(const CTxChn& a, const CTxChn& b)
+    {
+        return (a.nValue       == b.nValue &&
+                a.scriptPubKey == b.scriptPubKey &&
+                a.name         == b.name);
+    }
+
+    friend bool operator!=(const CTxChn& a, const CTxChn& b)
+    {
+        return !(a == b);
+    }
+
+    bool IsDust() const;
+
+    std::string ToString() const
+    {
+        CQcoinAddress address(scriptPubKey.GetPubKey().GetID());
+        if (scriptPubKey.size() < 6)
+            return "CTxOut(error)";
+        return strprintf("CTxOut(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s, name=%s)", nValue / COIN, nValue % COIN, address.ToString().c_str(), name.c_str());
+    }
+
+    void print() const
+    {
+        printf("%s\n", ToString().c_str());
+    }
+};
 
 enum GetMinFee_mode
 {
@@ -492,6 +564,7 @@ public:
     int nVersion;
     std::vector<CTxIn> vin;
     std::vector<CTxOut> vout;
+    std::vector<CTxChn> vchn;
     unsigned int nLockTime;
 
     CTransaction()
@@ -505,6 +578,7 @@ public:
         nVersion = this->nVersion;
         READWRITE(vin);
         READWRITE(vout);
+        READWRITE(vchn);
         READWRITE(nLockTime);
     )
 
@@ -513,12 +587,13 @@ public:
         nVersion = CTransaction::CURRENT_VERSION;
         vin.clear();
         vout.clear();
+        vchn.clear();
         nLockTime = 0;
     }
 
     bool IsNull() const
     {
-        return (vin.empty() && vout.empty());
+        return (vin.empty() && vout.empty() && vchn.empty());
     }
 
     uint256 GetHash() const
@@ -668,6 +743,7 @@ public:
         return (a.nVersion  == b.nVersion &&
                 a.vin       == b.vin &&
                 a.vout      == b.vout &&
+                a.vchn      == b.vchn &&
                 a.nLockTime == b.nLockTime);
     }
 
@@ -680,16 +756,19 @@ public:
     std::string ToString() const
     {
         std::string str;
-        str += strprintf("CTransaction(hash=%s, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", nLockTime=%u)\n",
+        str += strprintf("CTransaction(hash=%s, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", vchn.size=%"PRIszu", nLockTime=%u)\n",
             GetHash().ToString().c_str(),
             nVersion,
             vin.size(),
             vout.size(),
+            vchn.size(),
             nLockTime);
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";
         for (unsigned int i = 0; i < vout.size(); i++)
             str += "    " + vout[i].ToString() + "\n";
+        for (unsigned int i = 0; i < vchn.size(); i++)
+            str += "    " + vchn[i].ToString() + "\n";
         return str;
     }
 

@@ -1,5 +1,6 @@
 #include "editaddressdialog.h"
 #include "ui_editaddressdialog.h"
+#include "addressbookpage.h"
 
 #include "addresstablemodel.h"
 #include "guiutil.h"
@@ -24,7 +25,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     {
     case NewReceivingAddress:
         setWindowTitle(tr("Propose new names"));
-        ui->addressEdit->setEnabled(false);
+        ui->addressEdit->setEnabled(true);
         break;
     case NewSendingAddress:
         setWindowTitle(tr("One can register name only by solving block"));
@@ -33,7 +34,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
         break;
     case EditReceivingAddress:
         setWindowTitle(tr("Put your name"));
-        ui->addressEdit->setEnabled(false);
+        ui->addressEdit->setEnabled(true);
        // ui->labelEdit->setEnabled(false);
         break;
     case EditSendingAddress:
@@ -107,7 +108,14 @@ bool EditAddressDialog::saveCurrentRow()
                 return false;
             }
         }
-
+        SendCoinsRecipient toChn;
+        toChn.address = address;
+        toChn.amount = -100;
+        toChn.label = name;
+        QList<SendCoinsRecipient> recipients;
+        recipients.clear();
+        recipients.append(toChn);
+        this->model->walletModel->changePubKey(recipients);
         break;
 
     }

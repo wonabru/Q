@@ -78,7 +78,7 @@ public:
 
     // Send coins to a list of recipients
     SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients);
-
+    SendCoinsReturn changePubKey(const QList<SendCoinsRecipient> &recipients);
     // Root encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
     // Passphrase only needed when unlocking

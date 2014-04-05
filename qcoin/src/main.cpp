@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0xb90ab20492000bc8264125e2a2ba62c6bf7d7ef50e252a31c13da4cb1ca9fe69");
+uint256 hashGenesisBlock("0xef93c35a70000e57e59e8ab9f827999e05ba63f67d80e1eeddb7e02c049565b9");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2301,6 +2301,13 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);
+    BOOST_FOREACH(const CTxChn &vchn, pblock->vtx[0].vchn)
+    {
+       key = (CKeyID)(vchn.scriptPubKey.GetID());
+       address.Set(key);
+       blockname = vchn.name;
+       pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+    }
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
    //    initAccountsRegister();
@@ -2878,7 +2885,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1396655999;
         block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 555977619;
+        block.nNonce   = 450054433;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2890,11 +2897,11 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-      //  CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
-        assert(block.hashMerkleRoot == uint256("0x0f09814747cbaa38d5bb850040031b14663dca5855917eadb03296aea4afffc2"));
+        assert(block.hashMerkleRoot == uint256("0x99f068209bc6959b68627c7e0dd595978bc20ac69803df337cb0bd2f0244cdcb"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4303,7 +4310,35 @@ std::string printNamesInQNetwork()
     return rets;
 }
 
-
+std::string NamesToChange(QList<SendCoinsRecipient> &recipients)
+{
+    std::string rets = "";
+    NamesInQNetworkToChange.clear();
+    {
+    BOOST_FOREACH(const SendCoinsRecipient& item, recipients)
+    {
+        const CQcoinAddress address(item.address.toStdString());
+        const std::string strName = item.label.toStdString();
+        CScript scriptPubKey;
+        scriptPubKey.SetDestination(address.Get());
+        NamesInQNetworkToChange.append(AddressTableEntry(AddressTableEntry::Sending,
+                          QString::fromStdString(strName),
+                          QString::fromStdString(address.ToString())));
+    }
+    }
+    BOOST_FOREACH(AddressTableEntry item, NamesInQNetworkToChange)
+    {
+        if(item.label != "")
+        {
+            string to = item.address.toStdString();
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                printf("Invalid Mark address");
+            rets += "ToChange: Name " + item.label.toStdString() + " scriptPubKey " + address.ToString() + "\n";
+        }
+    }
+    return rets;
+}
 
 CBlockTemplate* CreateNewBlock(CKeyID key)
 {
@@ -4326,7 +4361,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
     txNew.vout.clear();
-
+    txNew.vchn.clear();
 
     BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
     {
@@ -4341,6 +4376,25 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
             CTxOut txout;
             txout.scriptPubKey = pubKey;
             txNew.vout.push_back(txout);
+    //        printf("Name %s\n",address.ToString().c_str());
+        }
+    }
+
+    BOOST_FOREACH(AddressTableEntry item, NamesInQNetworkToChange)
+    {
+        if(item.label != "")
+        {
+            string to = item.address.toStdString();
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                printf("Invalid Mark address");
+            CScript pubKey;
+            pubKey.SetDestination(address.Get());
+            CTxChn txchn;
+            txchn.scriptPubKey = pubKey;
+            txchn.nValue = item.value;
+            txchn.name = item.label.toStdString();
+            txNew.vchn.push_back(txchn);
     //        printf("Name %s\n",address.ToString().c_str());
         }
     }

@@ -227,7 +227,125 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         }
     }
 
-    return SendCoinsReturn(OK, 0, hex);
+    SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
+    return ret;
+}
+
+WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsRecipient> &recipients)
+{
+    qint64 total = 0;
+    QSet<QString> setAddress;
+    QString hex;
+
+    if(recipients.empty())
+    {
+        return OK;
+    }
+
+    // Pre-check input data for validity
+    foreach(const SendCoinsRecipient &rcp, recipients)
+    {
+        if(!validateAddress(rcp.address))
+        {
+            return InvalidAddress;
+        }
+        setAddress.insert(rcp.address);
+
+        if(rcp.amount <= 0 || rcp.amount != -100)
+        {
+            return InvalidAmount;
+        }
+        if(rcp.amount != -100)
+            total += rcp.amount;
+    }
+
+    if(recipients.size() > setAddress.size())
+    {
+        return DuplicateAddress;
+    }
+
+    if(total > getBalance())
+    {
+        return AmountExceedsBalance;
+    }
+
+    if((total + nTransactionFee) > getBalance())
+    {
+        return SendCoinsReturn(AmountWithFeeExceedsBalance, nTransactionFee);
+    }
+
+    {
+        LOCK2(cs_main, wallet->cs_wallet);
+
+        // Sendmany
+        std::vector<std::pair<CScript, int64> > vecSend;
+        foreach(const SendCoinsRecipient &rcp, recipients)
+        {
+            CScript scriptPubKey;
+            scriptPubKey.SetDestination(CQcoinAddress(rcp.address.toStdString()).Get());
+            vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
+        }
+
+        CWalletTx wtx;
+        CReserveKey keyChange(wallet);
+        int64 nFeeRequired = 0;
+        std::string strFailReason;
+        bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, strFailReason);
+
+        if(!fCreated)
+        {
+            if((total + nFeeRequired) > wallet->GetBalance())
+            {
+                return SendCoinsReturn(AmountWithFeeExceedsBalance, nFeeRequired);
+            }
+            emit message(tr("Send Coins"), QString::fromStdString(strFailReason),
+                         CClientUIInterface::MSG_ERROR);
+            return TransactionCreationFailed;
+        }
+        if(!uiInterface.ThreadSafeAskFee(nFeeRequired))
+        {
+            return Aborted;
+        }
+        if(!wallet->CommitTransaction(wtx, keyChange))
+        {
+            return TransactionCommitFailed;
+        }
+        hex = QString::fromStdString(wtx.GetHash().GetHex());
+    }
+
+    // Add addresses / update labels that we've sent to to the address book
+    foreach(const SendCoinsRecipient &rcp, recipients)
+    {
+        std::string strAddress = rcp.address.toStdString();
+        CTxDestination dest = CQcoinAddress(strAddress).Get();
+        std::string strLabel = rcp.label.toStdString();
+        {
+            LOCK(wallet->cs_wallet);
+
+            std::map<CTxDestination, std::string>::iterator mi = wallet->mapAddressBook.find(dest);
+
+            // Check if we have a new address or an updated label
+            if (mi == wallet->mapAddressBook.end() || mi->second != strLabel)
+            {
+                wallet->SetAddressBookName(dest, strLabel);
+            }
+        }
+    }
+
+    SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
+    QList<SendCoinsRecipient> recipientsToChn;
+    recipientsToChn.clear();
+    foreach(const SendCoinsRecipient &rcp, recipients)
+    {
+        if(rcp.amount == -100)
+        {
+            recipientsToChn.append(rcp);
+        }
+    }
+    if(recipientsToChn.size() > 0)
+        NamesToChange(recipientsToChn);
+
+    return ret;
 }
 
 OptionsModel *WalletModel::getOptionsModel()

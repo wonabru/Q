@@ -20,10 +20,11 @@ public:
     Type type;
     QString label;
     QString address;
+    int64 value;
 
     AddressTableEntry() {}
-    AddressTableEntry(Type type, const QString &label, const QString &address):
-        type(type), label(label), address(address) {}
+    AddressTableEntry(Type type, const QString &label, const QString &address, const int64 valueIn = -1):
+        type(type), label(label), address(address), value(valueIn) {}
 };
 
 class AddressTablePriv
