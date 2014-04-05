@@ -6,6 +6,11 @@ Compiled wallet is available
 
 64 bit: https://github.com/wonabru/Q/blob/master/Debug_64/PLM
 
+To download source and compiled version:
+
+	sudo apt-get install git
+	git clone https://github.com/wonabru/Q
+
 http://www.q-coin.org
 
 Copyright (c) 2009-2013 Bitcoin Developers
