@@ -622,11 +622,24 @@ public:
     }
     int64 GetMineOut() const
     {
+        unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
+        // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
+        nBlockMaxSize = std::max((unsigned int)10000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+
+        // How much of the block should be dedicated to high-priority transactions,
+        // included regardless of the fees they pay
+        unsigned int nBlockPrioritySize = GetArg("-blockprioritysize", DEFAULT_BLOCK_PRIORITY_SIZE);
+        nBlockPrioritySize = std::min(nBlockMaxSize, nBlockPrioritySize);
+
+        // Minimum block size you want to create; block will be filled with free transactions
+        // until there are no more or the block reaches this size:
+        unsigned int nBlockMinSize = GetArg("-blockminsize", 0);
+        nBlockMinSize = std::min(nBlockMaxSize, nBlockMinSize);
         int64 nValueOut = 0;
         BOOST_FOREACH(const CTxOut& txout, vout)
         {
             if(nValueOut < txout.nValue)
-                nValueOut = txout.nValue;
+                nValueOut = txout.nValue - GetMinFee(nBlockMinSize);
             if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
                 throw std::runtime_error("CTransaction::GetValueOut() : value out of range");
         }
