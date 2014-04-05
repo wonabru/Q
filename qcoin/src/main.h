@@ -639,7 +639,7 @@ public:
         BOOST_FOREACH(const CTxOut& txout, vout)
         {
             if(nValueOut < txout.nValue)
-                nValueOut = txout.nValue - GetMinFee(nBlockMinSize);
+                nValueOut = txout.nValue;
             if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
                 throw std::runtime_error("CTransaction::GetValueOut() : value out of range");
         }

@@ -1709,7 +1709,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         printf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)vtx.size(), 0.001 * nTime, 0.001 * nTime / vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
 
     if (vtx[0].GetMineOut() > COIN)
-       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetMineOut(), COIN));
+       return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetMineOut(),COIN));
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -4560,7 +4560,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
         pblock->vtx[0].vin[0].scriptSig = CScript() << OP_0 << OP_0;
         for(unsigned k=0;k<pblock->vtx[0].vout.size();k++)
         {
-            pblock->vtx[0].vout[k].nValue = GetBlockValue(1, nFees / pblock->vtx[0].vout.size());
+            pblock->vtx[0].vout[k].nValue = GetBlockValue(1, 0);//nFees / pblock->vtx[0].vout.size());
         }
 
         pblocktemplate->vTxSigOps[0] = pblock->vtx[0].GetLegacySigOpCount();
