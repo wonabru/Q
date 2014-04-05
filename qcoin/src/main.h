@@ -613,13 +613,25 @@ public:
         int64 nValueOut = 0;
         BOOST_FOREACH(const CTxOut& txout, vout)
         {
-            nValueOut += txout.nValue;
+          //  if(nValueOut < txout.nValue)
+                nValueOut += txout.nValue;
             if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
                 throw std::runtime_error("CTransaction::GetValueOut() : value out of range");
         }
         return nValueOut;
     }
-
+    int64 GetMineOut() const
+    {
+        int64 nValueOut = 0;
+        BOOST_FOREACH(const CTxOut& txout, vout)
+        {
+            if(nValueOut < txout.nValue)
+                nValueOut = txout.nValue;
+            if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
+                throw std::runtime_error("CTransaction::GetValueOut() : value out of range");
+        }
+        return nValueOut;
+    }
     /** Amount of qcoins coming in to this transaction
         Note that lightweight clients may not know anything besides the hash of previous transactions,
         so may not be able to calculate this.
