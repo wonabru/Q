@@ -164,6 +164,8 @@ void EditAddressDialog::accept()
     if(!model)
         return;
 
+    model->setEditStatus(AddressTableModel::NO_CHANGES);
+
     if(!saveCurrentRow())
     { 
         switch(model->getEditStatus())

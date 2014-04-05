@@ -110,7 +110,7 @@ public:
     int lookupAddress(const QString &address) const;
 
     EditStatus getEditStatus() const { return editStatus; }
-
+    void setEditStatus(EditStatus s) { editStatus = s; }
 
 
 
