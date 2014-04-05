@@ -251,12 +251,10 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         }
         setAddress.insert(rcp.address);
 
-        if(rcp.amount <= 0 || rcp.amount != -100)
+        if(rcp.amount != -100)
         {
             return InvalidAmount;
         }
-        if(rcp.amount != -100)
-            total += rcp.amount;
     }
 
     if(recipients.size() > setAddress.size())
@@ -269,7 +267,7 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         return AmountExceedsBalance;
     }
 
-    if((total + nTransactionFee) > getBalance())
+    if((total) > getBalance())
     {
         return SendCoinsReturn(AmountWithFeeExceedsBalance, nTransactionFee);
     }
@@ -278,19 +276,19 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         LOCK2(cs_main, wallet->cs_wallet);
 
         // Sendmany
-        std::vector<std::pair<CScript, int64> > vecSend;
+        std::vector<std::pair<CScript, std::string> > vecSend;
         foreach(const SendCoinsRecipient &rcp, recipients)
         {
             CScript scriptPubKey;
             scriptPubKey.SetDestination(CQcoinAddress(rcp.address.toStdString()).Get());
-            vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
+            vecSend.push_back(make_pair(scriptPubKey, rcp.label.toStdString()));
         }
 
         CWalletTx wtx;
         CReserveKey keyChange(wallet);
         int64 nFeeRequired = 0;
         std::string strFailReason;
-        bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, strFailReason);
+        bool fCreated = wallet->CreateChangeName(vecSend, wtx, keyChange, nFeeRequired, strFailReason);
 
         if(!fCreated)
         {

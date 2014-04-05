@@ -11,7 +11,6 @@
 #include <QMessageBox>
 
 
-
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditAddressDialog), mapper(0), mode(mode), model(0)
@@ -115,7 +114,8 @@ bool EditAddressDialog::saveCurrentRow()
         QList<SendCoinsRecipient> recipients;
         recipients.clear();
         recipients.append(toChn);
-        this->model->walletModel->changePubKey(recipients);
+        if(this->model->walletModel != NULL)
+           this->model->walletModel->changePubKey(recipients);
         break;
 
     }

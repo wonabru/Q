@@ -2301,12 +2301,16 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
     }
     reserved.removeAll(key);
-    BOOST_FOREACH(const CTxChn &vchn, pblock->vtx[0].vchn)
+    vector<CTransaction> tx = pblock->vtx;
+    BOOST_FOREACH(const CTransaction& vtx, tx)
     {
-       key = (CKeyID)(vchn.scriptPubKey.GetID());
-       address.Set(key);
-       blockname = vchn.name;
-       pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+        BOOST_FOREACH(const CTxChn &vchn, vtx.vchn)
+        {
+            key = (CKeyID)(vchn.scriptPubKey.GetID());
+            address.Set(key);
+            blockname = vchn.name;
+            pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+        }
     }
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
@@ -4379,25 +4383,24 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     //        printf("Name %s\n",address.ToString().c_str());
         }
     }
-
-    BOOST_FOREACH(AddressTableEntry item, NamesInQNetworkToChange)
-    {
-        if(item.label != "")
+        /*BOOST_FOREACH(AddressTableEntry item, NamesInQNetworkToChange)
         {
-            string to = item.address.toStdString();
-            CQcoinAddress address(to.c_str());
-            if (!address.IsValid())
-                printf("Invalid Mark address");
-            CScript pubKey;
-            pubKey.SetDestination(address.Get());
-            CTxChn txchn;
-            txchn.scriptPubKey = pubKey;
-            txchn.nValue = item.value;
-            txchn.name = item.label.toStdString();
-            txNew.vchn.push_back(txchn);
-    //        printf("Name %s\n",address.ToString().c_str());
-        }
-    }
+            if(item.label != "")
+            {
+                string to = item.address.toStdString();
+                CQcoinAddress address(to.c_str());
+                if (!address.IsValid())
+                    printf("Invalid Mark address");
+                CScript pubKey;
+                pubKey.SetDestination(address.Get());
+                CTxChn txchn;
+                txchn.scriptPubKey = pubKey;
+                txchn.nValue = item.value;
+                txchn.name = item.label.toStdString();
+                txNew.vchn.push_back(txchn);
+        //        printf("Name %s\n",address.ToString().c_str());
+            }
+        }*/
     CScript pubKeyMy;
     pubKeyMy.SetDestination(key);
     CTxOut txoutmy;
@@ -4488,6 +4491,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
                 dPriority += (double)nValueIn * nConf;
             }
             if (fMissingInputs) continue;
+
 
             // Priority is sum(valuein * age) / txsize
             unsigned int nTxSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
