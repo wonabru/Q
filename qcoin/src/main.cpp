@@ -4703,7 +4703,7 @@ void static QcoinMiner(CKeyID key)
 
 void RestartMining()
 {
-    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if(synchronizingComplete == true || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
@@ -4790,7 +4790,9 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                     // Found a solution
                     assert(hash == pblock->GetHash());
                     printf("nNonce InitBlock = %u\n",pblock->nNonce);
+                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
                     CheckWork(pblock, *pwalletMain, reservekey);
+                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
                     return;
 
                 }

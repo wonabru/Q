@@ -774,7 +774,6 @@ static list<CNode*> vNodesDisconnected;
 
 void ThreadSocketHandler()
 {
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     unsigned int nPrevNodeCount = 0;
     while (true)
     {
@@ -1364,7 +1363,6 @@ unsigned int pnSeed[] =
 
 void DumpAddresses()
 {
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     int64 nStart = GetTimeMillis();
 
     CAddrDB adb;
@@ -1394,7 +1392,6 @@ void static ProcessOneShot()
 
 void ThreadOpenConnections()
 {
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     // Connect to specific addresses
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0)
     {
@@ -1505,7 +1502,6 @@ void ThreadOpenConnections()
 
 void ThreadOpenAddedConnections()
 {
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     {
         LOCK(cs_vAddedNodes);
         vAddedNodes = mapMultiArgs["-addnode"];
@@ -1657,7 +1653,6 @@ void static StartSync(const vector<CNode*> &vNodes) {
 
 void ThreadMessageHandler()
 {
-    SetThreadPriority(THREAD_PRIORITY_LOWEST);
     while (true)
     {
         bool fHaveSyncNode = false;
