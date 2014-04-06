@@ -47,6 +47,8 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
 
     mapper = new QDataWidgetMapper(this);
     mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
+
+
 }
 
 EditAddressDialog::~EditAddressDialog()
@@ -68,6 +70,8 @@ void EditAddressDialog::setModel(AddressTableModel *model)
 void EditAddressDialog::loadRow(int row)
 {
     mapper->setCurrentIndex(row);
+    addressOld = ui->addressEdit->text();
+    nameOld = ui->labelEdit->text();
 }
 
 bool EditAddressDialog::saveCurrentRow()
@@ -93,8 +97,7 @@ bool EditAddressDialog::saveCurrentRow()
      //       model->noChanges();
      //   break;
         case EditReceivingAddress:
-        addressOld = ui->addressEdit->text();
-        nameOld = ui->labelEdit->text();
+
         if(::IsMine(*(model->wallet),model->wallet->GetAddress(nameOld.toStdString()).Get()) == false && ::IsMine(*(model->wallet),CQcoinAddress(addressOld.toStdString()).Get()) == false)
         {
             return false;
@@ -104,15 +107,10 @@ bool EditAddressDialog::saveCurrentRow()
         {
             address = ui->addressEdit->text();
             name = ui->labelEdit->text();
-            if(model->changeName(name,address) == false)
+            if(model->changeName(name,address,nameOld.toStdString()) == false)
             {
-                if(model->changeAddress(name,address) == false)
+                if(model->changeAddress(name,address,addressOld.toStdString()) == false)
                 {
-                    if(mapper->submit())
-                    {
-                        address = addressOld;
-                        name = nameOld;
-                    }
                     return false;
                 }else{
                     addressOld = "";
@@ -156,7 +154,7 @@ void EditAddressDialog::acceptAndDestroy()
         sleep(2);
         name = ui->labelEdit->text();
         if(name != "0")
-            if(model->changeName(name,address) == false)
+            if(model->changeName(name,address,"0") == false)
                 break;
     }
     yourName =name.toStdString();

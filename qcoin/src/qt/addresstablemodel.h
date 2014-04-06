@@ -95,8 +95,8 @@ public:
      */
     QString addRow(const QString &type, const QString &label, const QString &address);
     void noChanges();
-    bool changeName(const QString &label, const QString &addr);
-    bool changeAddress(const QString &label, const QString &addr);
+    bool changeName(const QString &label, const QString &addr, std::string nameOld);
+    bool changeAddress(const QString &label, const QString &addr, std::string addressOld);
 
     void addDefaultReceive();
 

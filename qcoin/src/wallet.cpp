@@ -1383,9 +1383,15 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                     CTxChn txout(0, s.first, s.second);
                     wtxNew.vchn.push_back(txout);
                 }
-
+                int64 nTotalValue = nFeeRet;
                 // Choose coins to use
                 set<pair<const CWalletTx*,unsigned int> > setCoins;
+                int64 nValueIn = 0;
+                if (!SelectCoins(nTotalValue, setCoins, nValueIn))
+                {
+                    strFailReason = _("Insufficient funds");
+                    return false;
+                }
                 BOOST_FOREACH(PAIRTYPE(const CWalletTx*, unsigned int) pcoin, setCoins)
                 {
                     int64 nCredit = pcoin.first->vout[pcoin.second].nValue;

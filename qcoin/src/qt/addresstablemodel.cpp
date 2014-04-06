@@ -296,17 +296,20 @@ void AddressTableModel::updateEntry(const QString &address, const QString &label
 }
 
 
-bool AddressTableModel::changeName(const QString &label, const QString &addr)
+bool AddressTableModel::changeName(const QString &label, const QString &addr, std::string nameOld)
 {
     std::string name = label.toStdString();
     std::string address = addr.toStdString();
-    if(CQcoinAddress(address).IsValid() == true)
+    CQcoinAddress a(address);
+    CKeyID key;
+    a.GetKeyID(key);
+    if(CQcoinAddress(address).IsValid() == true && name != nameOld)
     {
-    LOCK(wallet->cs_wallet);
-    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
-    {
-        return false;
-    }
+        LOCK(wallet->cs_wallet);
+        if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
+        {
+            return false;
+        }
     }else{
         return false;
     }
@@ -314,24 +317,23 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr)
     return true;
 }
 
-bool AddressTableModel::changeAddress(const QString &label, const QString &addr)
+bool AddressTableModel::changeAddress(const QString &label, const QString &addr, std::string addressOld)
 {
     std::string name = label.toStdString();
     std::string address = addr.toStdString();
-    if(CQcoinAddress(address).IsValid() == true)
+    if(CQcoinAddress(address).IsValid() == true && address != addressOld)
     {
     LOCK(wallet->cs_wallet);
     {
-        if(IsMine(*wallet, wallet->GetAddress(name).Get()) == false)
+        if(wallet->mapAddressBook.find(CQcoinAddress(addressOld).Get()) != wallet->mapAddressBook.end())
         {
-                return false;
-        }
-
-        wallet->DelAddressBookName(wallet->GetAddress(name).Get());
-
-        if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
-        {
-             return false;
+            wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
+            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
+            {
+                 return false;
+            }
+        }else{
+            return false;
         }
 
     }
