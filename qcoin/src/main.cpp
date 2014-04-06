@@ -3776,10 +3776,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CValidationState state;
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
             mapAlreadyAskedFor.erase(inv);
+
         int nDoS = 0;
         if (state.IsInvalid(nDoS))
             if (nDoS > 0)
                 pfrom->Misbehaving(nDoS);
+        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     }
 
 
@@ -4783,13 +4785,13 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
             LOCK(wallet.cs_wallet);
             wallet.mapRequestCount[pblock->GetHash()] = 0;
         }
-        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+
         // Process this block the same as if we had received it from another node
         CValidationState state;
         if (!ProcessBlock(state, NULL, pblock))
             return error("QcoinMiner : ProcessBlock, block not accepted");
     }
-
+    rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     return true;
 }
 

@@ -457,11 +457,13 @@ void rescan(CWallet *wallet, CBlockIndex* pindexBest, CBlockIndex* pindexGenesis
  //   uiInterface.InitMessage(_("Rescanning..."));
 //    printf("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexGenesisBlock->nHeight, pindexGenesisBlock->nHeight);
   //  nStart = GetTimeMillis();
+  //  static CBlockIndex* lastblockvisited = pindexGenesisBlock;
     rescaningonly = true;
     wallet->ScanForWalletTransactions(pindexGenesisBlock, true);
   //  printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
     wallet->SetBestChain(CBlockLocator(pindexBest));
     rescaningonly = false;
+
 }
 
 /** Initialize qcoin.
