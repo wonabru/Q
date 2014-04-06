@@ -306,7 +306,7 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr, st
     if(CQcoinAddress(address).IsValid() == true && name != nameOld)
     {
         LOCK(wallet->cs_wallet);
-        if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
+        if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
         {
             return false;
         }
@@ -327,11 +327,12 @@ bool AddressTableModel::changeAddress(const QString &label, const QString &addr,
     {
         if(wallet->mapAddressBook.find(CQcoinAddress(addressOld).Get()) != wallet->mapAddressBook.end())
         {
-            wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
-            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
+
+            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
             {
                  return false;
             }
+            wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
         }else{
             return false;
         }
