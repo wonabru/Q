@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
 
                 AddressTableModel addrTableModel(pwalletMain);
                 edg.setModel(&addrTableModel);
-                if(yourName == "0")
+                if(yourName == "")
                 {
                    edg.show();
                 }else{

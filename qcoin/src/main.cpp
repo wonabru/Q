@@ -28,7 +28,7 @@
 
 using namespace json_spirit;
 
-std::string yourName = "0";
+std::string yourName = "";
 
 using namespace std;
 using namespace boost;
@@ -45,7 +45,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0xef93c35a70000e57e59e8ab9f827999e05ba63f67d80e1eeddb7e02c049565b9");
+uint256 hashGenesisBlock("0x7a251b480b001118e5dcd7aee2b2fb9cee7ecf29e59ff5e69b75d734acd8b491");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -602,7 +602,8 @@ bool CTransaction::CheckTransaction(CValidationState &state) const
 
     if (IsCoinBase())
     {
-        if (vin[0].scriptSig.size() < 2 || vin[0].scriptSig.size() > 100)
+        if(vchn.size() == 0)
+        if ((vin[0].scriptSig.size() < 2 || vin[0].scriptSig.size() > 100))
             return state.DoS(100, error("CTransaction::CheckTransaction() : coinbase script size"));
     }
     else
@@ -2896,9 +2897,13 @@ bool InitBlockIndex() {
         gnpk = "MMAswGBAiEwJEp2hyCariEJfUqZ8ECuZQ9";
         memcpy(&gn[0],&gnpk[0],34);
         gnpk = "MEycBkxfUvxXhP6TEVcSRZbUEj3DRG4BNj";
+        CScript GenesisName2;
+        GenesisName2.SetDestination(CPubKey(gn).GetID());
         vector<unsigned char> gn0;
         gn0.resize(34);
         memcpy(&gn0[0],&gnpk[0],34);
+        CScript GenesisName3;
+        GenesisName3.SetDestination(CPubKey(gn0).GetID());
         CScript sign;
         sign.SetDestination(CPubKey(gn).GetID());
         CTransaction txNew;
@@ -2907,8 +2912,15 @@ bool InitBlockIndex() {
         txNew.vout.resize(1);
         txNew.vout[0].nValue = COIN;
         txNew.vout[0].scriptPubKey = GenesisName;
+        txNew.vchn.resize(2);
+        txNew.vchn[0].scriptPubKey = GenesisName2;
+        txNew.vchn[0].nValue = COIN;
+        txNew.vchn[0].name = "Q";
+        txNew.vchn[1].scriptPubKey = GenesisName3;
+        txNew.vchn[1].nValue = COIN;
+        txNew.vchn[1].name = "1";
         CBlock block;
-        block.SetBlockName("999");
+        block.SetBlockName("0");
         block.SetBlockPubKey((uint160)CPubKey(gn0).GetID());
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
@@ -2917,7 +2929,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1396655999;
         block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 450054433;
+        block.nNonce   = 278721013;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2933,7 +2945,7 @@ bool InitBlockIndex() {
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
-        assert(block.hashMerkleRoot == uint256("0x99f068209bc6959b68627c7e0dd595978bc20ac69803df337cb0bd2f0244cdcb"));
+        assert(block.hashMerkleRoot == uint256("0x84b1163cf02b893783691ff5929018bc52898ad485df716abe5abd2e8624a7ac"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -2950,6 +2962,8 @@ bool InitBlockIndex() {
                 return error("LoadBlockIndex() : writing genesis block to disk failed");
             if (!block.AddToBlockIndex(state, blockPos))
                 return error("LoadBlockIndex() : genesis block not accepted");
+            if(!acceptNameInQNetwork(state, NULL, &block, &blockPos))
+                return error("acceptNameInQNetwork() : genesis block not accepted");
         } catch(std::runtime_error &e) {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());
         }
@@ -5003,6 +5017,50 @@ uint64 CTxOutCompressor::DecompressAmount(uint64 x)
     return n;
 }
 
+uint64 CTxChnCompressor::CompressAmount(uint64 n)
+{
+    if (n == 0)
+        return 0;
+    int e = 0;
+    while (((n % 10) == 0) && e < 9) {
+        n /= 10;
+        e++;
+    }
+    if (e < 9) {
+        int d = (n % 10);
+        assert(d >= 1 && d <= 9);
+        n /= 10;
+        return 1 + (n*9 + d - 1)*10 + e;
+    } else {
+        return 1 + (n - 1)*10 + 9;
+    }
+}
+
+uint64 CTxChnCompressor::DecompressAmount(uint64 x)
+{
+    // x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
+    if (x == 0)
+        return 0;
+    x--;
+    // x = 10*(9*n + d - 1) + e
+    int e = x % 10;
+    x /= 10;
+    uint64 n = 0;
+    if (e < 9) {
+        // x = 9*n + d - 1
+        int d = (x % 9) + 1;
+        x /= 9;
+        // x = n
+        n = x*10 + d;
+    } else {
+        n = x+1;
+    }
+    while (e) {
+        n *= 10;
+        e--;
+    }
+    return n;
+}
 
 class CMainCleanup
 {

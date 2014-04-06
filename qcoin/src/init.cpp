@@ -862,6 +862,94 @@ bool AppInit2(boost::thread_group& threadGroup)
     nTotalCache -= nCoinDBCache;
     nCoinCacheSize = nTotalCache / 300; // coins in memory require around 300 bytes
 
+    // ********************************************************* Step 8: load wallet
+
+    uiInterface.InitMessage(_("Set your init Name to \"0\" ..."));
+
+
+    nStart = GetTimeMillis();
+    bool fFirstRun = false;
+ //   bool fFirstRun1 = false;
+ //   bool fFirstRunQ = false;
+  //  bool fFirstRunWonabru = false;
+    pwalletMain = new CWallet(GetArg("-wallet", "myq.dat"));
+//    wallet1 = new CWallet("myq1.dat");
+//    walletQ = new CWallet("myqQ.dat");
+//    walletWonabru = new CWallet("myqWonabru.dat");
+    DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
+//    wallet1->LoadWallet(fFirstRun1);
+//    walletQ->LoadWallet(fFirstRunQ);
+//    walletWonabru->LoadWallet(fFirstRunWonabru);
+
+    printf("%s\n",printNamesInQNetwork().c_str());
+
+    if (nLoadWalletRet != DB_LOAD_OK)
+    {
+        if (nLoadWalletRet == DB_CORRUPT)
+            strErrors << _("Error loading myq.dat: Root corrupted") << "\n";
+        else if (nLoadWalletRet == DB_NONCRITICAL_ERROR)
+        {
+            string msg(_("Warning: error reading myq.dat! All keys read correctly, but transaction data"
+                         " or address book entries might be missing or incorrect."));
+            InitWarning(msg);
+        }
+        else if (nLoadWalletRet == DB_TOO_NEW)
+            strErrors << _("Error loading myq.dat: Root requires newer version of Mark") << "\n";
+        else if (nLoadWalletRet == DB_NEED_REWRITE)
+        {
+            strErrors << _("Root needed to be rewritten: restart Mark to complete") << "\n";
+            printf("%s", strErrors.str().c_str());
+            return InitError(strErrors.str());
+        }
+        else
+            strErrors << _("Error loading myq.dat") << "\n";
+    }
+
+    if (GetBoolArg("-upgradewallet", fFirstRun))
+    {
+        int nMaxVersion = GetArg("-upgradewallet", 90909);
+        if (nMaxVersion == 0) // the -upgradewallet without argument case
+        {
+            printf("Performing wallet upgrade to %i\n", FEATURE_LATEST);
+            nMaxVersion = CLIENT_VERSION;
+            pwalletMain->SetMinVersion(FEATURE_LATEST); // permanently upgrade the wallet immediately
+        }
+        else
+            printf("Allowing wallet upgrade up to %i\n", nMaxVersion);
+        if (nMaxVersion < pwalletMain->GetVersion())
+            strErrors << _("Cannot downgrade wallet") << "\n";
+        pwalletMain->SetMaxVersion(nMaxVersion);
+    }
+
+    if (fFirstRun)
+    {
+
+        // Create new keyUser and set as default key
+        RandAddSeedPerfmon();
+
+      //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
+        std::string defaultname = "";
+
+        CPubKey newDefaultKey = pwalletMain->GenerateNewKey();
+        pwalletMain->SetDefaultKey(newDefaultKey);
+        if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
+            strErrors << _("Cannot write default address") << "\n";
+    }else{
+        yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
+    }
+
+    reserved.push_back(pwalletMain->vchDefaultKey.GetID());
+
+    CKeyID keyDefault;
+    CSecret secretDefault;
+    bool fcompressed;
+    pwalletMain->GetSecret(keyDefault,secretDefault,fcompressed);
+    printf("%s", (const char *)(&secretDefault));
+    //printf("%d", (int)(*fcompressed));
+    printf(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+
+    RegisterWallet(pwalletMain);
+
     bool fLoaded = false;
     while (!fLoaded) {
         bool fReset = fReindex;
@@ -968,95 +1056,10 @@ bool AppInit2(boost::thread_group& threadGroup)
         return false;
     }
 
-    // ********************************************************* Step 8: load wallet
-
-    uiInterface.InitMessage(_("Set your init Name to \"0\" ..."));
-
-
-    nStart = GetTimeMillis();
-    bool fFirstRun = false;
- //   bool fFirstRun1 = false;
- //   bool fFirstRunQ = false;
-  //  bool fFirstRunWonabru = false;
-    pwalletMain = new CWallet(GetArg("-wallet", "myq.dat"));
-//    wallet1 = new CWallet("myq1.dat");
-//    walletQ = new CWallet("myqQ.dat");
-//    walletWonabru = new CWallet("myqWonabru.dat");
-    DBErrors nLoadWalletRet = pwalletMain->LoadWallet(fFirstRun);
-//    wallet1->LoadWallet(fFirstRun1);
-//    walletQ->LoadWallet(fFirstRunQ);
-//    walletWonabru->LoadWallet(fFirstRunWonabru);
-
-    printf("%s\n",printNamesInQNetwork().c_str());
-
-    if (nLoadWalletRet != DB_LOAD_OK)
-    {
-        if (nLoadWalletRet == DB_CORRUPT)
-            strErrors << _("Error loading myq.dat: Root corrupted") << "\n";
-        else if (nLoadWalletRet == DB_NONCRITICAL_ERROR)
-        {
-            string msg(_("Warning: error reading myq.dat! All keys read correctly, but transaction data"
-                         " or address book entries might be missing or incorrect."));
-            InitWarning(msg);
-        }
-        else if (nLoadWalletRet == DB_TOO_NEW)
-            strErrors << _("Error loading myq.dat: Root requires newer version of Mark") << "\n";
-        else if (nLoadWalletRet == DB_NEED_REWRITE)
-        {
-            strErrors << _("Root needed to be rewritten: restart Mark to complete") << "\n";
-            printf("%s", strErrors.str().c_str());
-            return InitError(strErrors.str());
-        }
-        else
-            strErrors << _("Error loading myq.dat") << "\n";
-    }
-
-    if (GetBoolArg("-upgradewallet", fFirstRun))
-    {
-        int nMaxVersion = GetArg("-upgradewallet", 90909);
-        if (nMaxVersion == 0) // the -upgradewallet without argument case
-        {
-            printf("Performing wallet upgrade to %i\n", FEATURE_LATEST);
-            nMaxVersion = CLIENT_VERSION;
-            pwalletMain->SetMinVersion(FEATURE_LATEST); // permanently upgrade the wallet immediately
-        }
-        else
-            printf("Allowing wallet upgrade up to %i\n", nMaxVersion);
-        if (nMaxVersion < pwalletMain->GetVersion())
-            strErrors << _("Cannot downgrade wallet") << "\n";
-        pwalletMain->SetMaxVersion(nMaxVersion);
-    }
-
     if (fFirstRun)
     {
-
-        // Create new keyUser and set as default key
-        RandAddSeedPerfmon();
-
-      //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
-        std::string defaultname = "0";
-
-        CPubKey newDefaultKey = pwalletMain->GenerateNewKey();
-        pwalletMain->SetDefaultKey(newDefaultKey);
-        if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
-            strErrors << _("Cannot write default address") << "\n";
         pwalletMain->SetBestChain(CBlockLocator(pindexBest));
-    }else{
-        yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
-
-    reserved.push_back(pwalletMain->vchDefaultKey.GetID());
-
-    CKeyID keyDefault;
-    CSecret secretDefault;
-    bool fcompressed;
-    pwalletMain->GetSecret(keyDefault,secretDefault,fcompressed);
-    printf("%s", (const char *)(&secretDefault));
-    //printf("%d", (int)(*fcompressed));
-    printf(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
-
-    RegisterWallet(pwalletMain);
-
     uiInterface.InitMessage(_("Loading addresses..."));
     mainNodes[0] = "195.245.104.3";
     mainNodes[1] = "195.245.104.23";

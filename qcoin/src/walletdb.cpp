@@ -21,8 +21,8 @@ static uint64 nAccountingEntryNumber = 0;
 bool CWalletDB::WriteName(const string& strAddress, const string& strName)
 {
     nWalletDBUpdated++;
-    if(strName.size() == 0)
-        return false;
+    //if(strName.size() == 0)
+    //    return false;
     return Write(make_pair(string("name"), strAddress), strName);
 }
 

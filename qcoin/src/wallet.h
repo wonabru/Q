@@ -186,7 +186,8 @@ public:
 
     bool CreateChangeName(const std::vector<std::pair<CScript, std::string> >& vecSend,
                           CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason);
-
+    bool CreateChangeName(CScript scriptPubKey, std::string nName,
+                                    CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason);
     bool CreateTransaction(CScript scriptPubKey, int64 nValue,
                            CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason);
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);

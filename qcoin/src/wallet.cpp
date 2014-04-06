@@ -1495,6 +1495,14 @@ bool CWallet::CreateTransaction(CScript scriptPubKey, int64 nValue,
     return CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason);
 }
 
+bool CWallet::CreateChangeName(CScript scriptPubKey, std::string nName,
+                                CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason)
+{
+    vector< pair<CScript, std::string> > vecSend;
+    vecSend.push_back(make_pair(scriptPubKey, nName));
+    return CreateChangeName(vecSend, wtxNew, reservekey, nFeeRet, strFailReason);
+}
+
 // Call after CreateTransaction unless you want to abort
 bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
 {
@@ -1559,12 +1567,27 @@ string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew,
         return strError;
     }
     string strError;
+    if(wtxNew.vchn.size() == 0)
+    {
     if (!CreateTransaction(scriptPubKey, nValue, wtxNew, reservekey, nFeeRequired, strError))
     {
         if (nValue + nFeeRequired > GetBalance())
             strError = strprintf(_("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!"), FormatMoney(nFeeRequired).c_str());
         printf("SendMoney() : %s\n", strError.c_str());
         return strError;
+    }
+    }else{
+        CQcoinAddress address(scriptPubKey.ToString());
+        CKeyID key;
+        address.GetKeyID(key);
+        std::string name = this->GetName(key);
+        if (!CreateChangeName(scriptPubKey, name, wtxNew, reservekey, nFeeRequired, strError))
+        {
+            if (nValue + nFeeRequired > GetBalance())
+                strError = strprintf(_("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!"), FormatMoney(nFeeRequired).c_str());
+            printf("SendMoney() : %s\n", strError.c_str());
+            return strError;
+        }
     }
 
     if (fAskFee && !uiInterface.ThreadSafeAskFee(nFeeRequired))

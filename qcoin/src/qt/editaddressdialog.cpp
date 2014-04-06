@@ -79,7 +79,7 @@ bool EditAddressDialog::saveCurrentRow()
     if(!model)
         return false;
 
-    if(yourName == "0")
+    if(yourName == "")
         acceptAndDestroy();
 
     switch(mode)
@@ -149,12 +149,12 @@ void EditAddressDialog::acceptAndDestroy()
     QString name((const char *)yourName.c_str());
     CQcoinAddress qaddress((CKeyID)(model->wallet->GetWalletDefaultPubKey()));
     QString address((const char *)(qaddress.ToString().c_str()));
-    while(name == "0")
+    while(name == "")
     {
         sleep(2);
         name = ui->labelEdit->text();
-        if(name != "0")
-            if(model->changeName(name,address,"0") == false)
+        if(name != "")
+            if(model->changeName(name,address,"") == false)
                 break;
     }
     yourName =name.toStdString();
