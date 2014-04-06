@@ -325,10 +325,9 @@ bool AddressTableModel::changeAddress(const QString &label, const QString &addr,
     {
     LOCK(wallet->cs_wallet);
     {
-        if(wallet->mapAddressBook.find(CQcoinAddress(addressOld).Get()) != wallet->mapAddressBook.end())
+        if(wallet->mapAddressBook.find(CQcoinAddress(address).Get()) == wallet->mapAddressBook.end())
         {
-
-            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
+            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
             {
                  return false;
             }
