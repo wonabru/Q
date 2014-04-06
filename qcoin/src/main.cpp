@@ -2349,8 +2349,9 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             CKeyID keydel;
             pwalletMain->GetAddress(blockname).GetKeyID(keydel);
             pwalletMain->DelAddressBookName((CKeyID)keydel);
+            address.GetKeyID(keydel);
             if(address.IsValid() == true)
-                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                pwalletMain->SetAddressBookName(keydel,blockname, 5);
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)
