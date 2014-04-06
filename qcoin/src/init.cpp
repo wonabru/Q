@@ -618,7 +618,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (mapArgs.count("-mintxfee"))
     {
         int64 n = 0;
-        if (ParseMoney(mapArgs["-mintxfee"], n) && n > 0)
+        if (ParseMoney(mapArgs["-mintxfee"], n) && n >= 0)
             CTransaction::nMinTxFee = n;
         else
             return InitError(strprintf(_("Invalid amount for -mintxfee=<amount>: '%s'"), mapArgs["-mintxfee"].c_str()));
@@ -626,7 +626,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (mapArgs.count("-minrelaytxfee"))
     {
         int64 n = 0;
-        if (ParseMoney(mapArgs["-minrelaytxfee"], n) && n > 0)
+        if (ParseMoney(mapArgs["-minrelaytxfee"], n) && n >= 0)
             CTransaction::nMinRelayTxFee = n;
         else
             return InitError(strprintf(_("Invalid amount for -minrelaytxfee=<amount>: '%s'"), mapArgs["-minrelaytxfee"].c_str()));

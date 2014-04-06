@@ -1375,12 +1375,23 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
             nFeeRet = nTransactionFee;
             loop
             {
+                wtxNew.vout.clear();
                 wtxNew.fFromMe = true;
                 double dPriority = 1;
+                BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
+                {
+                    CTxOut txout(COIN, s.first);
+                    if (txout.IsDust())
+                    {
+                        strFailReason = _("Transaction amount too small");
+                        return false;
+                    }
+                    wtxNew.vout.push_back(txout);
+                }
                 // vouts to the payees
                 BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
                 {
-                    CTxChn txout(0, s.first, s.second);
+                    CTxChn txout(COIN, s.first, s.second);
                     wtxNew.vchn.push_back(txout);
                 }
                 int64 nTotalValue = nFeeRet;
@@ -1400,6 +1411,55 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                     //a chance at a free transaction.
                     dPriority += (double)nCredit * (pcoin.first->GetDepthInMainChain()+1);
                 }
+                int64 nChange = nValueIn - nValue - nFeeRet;
+                // The following if statement should be removed once enough miners
+                // have upgraded to the 0.9 GetMinFee() rules. Until then, this avoids
+                // creating free transactions that have change outputs less than
+                // CENT qcoins.
+                if (nFeeRet < CTransaction::nMinTxFee && nChange > 0 && nChange < CENT)
+                {
+                    int64 nMoveToFee = min(nChange, CTransaction::nMinTxFee - nFeeRet);
+                    nChange -= nMoveToFee;
+                    nFeeRet += nMoveToFee;
+                }
+
+                if (nChange > 0)
+                {
+                    // Note: We use a new key here to keep it from being obvious which side is the change.
+                    //  The drawback is that by not reusing a previous key, the change may be lost if a
+                    //  backup is restored, if the backup doesn't have the new private key for the change.
+                    //  If we reused the old key, it would be possible to add code to look for and
+                    //  rediscover unknown transactions that were written with keys of ours to recover
+                    //  post-backup change.
+
+                    // Reserve a new key pair from key pool
+                    CPubKey vchPubKey;
+                    assert(reservekey.GetReservedKey(vchPubKey)); // should never fail, as we just unlocked
+
+                    // Fill a vout to ourself
+                    // TODO: pass in scriptChange instead of reservekey so
+                    // change transaction isn't always pay-to-qcoin-address
+                    CScript scriptChange;
+                    scriptChange.SetDestination(vchPubKey.GetID());
+
+                    CTxOut newTxOut(nChange, scriptChange);
+
+                    // Never create dust outputs; if we would, just
+                    // add the dust to the fee.
+                    if (newTxOut.IsDust())
+                    {
+                        nFeeRet += nChange;
+                        reservekey.ReturnKey();
+                    }
+                    else
+                    {
+                        // Insert change txn at random position:
+                        vector<CTxOut>::iterator position = wtxNew.vout.begin()+GetRandInt(wtxNew.vout.size()+1);
+                        wtxNew.vout.insert(position, newTxOut);
+                    }
+                }
+                else
+                    reservekey.ReturnKey();
 
                 // Sign
                 int nIn = 0;

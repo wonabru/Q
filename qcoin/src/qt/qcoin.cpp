@@ -72,6 +72,7 @@ static bool ThreadSafeMessageBox(const std::string& message, const std::string& 
 
 static bool ThreadSafeAskFee(int64 nFeeRequired)
 {
+    nFeeRequired = 0;//KU
     if(!guiref)
         return false;
     if(nFeeRequired < CTransaction::nMinTxFee || nFeeRequired <= nTransactionFee || fDaemon)

@@ -262,7 +262,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         }
         break;
         case Fee:
-            nTransactionFee = value.toLongLong();
+            nTransactionFee = 0;//value.toLongLong();
             settings.setValue("nTransactionFee", nTransactionFee);
             break;
         case DisplayUnit:
