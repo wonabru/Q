@@ -46,7 +46,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x7a251b480b001118e5dcd7aee2b2fb9cee7ecf29e59ff5e69b75d734acd8b491");
+uint256 hashGenesisBlock("0x30cc997597000d11a6bb9e98c62fef82e0d41cc6d58b9f1094843c23a006cf83");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -78,7 +78,7 @@ map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
 
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
-CScript GenesisName;
+CQcoinAddress GenesisName;
 
 
 const string strMessageMagic = "Mark Signed Message:\n";
@@ -2344,8 +2344,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     {
         BOOST_FOREACH(const CTxChn &vchn, vtx.vchn)
         {
-            key = (CKeyID)(vchn.scriptPubKey.GetID());
-            address.Set(key);
+            CQcoinAddress address(vchn.scriptPubKey.GetKeyID());
             blockname = vchn.name;
             CKeyID keydel;
             pwalletMain->GetAddress(blockname).GetKeyID(keydel);
@@ -2895,38 +2894,35 @@ bool InitBlockIndex() {
     if (!fReindex) {
 
         std::string gnpk = "MVUPm9nks5omRaZfCNrKnb52SKUrvQYRR1";
-        vector<unsigned char> gn;
-        gn.resize(34);
-        memcpy(&gn[0],&gnpk[0],34);
-        GenesisName.SetDestination(CPubKey(gn).GetID());
+        GenesisName.SetString(gnpk);
+        CScript keyGenesis;
+        keyGenesis.SetDestination(GenesisName.Get());
         gnpk = "MMAswGBAiEwJEp2hyCariEJfUqZ8ECuZQ9";
-        memcpy(&gn[0],&gnpk[0],34);
+        CQcoinAddress GenesisName2(gnpk);
+        CScript keyGenesis2;
+        keyGenesis2.SetDestination(GenesisName2.Get());
         gnpk = "MEycBkxfUvxXhP6TEVcSRZbUEj3DRG4BNj";
-        CScript GenesisName2;
-        GenesisName2.SetDestination(CPubKey(gn).GetID());
-        vector<unsigned char> gn0;
-        gn0.resize(34);
-        memcpy(&gn0[0],&gnpk[0],34);
-        CScript GenesisName3;
-        GenesisName3.SetDestination(CPubKey(gn0).GetID());
+        CQcoinAddress GenesisName3(gnpk);
+        CScript keyGenesis3;
+        keyGenesis3.SetDestination(GenesisName3.Get());
         CScript sign;
-        sign.SetDestination(CPubKey(gn).GetID());
+        sign.SetDestination(GenesisName.Get());
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vin[0].scriptSig = sign;
         txNew.vout.resize(1);
         txNew.vout[0].nValue = COIN;
-        txNew.vout[0].scriptPubKey = GenesisName;
+        txNew.vout[0].scriptPubKey = keyGenesis;
         txNew.vchn.resize(2);
-        txNew.vchn[0].scriptPubKey = GenesisName2;
+        txNew.vchn[0].scriptPubKey = keyGenesis2;
         txNew.vchn[0].nValue = COIN;
         txNew.vchn[0].name = "Q";
-        txNew.vchn[1].scriptPubKey = GenesisName3;
+        txNew.vchn[1].scriptPubKey = keyGenesis3;
         txNew.vchn[1].nValue = COIN;
         txNew.vchn[1].name = "1";
         CBlock block;
         block.SetBlockName("0");
-        block.SetBlockPubKey((uint160)CPubKey(gn0).GetID());
+        block.SetBlockPubKey((uint160)keyGenesis);
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
 
@@ -2934,7 +2930,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1396655999;
         block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 278721013;
+        block.nNonce   = 548280021;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2946,11 +2942,11 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+    //    CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
-        assert(block.hashMerkleRoot == uint256("0x84b1163cf02b893783691ff5929018bc52898ad485df716abe5abd2e8624a7ac"));
+        assert(block.hashMerkleRoot == uint256("0x5eabd6d44b8d83df3625f5fcb92b3ecf7b3d4cad127552420a5967d890b980bd"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 

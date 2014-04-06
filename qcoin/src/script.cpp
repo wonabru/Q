@@ -43,7 +43,7 @@ CBigNum CastToBigNum(const valtype& vch)
 std::string CScript::GetPubKeyString() const
 {
     CQcoinAddress spk;
-    spk.SetString(this->ToString());
+    spk.Set(this->GetKeyID());
     return spk.ToString();
 }
 
@@ -56,6 +56,13 @@ CPubKey CScript::GetPubKey() const
     m.resize(33);
     memcpy(&m[0],&pk[0],33);
     return CPubKey(m);
+}
+
+CQcoinAddress CScript::GetQcoinAddress() const
+{
+    CQcoinAddress spk;
+    spk.SetString(this->ToString());
+    return spk;
 }
 
 std::string CScript::GetPubKeyCScript() const

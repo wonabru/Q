@@ -15,9 +15,10 @@
 #include "keystore.h"
 #include "bignum.h"
 
+
 class CCoins;
 class CTransaction;
-
+class CQcoinAddress;
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 
 /** Signature hash types/flags */
@@ -592,9 +593,15 @@ public:
 
     CPubKey GetPubKey() const;
 
+    CQcoinAddress GetQcoinAddress() const;
+
     CScriptID GetID() const
     {
         return CScriptID(Hash160(*this));
+    }
+    CKeyID GetKeyID() const
+    {
+        return CKeyID(Hash160(*this));
     }
 };
 

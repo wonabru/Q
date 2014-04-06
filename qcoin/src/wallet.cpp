@@ -1551,7 +1551,7 @@ string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew,
         return strError;
     }
     }else{
-        CQcoinAddress address(scriptPubKey.ToString());
+        CQcoinAddress address(scriptPubKey.GetKeyID());
         CKeyID key;
         address.GetKeyID(key);
         std::string name = this->GetName(key);

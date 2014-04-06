@@ -459,7 +459,7 @@ public:
 
     std::string ToString() const
     {
-        CQcoinAddress address(scriptPubKey.GetPubKey().GetID());
+        CQcoinAddress address(scriptPubKey.GetKeyID());
         if (scriptPubKey.size() < 6)
             return "CTxOut(error)";
         return strprintf("CTxOut(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s)", nValue / COIN, nValue % COIN, address.ToString().c_str());
@@ -533,7 +533,7 @@ public:
 
     std::string ToString() const
     {
-        CQcoinAddress address(scriptPubKey.GetPubKey().GetID());
+        CQcoinAddress address(scriptPubKey.GetKeyID());
         if (scriptPubKey.size() < 6)
             return "CTxChn(error)";
         return strprintf("CTxChn(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s, name=%s)", nValue / COIN, nValue % COIN, address.ToString().c_str(), name.c_str());
@@ -1520,7 +1520,8 @@ public:
     std::string GetBlockPubKey() const
     {
         CKeyID keyid = namePubKey;
-        std::string ret = keyid.ToString();
+        CQcoinAddress address(keyid);
+        std::string ret = address.ToString();
         return ret;
     }
 
