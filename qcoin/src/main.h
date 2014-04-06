@@ -862,18 +862,18 @@ class CTxInUndo
 {
 public:
     CTxOut txout;         // the txout data before being spent
-    CTxChn txchn;
+  //  CTxChn txchn;
     bool fCoinBase;       // if the outpoint was the last unspent: whether it belonged to a coinbase
     unsigned int nHeight; // if the outpoint was the last unspent: its height
     int nVersion;         // if the outpoint was the last unspent: its version
 
-    CTxInUndo() : txout(), txchn(), fCoinBase(false), nHeight(0), nVersion(0) {}
-    CTxInUndo(const CTxOut &txoutIn,const CTxChn &txchnIn, bool fCoinBaseIn = false, unsigned int nHeightIn = 0, int nVersionIn = 0) : txout(txoutIn), txchn(txchnIn), fCoinBase(fCoinBaseIn), nHeight(nHeightIn), nVersion(nVersionIn) { }
+    CTxInUndo() : txout(), fCoinBase(false), nHeight(0), nVersion(0) {}
+    CTxInUndo(const CTxOut &txoutIn, bool fCoinBaseIn = false, unsigned int nHeightIn = 0, int nVersionIn = 0) : txout(txoutIn), fCoinBase(fCoinBaseIn), nHeight(nHeightIn), nVersion(nVersionIn) { }
 
     unsigned int GetSerializeSize(int nType, int nVersion) const {
         return ::GetSerializeSize(VARINT(nHeight*2+(fCoinBase ? 1 : 0)), nType, nVersion) +
                (nHeight > 0 ? ::GetSerializeSize(VARINT(this->nVersion), nType, nVersion) : 0) +
-               ::GetSerializeSize(CTxOutCompressor(REF(txout)),  nType, nVersion) + ::GetSerializeSize(CTxChnCompressor(REF(txchn)),  nType, nVersion);
+               ::GetSerializeSize(CTxOutCompressor(REF(txout)),  nType, nVersion);
     }
 
     template<typename Stream>
@@ -882,7 +882,6 @@ public:
         if (nHeight > 0)
             ::Serialize(s, VARINT(this->nVersion), nType, nVersion);
         ::Serialize(s, CTxOutCompressor(REF(txout)), nType, nVersion);
-        ::Serialize(s, CTxChnCompressor(REF(txchn)), nType, nVersion);
     }
 
     template<typename Stream>
@@ -894,7 +893,6 @@ public:
         if (nHeight > 0)
             ::Unserialize(s, VARINT(this->nVersion), nType, nVersion);
         ::Unserialize(s, REF(CTxOutCompressor(REF(txout))), nType, nVersion);
-        ::Unserialize(s, REF(CTxChnCompressor(REF(txchn))), nType, nVersion);
     }
 };
 
@@ -1040,7 +1038,7 @@ public:
 
     // unspent transaction outputs; spent outputs are .IsNull(); spent outputs at the end of the array are dropped
     std::vector<CTxOut> vout;
-    std::vector<CTxChn> vchn;
+  //  std::vector<CTxChn> vchn;
     // at which height this transaction was included in the active block chain
     int nHeight;
 
@@ -1049,10 +1047,10 @@ public:
     int nVersion;
 
     // construct a CCoins from a CTransaction, at a given height
-    CCoins(const CTransaction &tx, int nHeightIn) : fCoinBase(tx.IsCoinBase()), vout(tx.vout), vchn(tx.vchn), nHeight(nHeightIn), nVersion(tx.nVersion) { }
+    CCoins(const CTransaction &tx, int nHeightIn) : fCoinBase(tx.IsCoinBase()), vout(tx.vout), nHeight(nHeightIn), nVersion(tx.nVersion) { }
 
     // empty constructor
-    CCoins() : fCoinBase(false), vout(0), vchn(0), nHeight(0), nVersion(0) { }
+    CCoins() : fCoinBase(false), vout(0), nHeight(0), nVersion(0) { }
 
     // remove spent outputs at the end of vout
     void Cleanup() {
@@ -1060,16 +1058,12 @@ public:
             vout.pop_back();
         if (vout.empty())
             std::vector<CTxOut>().swap(vout);
-        while (vchn.size() > 0 && vchn.back().IsNull())
-            vchn.pop_back();
-        if (vchn.empty())
-            std::vector<CTxChn>().swap(vchn);
+
     }
 
     void swap(CCoins &to) {
         std::swap(to.fCoinBase, fCoinBase);
         to.vout.swap(vout);
-        to.vchn.swap(vchn);
         std::swap(to.nHeight, nHeight);
         std::swap(to.nVersion, nVersion);
     }
@@ -1079,8 +1073,7 @@ public:
          return a.fCoinBase == b.fCoinBase &&
                 a.nHeight == b.nHeight &&
                 a.nVersion == b.nVersion &&
-                a.vout == b.vout &&
-                a.vchn == b.vchn;
+                a.vout == b.vout;
     }
     friend bool operator!=(const CCoins &a, const CCoins &b) {
         return !(a == b);
@@ -1104,19 +1097,6 @@ public:
                 nNonzeroBytes++;
             }
         }
-        for (unsigned int b = 0; 2+b*8 < vchn.size(); b++) {
-            bool fZero = true;
-            for (unsigned int i = 0; i < 8 && 2+b*8+i < vchn.size(); i++) {
-                if (!vchn[2+b*8+i].IsNull()) {
-                    fZero = false;
-                    continue;
-                }
-            }
-            if (!fZero) {
-                nLastUsedByte = b + 1;
-                nNonzeroBytes++;
-            }
-        }
         nBytes += nLastUsedByte;
     }
 
@@ -1128,8 +1108,8 @@ public:
         unsigned int nSize = 0;
         unsigned int nMaskSize = 0, nMaskCode = 0;
         CalcMaskSize(nMaskSize, nMaskCode);
-        bool fFirst = (vout.size() > 0 && !vout[0].IsNull()) || (vchn.size() > 0 && !vchn[0].IsNull());
-        bool fSecond = (vout.size() > 1 && !vout[1].IsNull()) || (vchn.size() > 1 && !vchn[1].IsNull());
+        bool fFirst = vout.size() > 0 && !vout[0].IsNull();
+        bool fSecond = vout.size() > 1 && !vout[1].IsNull();
         assert(fFirst || fSecond || nMaskCode);
         unsigned int nCode = 8*(nMaskCode - (fFirst || fSecond ? 0 : 1)) + (fCoinBase ? 1 : 0) + (fFirst ? 2 : 0) + (fSecond ? 4 : 0);
         // version
@@ -1142,9 +1122,6 @@ public:
         for (unsigned int i = 0; i < vout.size(); i++)
             if (!vout[i].IsNull())
                 nSize += ::GetSerializeSize(CTxOutCompressor(REF(vout[i])), nType, nVersion);
-        for (unsigned int i = 0; i < vchn.size(); i++)
-            if (!vchn[i].IsNull())
-                nSize += ::GetSerializeSize(CTxChnCompressor(REF(vchn[i])), nType, nVersion);
         // height
         nSize += ::GetSerializeSize(VARINT(nHeight), nType, nVersion);
         return nSize;
@@ -1154,8 +1131,8 @@ public:
     void Serialize(Stream &s, int nType, int nVersion) const {
         unsigned int nMaskSize = 0, nMaskCode = 0;
         CalcMaskSize(nMaskSize, nMaskCode);
-        bool fFirst = (vout.size() > 0 && !vout[0].IsNull()) || (vchn.size() > 0 && !vchn[0].IsNull());
-        bool fSecond = (vout.size() > 1 && !vout[1].IsNull()) || (vchn.size() > 1 && !vchn[1].IsNull());
+        bool fFirst = vout.size() > 0 && !vout[0].IsNull();
+        bool fSecond = vout.size() > 1 && !vout[1].IsNull();
         assert(fFirst || fSecond || nMaskCode);
         unsigned int nCode = 8*(nMaskCode - (fFirst || fSecond ? 0 : 1)) + (fCoinBase ? 1 : 0) + (fFirst ? 2 : 0) + (fSecond ? 4 : 0);
         // version
@@ -1168,19 +1145,12 @@ public:
             for (unsigned int i = 0; i < 8 && 2+b*8+i < vout.size(); i++)
                 if (!vout[2+b*8+i].IsNull())
                     chAvail |= (1 << i);
-            for (unsigned int i = 0; i < 8 && 2+b*8+i < vchn.size(); i++)
-                if (!vchn[2+b*8+i].IsNull())
-                    chAvail |= (1 << i);
             ::Serialize(s, chAvail, nType, nVersion);
         }
         // txouts themself
         for (unsigned int i = 0; i < vout.size(); i++) {
             if (!vout[i].IsNull())
                 ::Serialize(s, CTxOutCompressor(REF(vout[i])), nType, nVersion);
-        }
-        for (unsigned int i = 0; i < vchn.size(); i++) {
-            if (!vchn[i].IsNull())
-                ::Serialize(s, CTxChnCompressor(REF(vchn[i])), nType, nVersion);
         }
         // coinbase height
         ::Serialize(s, VARINT(nHeight), nType, nVersion);
@@ -1215,11 +1185,6 @@ public:
             if (vAvail[i])
                 ::Unserialize(s, REF(CTxOutCompressor(vout[i])), nType, nVersion);
         }
-        vchn.assign(vAvail.size(), CTxChn());
-        for (unsigned int i = 0; i < vAvail.size(); i++) {
-            if (vAvail[i])
-                ::Unserialize(s, REF(CTxChnCompressor(vchn[i])), nType, nVersion);
-        }
         // coinbase height
         ::Unserialize(s, VARINT(nHeight), nType, nVersion);
         Cleanup();
@@ -1231,9 +1196,8 @@ public:
             return false;
         if (vout[out.n].IsNull())
             return false;
-        undo = CTxInUndo(vout[out.n],vchn[out.n]);
+        undo = CTxInUndo(vout[out.n]);
         vout[out.n].SetNull();
-        vchn[out.n].SetNull();
         Cleanup();
         if (vout.size() == 0) {
             undo.nHeight = nHeight;
@@ -1252,16 +1216,13 @@ public:
 
     // check whether a particular output is still available
     bool IsAvailable(unsigned int nPos) const {
-        return ((nPos < vout.size() && !vout[nPos].IsNull()) || (nPos < vchn.size() && !vchn[nPos].IsNull()));
+        return ((nPos < vout.size() && !vout[nPos].IsNull()));
     }
 
     // check whether the entire CCoins is spent
     // note that only !IsPruned() CCoins can be serialized
     bool IsPruned() const {
         BOOST_FOREACH(const CTxOut &out, vout)
-            if (!out.IsNull())
-                return false;
-        BOOST_FOREACH(const CTxChn &out, vchn)
             if (!out.IsNull())
                 return false;
         return true;
