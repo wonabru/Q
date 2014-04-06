@@ -1360,15 +1360,22 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                                 CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason)
 {
     int64 nValue = 0;
-
+    BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
+    {
+        if (nValue < 0)
+        {
+            strFailReason = _("Transaction amounts must be positive");
+            return false;
+        }
+        nValue += COIN;
+    }
     if (vecSend.empty() || nValue < 0)
     {
         strFailReason = _("Transaction amounts must be positive");
         return false;
     }
-    wtxNew.vchn.clear();
-    wtxNew.BindWallet(this);
 
+    wtxNew.BindWallet(this);
     {
         LOCK2(cs_main, cs_wallet);
         {
@@ -1377,6 +1384,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
             {
                 wtxNew.vout.clear();
                 wtxNew.vin.clear();
+                wtxNew.vchn.clear();
                 wtxNew.fFromMe = true;
                 double dPriority = 1;
                 BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
@@ -1392,7 +1400,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                 // vouts to the payees
                 BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
                 {
-                    CTxChn txout(COIN, s.first, s.second);
+                    CTxChn txout(0, s.first, s.second);
                     wtxNew.vchn.push_back(txout);
                 }
                 int64 nTotalValue = nFeeRet;

@@ -257,6 +257,7 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         {
             return InvalidAmount;
         }
+        total += COIN;
     }
 
     if(recipients.size() > setAddress.size())
