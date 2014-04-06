@@ -1376,6 +1376,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
             loop
             {
                 wtxNew.vout.clear();
+                wtxNew.vin.clear();
                 wtxNew.fFromMe = true;
                 double dPriority = 1;
                 BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
@@ -1460,6 +1461,10 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                 }
                 else
                     reservekey.ReturnKey();
+
+                // Fill vin
+                BOOST_FOREACH(const PAIRTYPE(const CWalletTx*,unsigned int)& coin, setCoins)
+                    wtxNew.vin.push_back(CTxIn(coin.first->GetHash(),coin.second));
 
                 // Sign
                 int nIn = 0;
