@@ -1359,16 +1359,8 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
 bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSend,
                                 CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason)
 {
-    int64 nValue = 0;
-    BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
-    {
-        if (nValue < 0)
-        {
-            strFailReason = _("Transaction amounts must be positive");
-            return false;
-        }
-        nValue += COIN;
-    }
+    int64 nValue = vecSend.size() * COIN;
+
     if (vecSend.empty() || nValue < 0)
     {
         strFailReason = _("Transaction amounts must be positive");
@@ -1403,7 +1395,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                     CTxChn txout(0, s.first, s.second);
                     wtxNew.vchn.push_back(txout);
                 }
-                int64 nTotalValue = nFeeRet;
+                int64 nTotalValue = nValue + nFeeRet;
                 // Choose coins to use
                 set<pair<const CWalletTx*,unsigned int> > setCoins;
                 int64 nValueIn = 0;
@@ -1549,11 +1541,21 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
         mapRequestCount[wtxNew.GetHash()] = 0;
 
         // Broadcast
-        if (!wtxNew.AcceptToMemoryPool(true, false))
+        if(wtxNew.vchn.size() == 0)
         {
-            // This must not fail. The transaction has already been signed and recorded.
-            printf("CommitTransaction() : Error: Transaction not valid");
-            return false;
+            if (!wtxNew.AcceptToMemoryPool(true, false))
+            {
+                // This must not fail. The transaction has already been signed and recorded.
+                printf("CommitTransaction() : Error: Transaction not valid");
+                return false;
+            }
+        }else{
+            if (!wtxNew.AcceptToMemoryPool(false, false))
+            {
+                // This must not fail. The transaction has already been signed and recorded.
+                printf("CommitTransaction() : Error: Transaction not valid");
+                return false;
+            }
         }
         wtxNew.RelayWalletTransaction();
     }
