@@ -61,7 +61,8 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         break;
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your Mark addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you."));
-        ui->deleteAddress->setVisible(false);
+        ui->deleteAddress->setVisible(true);
+        ui->deleteAddress->setEnabled(true);
         ui->signMessage->setVisible(true);
         break;
     }
@@ -81,11 +82,9 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
-    if(tab == SendingTab)
-        contextMenu->addAction(deleteAction);
+    contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
-    if(tab == SendingTab)
-        contextMenu->addAction(sendCoinsAction);
+    contextMenu->addAction(sendCoinsAction);
 #ifdef USE_QRCODE
     contextMenu->addAction(showQRCodeAction);
 #endif
@@ -254,6 +253,7 @@ void AddressBookPage::on_deleteAddress_clicked()
     {
         table->model()->removeRow(indexes.at(0).row());
     }
+
 }
 
 void AddressBookPage::selectionChanged()
@@ -279,9 +279,9 @@ void AddressBookPage::selectionChanged()
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(false);
-            ui->deleteAddress->setVisible(false);
-            deleteAction->setEnabled(false);
+            ui->deleteAddress->setEnabled(true);
+            ui->deleteAddress->setVisible(true);
+            deleteAction->setEnabled(true);
             ui->signMessage->setEnabled(true);
             ui->signMessage->setVisible(true);
             ui->verifyMessage->setEnabled(false);
@@ -293,9 +293,9 @@ void AddressBookPage::selectionChanged()
     }
     else
     {
-        ui->deleteAddress->setEnabled(false);
+        ui->deleteAddress->setEnabled(true);
         ui->showQRCode->setEnabled(false);
-        ui->copyAddress->setEnabled(false);
+        ui->copyAddress->setEnabled(true);
         ui->signMessage->setEnabled(false);
         ui->verifyMessage->setEnabled(false);
     }

@@ -204,7 +204,8 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
                 editStatus = NO_CHANGES;
                 return false;
             }
-            wallet->SetAddressBookName(CQcoinAddress(rec->address.toStdString()).Get(), value.toString().toStdString());
+
+            //wallet->SetAddressBookName(CQcoinAddress(rec->address.toStdString()).Get(), value.toString().toStdString());
             break;
         case Address:
             // Do nothing, if old address == new address
@@ -230,11 +231,11 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
             else if(rec->type == AddressTableEntry::Sending)
             {
                 {
-                    LOCK(wallet->cs_wallet);
+                  //  LOCK(wallet->cs_wallet);
                     // Remove old entry
-                    wallet->DelAddressBookName(CQcoinAddress(rec->address.toStdString()).Get());
+                  //  wallet->DelAddressBookName(CQcoinAddress(rec->address.toStdString()).Get());
                     // Add new entry with new address
-                    wallet->SetAddressBookName(CQcoinAddress(value.toString().toStdString()).Get(), rec->label.toStdString());
+                   // wallet->SetAddressBookName(CQcoinAddress(value.toString().toStdString()).Get(), rec->label.toStdString());
                 }
             }
             break;
@@ -299,10 +300,10 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr)
 {
     std::string name = label.toStdString();
     std::string address = addr.toStdString();
-    if(CQcoinAddress(address).IsValid() == true && IsMine(*wallet, CQcoinAddress(address).Get()) == true)
+    if(CQcoinAddress(address).IsValid() == true)
     {
     LOCK(wallet->cs_wallet);
-    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 0) == false)
+    if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
     {
         return false;
     }

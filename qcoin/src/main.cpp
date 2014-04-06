@@ -220,10 +220,12 @@ std::map<uint256,CCoins>::iterator CCoinsViewCache::FetchCoins(const uint256 &tx
     std::map<uint256,CCoins>::iterator it = cacheCoins.lower_bound(txid);
     if (it != cacheCoins.end() && it->first == txid)
         return it;
+    std::map<uint256,CCoins>::iterator ret;
+
     CCoins tmp;
     if (!base->GetCoins(txid,tmp))
         return cacheCoins.end();
-    std::map<uint256,CCoins>::iterator ret = cacheCoins.insert(it, std::make_pair(txid, CCoins()));
+    ret = cacheCoins.insert(it, std::make_pair(txid, CCoins()));
     tmp.swap(ret->second);
     return ret;
 }
@@ -739,7 +741,7 @@ bool CTxMemPool::accept(CValidationState &state, CTransaction &tx, bool fCheckIn
         view.SetBackend(viewMemPool);
 
         // do we already have it?
-        if (view.HaveCoins(hash))
+       if (view.HaveCoins(hash))
             return false;
 
         // do all inputs exist?
@@ -2289,9 +2291,6 @@ void reconnection()
 
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
-
-    std::string names = printNamesInQNetwork();
-    printf("%s",names.c_str());
     printf("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
     CKeyID key = (CKeyID)(pblock->namePubKey);
@@ -2300,16 +2299,40 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     std::string blockname = pblock->GetBlockName();
     if(address.IsValid() == true)
     {
-    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 1) == false)
+    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
     {
-        printf("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n Overwrite your name !!!\n");
-     //   CKeyID keydel;
-    //    pwalletMain->GetAddress(blockname).GetKeyID(keydel);
-     //   pwalletMain->DelAddressBookName((CKeyID)keydel);
+        printf("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
+        reserved.removeAll(key);
+        if(reserved.size() == 0)
+        {
+            CPubKey newKey = pwalletMain->GenerateNewKey();
+            std::string newName = yourName + "/" + newKey.GetID().GetHex();
+            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+                    printf("Reserved.size() == 0 and cannot write default address\n");
+            reserved.push_back((CKeyID)(newKey.GetID()));
+        }
+        return false;
+        /*if(pwalletMain->IsMine(address.Get()) == false)
+        {
+          CKeyID keydel;
+          pwalletMain->GetAddress(blockname).GetKeyID(keydel);
+          if(pwalletMain->IsMine(keydel) == true)
+          pwalletMain->DelAddressBookName((CKeyID)keydel);
       //  pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+        }*/
     }
     }
     reserved.removeAll(key);
+    if(reserved.size() == 0)
+    {
+        CPubKey newKey = pwalletMain->GenerateNewKey();
+        std::string newName = yourName + "/" + newKey.GetID().GetHex();
+        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+                printf("Reserved.size() == 0 and cannot write default address\n");
+        reserved.push_back((CKeyID)(newKey.GetID()));
+    }
+    std::string names = printNamesInQNetwork();
+    printf("%s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
@@ -2322,23 +2345,14 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             pwalletMain->GetAddress(blockname).GetKeyID(keydel);
             pwalletMain->DelAddressBookName((CKeyID)keydel);
             if(address.IsValid() == true)
-                pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
+                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
    //    initAccountsRegister();
    // }
-    if(reserved.size() == 0)
-    {
-        CPubKey newKey = pwalletMain->GenerateNewKey();
-        std::string newName = yourName + "/" + newKey.GetID().GetHex();
-        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
-                printf("Reserved.size() == 0 and cannot write default address\n");
-        reserved.push_back((CKeyID)(newKey.GetID()));
-    }
-    names = printNamesInQNetwork();
-    printf("%s\n New name accepted\n",names.c_str());
+
     //RestartMining();
     return true;
 }
@@ -2415,10 +2429,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if (!pblock->AcceptBlock(state, dbp))
         return error("ProcessBlock() : AcceptBlock FAILED");
 
-    bool ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
+    if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
+        return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
     //RestartMining();
     //reconnection();
-    return ret;
+    return true;
 }
 
 

@@ -36,7 +36,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     case EditReceivingAddress:
         setWindowTitle(tr("Put your name"));
         ui->addressEdit->setEnabled(true);
-       // ui->labelEdit->setEnabled(false);
+        ui->labelEdit->setEnabled(true);
         break;
     case EditSendingAddress:
         setWindowTitle(tr("Names registered in PLM Network"));
@@ -95,6 +95,11 @@ bool EditAddressDialog::saveCurrentRow()
         case EditReceivingAddress:
         addressOld = ui->addressEdit->text();
         nameOld = ui->labelEdit->text();
+        if(::IsMine(*(model->wallet),model->wallet->GetAddress(nameOld.toStdString()).Get()) == false && ::IsMine(*(model->wallet),CQcoinAddress(addressOld.toStdString()).Get()) == false)
+        {
+            return false;
+        }
+
         if(mapper->submit())
         {
             address = ui->addressEdit->text();

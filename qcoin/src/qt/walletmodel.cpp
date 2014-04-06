@@ -250,10 +250,7 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         {
             return InvalidAddress;
         }
-        if(::IsMine(*(this->wallet),address.Get()) == false)
-        {
-            return InvalidAddress;
-        }
+
         setAddress.insert(rcp.address);
 
         if(rcp.amount != -100)
