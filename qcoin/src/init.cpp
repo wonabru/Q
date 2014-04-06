@@ -39,6 +39,7 @@ QMap<CAddress,int> tryingAddresses;
 bool synchronizingComplete = false;
 std::string whoami = "";
 boost::thread_group* minerThreads = NULL;
+extern bool rescaningonly;
 
 string mainNodes[mainNodesNumber];
 
@@ -456,9 +457,11 @@ void rescan(CWallet *wallet, CBlockIndex* pindexBest, CBlockIndex* pindexGenesis
  //   uiInterface.InitMessage(_("Rescanning..."));
 //    printf("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexGenesisBlock->nHeight, pindexGenesisBlock->nHeight);
   //  nStart = GetTimeMillis();
+    rescaningonly = true;
     wallet->ScanForWalletTransactions(pindexGenesisBlock, true);
   //  printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
     wallet->SetBestChain(CBlockLocator(pindexBest));
+    rescaningonly = false;
 }
 
 /** Initialize qcoin.
@@ -1070,7 +1073,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
 
 
-    CBlockIndex *pindexRescan = pindexBest;
+    CBlockIndex *pindexRescan = pindexGenesisBlock;
    // CWalletDB walletdb("myq.dat");
    // CBlockLocator locator;
    // if (walletdb.ReadBestBlock(locator))

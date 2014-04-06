@@ -29,6 +29,7 @@
 using namespace json_spirit;
 
 std::string yourName = "";
+bool rescaningonly = false;
 
 using namespace std;
 using namespace boost;
@@ -2298,10 +2299,13 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     CQcoinAddress address;
     address.Set(key);
     std::string blockname = pblock->GetBlockName();
+    pblock->print();
     if(address.IsValid() == true)
     {
     if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
     {
+        if(rescaningonly == false)
+        {
         printf("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
         reserved.removeAll(key);
         if(reserved.size() == 0)
@@ -2313,6 +2317,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             reserved.push_back((CKeyID)(newKey.GetID()));
         }
         return false;
+        }
         /*if(pwalletMain->IsMine(address.Get()) == false)
         {
           CKeyID keydel;
@@ -4778,7 +4783,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
             LOCK(wallet.cs_wallet);
             wallet.mapRequestCount[pblock->GetHash()] = 0;
         }
-
+        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
         // Process this block the same as if we had received it from another node
         CValidationState state;
         if (!ProcessBlock(state, NULL, pblock))

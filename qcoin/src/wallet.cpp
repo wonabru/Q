@@ -1424,43 +1424,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                     nFeeRet += nMoveToFee;
                 }
 
-                if (nChange > 0)
-                {
-                    // Note: We use a new key here to keep it from being obvious which side is the change.
-                    //  The drawback is that by not reusing a previous key, the change may be lost if a
-                    //  backup is restored, if the backup doesn't have the new private key for the change.
-                    //  If we reused the old key, it would be possible to add code to look for and
-                    //  rediscover unknown transactions that were written with keys of ours to recover
-                    //  post-backup change.
-
-                    // Reserve a new key pair from key pool
-                    CPubKey vchPubKey;
-                    assert(reservekey.GetReservedKey(vchPubKey)); // should never fail, as we just unlocked
-
-                    // Fill a vout to ourself
-                    // TODO: pass in scriptChange instead of reservekey so
-                    // change transaction isn't always pay-to-qcoin-address
-                    CScript scriptChange;
-                    scriptChange.SetDestination(vchPubKey.GetID());
-
-                    CTxOut newTxOut(nChange, scriptChange);
-
-                    // Never create dust outputs; if we would, just
-                    // add the dust to the fee.
-                    if (newTxOut.IsDust())
-                    {
-                        nFeeRet += nChange;
-                        reservekey.ReturnKey();
-                    }
-                    else
-                    {
-                        // Insert change txn at random position:
-                        vector<CTxOut>::iterator position = wtxNew.vout.begin()+GetRandInt(wtxNew.vout.size()+1);
-                        wtxNew.vout.insert(position, newTxOut);
-                    }
-                }
-                else
-                    reservekey.ReturnKey();
+                reservekey.ReturnKey();
 
                 // Fill vin
                 BOOST_FOREACH(const PAIRTYPE(const CWalletTx*,unsigned int)& coin, setCoins)
