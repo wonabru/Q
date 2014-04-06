@@ -1356,7 +1356,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
     return true;
 }
 
-bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSend,
+bool CWallet::CreateChangeName(const vector<pair<CKeyID, std::string> >& vecSend,
                                 CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason)
 {
     int64 nValue = vecSend.size() * COIN;
@@ -1379,9 +1379,12 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                 wtxNew.vchn.clear();
                 wtxNew.fFromMe = true;
                 double dPriority = 1;
-                BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
+                BOOST_FOREACH (const PAIRTYPE(CKeyID, std::string)& s, vecSend)
                 {
-                    CTxOut txout(COIN, s.first);
+                    CQcoinAddress address(s.first);
+                    CScript script;
+                    script.SetDestination(address.Get());
+                    CTxOut txout(COIN, script);
                     if (txout.IsDust())
                     {
                         strFailReason = _("Transaction amount too small");
@@ -1390,7 +1393,7 @@ bool CWallet::CreateChangeName(const vector<pair<CScript, std::string> >& vecSen
                     wtxNew.vout.push_back(txout);
                 }
                 // vouts to the payees
-                BOOST_FOREACH (const PAIRTYPE(CScript, std::string)& s, vecSend)
+                BOOST_FOREACH (const PAIRTYPE(CKeyID, std::string)& s, vecSend)
                 {
                     CTxChn txout(0, s.first, s.second);
                     wtxNew.vchn.push_back(txout);
@@ -1459,10 +1462,10 @@ bool CWallet::CreateTransaction(CScript scriptPubKey, int64 nValue,
     return CreateTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason);
 }
 
-bool CWallet::CreateChangeName(CScript scriptPubKey, std::string nName,
+bool CWallet::CreateChangeName(CKeyID scriptPubKey, std::string nName,
                                 CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, std::string& strFailReason)
 {
-    vector< pair<CScript, std::string> > vecSend;
+    vector< pair<CKeyID, std::string> > vecSend;
     vecSend.push_back(make_pair(scriptPubKey, nName));
     return CreateChangeName(vecSend, wtxNew, reservekey, nFeeRet, strFailReason);
 }
@@ -1529,7 +1532,7 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
 
 
 
-string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew, bool fAskFee)
+string CWallet::SendMoney(CKeyID scriptPubKey, int64 nValue, CWalletTx& wtxNew, bool fAskFee)
 {
     CReserveKey reservekey(this);
     int64 nFeeRequired;
@@ -1543,7 +1546,10 @@ string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew,
     string strError;
     if(wtxNew.vchn.size() == 0)
     {
-    if (!CreateTransaction(scriptPubKey, nValue, wtxNew, reservekey, nFeeRequired, strError))
+        CScript script;
+        CQcoinAddress address(scriptPubKey);
+        script.SetDestination(address.Get());
+    if (!CreateTransaction(script, nValue, wtxNew, reservekey, nFeeRequired, strError))
     {
         if (nValue + nFeeRequired > GetBalance())
             strError = strprintf(_("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!"), FormatMoney(nFeeRequired).c_str());
@@ -1551,10 +1557,7 @@ string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew,
         return strError;
     }
     }else{
-        CQcoinAddress address(scriptPubKey.GetKeyID());
-        CKeyID key;
-        address.GetKeyID(key);
-        std::string name = this->GetName(key);
+        std::string name = this->GetName(scriptPubKey);
         if (!CreateChangeName(scriptPubKey, name, wtxNew, reservekey, nFeeRequired, strError))
         {
             if (nValue + nFeeRequired > GetBalance())
@@ -1584,10 +1587,11 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, int64 nVal
         return _("Insufficient funds");
 
     // Parse Mark address
-    CScript scriptPubKey;
-    scriptPubKey.SetDestination(address);
+    CQcoinAddress scriptPubKey(address);
+    CKeyID key;
+    scriptPubKey.GetKeyID(key);
 
-    return SendMoney(scriptPubKey, nValue, wtxNew, fAskFee);
+    return SendMoney(key, nValue, wtxNew, fAskFee);
 }
 
 

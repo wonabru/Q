@@ -478,7 +478,7 @@ class CTxChn
 {
 public:
     int64 nValue;
-    CScript scriptPubKey;
+    CKeyID keyID;
     std::string name;
 
     CTxChn()
@@ -486,24 +486,24 @@ public:
         SetNull();
     }
 
-    CTxChn(int64 nValueIn, CScript scriptPubKeyIn, std::string nameIn)
+    CTxChn(int64 nValueIn, CKeyID scriptPubKeyIn, std::string nameIn)
     {
         nValue = nValueIn;
-        scriptPubKey = scriptPubKeyIn;
+        keyID = scriptPubKeyIn;
         name = nameIn;
     }
 
     IMPLEMENT_SERIALIZE
     (
         READWRITE(nValue);
-        READWRITE(scriptPubKey);
+        READWRITE(keyID);
         READWRITE(name);
     )
 
     void SetNull()
     {
         nValue = -1;
-        scriptPubKey.clear();
+        keyID = (uint160)0;
         name = "";
     }
 
@@ -520,7 +520,7 @@ public:
     friend bool operator==(const CTxChn& a, const CTxChn& b)
     {
         return (a.nValue       == b.nValue &&
-                a.scriptPubKey == b.scriptPubKey &&
+                a.keyID == b.keyID &&
                 a.name         == b.name);
     }
 
@@ -533,8 +533,8 @@ public:
 
     std::string ToString() const
     {
-        CQcoinAddress address(scriptPubKey.GetKeyID());
-        if (scriptPubKey.size() < 6)
+        CQcoinAddress address(keyID);
+        if (address.ToString().size() < 6)
             return "CTxChn(error)";
         return strprintf("CTxChn(nValue=%"PRI64d".%08"PRI64d", scriptPubKey=%s, name=%s)", nValue / COIN, nValue % COIN, address.ToString().c_str(), name.c_str());
     }
@@ -825,7 +825,7 @@ public:
         READWRITE(cscript);
     });)
 };
-
+/*
         class CTxChnCompressor
         {
         private:
@@ -851,7 +851,7 @@ public:
                 READWRITE(txout.name);
             });)
         };
-
+*/
 /** Undo information for a CTxIn
  *
  *  Contains the prevout's CTxOut being spent, and if this was the

@@ -279,11 +279,11 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
         LOCK2(cs_main, wallet->cs_wallet);
 
         // Sendmany
-        std::vector<std::pair<CScript, std::string> > vecSend;
+        std::vector<std::pair<CKeyID, std::string> > vecSend;
         foreach(const SendCoinsRecipient &rcp, recipients)
         {
-            CScript scriptPubKey;
-            scriptPubKey.SetDestination(CQcoinAddress(rcp.address.toStdString()).Get());
+            CKeyID scriptPubKey;
+            CQcoinAddress(rcp.address.toStdString()).GetKeyID(scriptPubKey);
             vecSend.push_back(make_pair(scriptPubKey, rcp.label.toStdString()));
         }
 

@@ -46,7 +46,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x30cc997597000d11a6bb9e98c62fef82e0d41cc6d58b9f1094843c23a006cf83");
+uint256 hashGenesisBlock("0x321327dbd5000bce8be407686420a981fe18383d36a624f7af596ab21793fdf5");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2344,14 +2344,13 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     {
         BOOST_FOREACH(const CTxChn &vchn, vtx.vchn)
         {
-            CQcoinAddress address(vchn.scriptPubKey.GetKeyID());
+            CQcoinAddress address(vchn.keyID);
             blockname = vchn.name;
             CKeyID keydel;
             pwalletMain->GetAddress(blockname).GetKeyID(keydel);
             pwalletMain->DelAddressBookName((CKeyID)keydel);
-            address.GetKeyID(keydel);
             if(address.IsValid() == true)
-                pwalletMain->SetAddressBookName(keydel,blockname, 5);
+                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)
@@ -2896,16 +2895,18 @@ bool InitBlockIndex() {
 
         std::string gnpk = "MVUPm9nks5omRaZfCNrKnb52SKUrvQYRR1";
         GenesisName.SetString(gnpk);
-        CScript keyGenesis;
-        keyGenesis.SetDestination(GenesisName.Get());
+        CScript scriptGenesis;
+        scriptGenesis.SetDestination(GenesisName.Get());
+        CKeyID keyGenesis;
+        GenesisName.GetKeyID(keyGenesis);
         gnpk = "MMAswGBAiEwJEp2hyCariEJfUqZ8ECuZQ9";
         CQcoinAddress GenesisName2(gnpk);
-        CScript keyGenesis2;
-        keyGenesis2.SetDestination(GenesisName2.Get());
+        CKeyID keyGenesis2;
+        GenesisName2.GetKeyID(keyGenesis2);
         gnpk = "MEycBkxfUvxXhP6TEVcSRZbUEj3DRG4BNj";
         CQcoinAddress GenesisName3(gnpk);
-        CScript keyGenesis3;
-        keyGenesis3.SetDestination(GenesisName3.Get());
+        CKeyID keyGenesis3;
+        GenesisName3.GetKeyID(keyGenesis3);
         CScript sign;
         sign.SetDestination(GenesisName.Get());
         CTransaction txNew;
@@ -2913,12 +2914,12 @@ bool InitBlockIndex() {
         txNew.vin[0].scriptSig = sign;
         txNew.vout.resize(1);
         txNew.vout[0].nValue = COIN;
-        txNew.vout[0].scriptPubKey = keyGenesis;
+        txNew.vout[0].scriptPubKey = scriptGenesis;
         txNew.vchn.resize(2);
-        txNew.vchn[0].scriptPubKey = keyGenesis2;
+        txNew.vchn[0].keyID = keyGenesis2;
         txNew.vchn[0].nValue = COIN;
         txNew.vchn[0].name = "Q";
-        txNew.vchn[1].scriptPubKey = keyGenesis3;
+        txNew.vchn[1].keyID = keyGenesis3;
         txNew.vchn[1].nValue = COIN;
         txNew.vchn[1].name = "1";
         CBlock block;
@@ -2931,7 +2932,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1396655999;
         block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 548280021;
+        block.nNonce   = 409471825;
 
         printf("%d\n", bnProofOfWorkLimit.getint());//2147483647
         printf("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2943,11 +2944,11 @@ bool InitBlockIndex() {
         printf("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         printf("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-    //    CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         printf("%u\n", block.nNonce);
         printf("h %s\n", block.GetHash().ToString().c_str());
         printf("MM %s\n", block.getMM().c_str());
-        assert(block.hashMerkleRoot == uint256("0x5eabd6d44b8d83df3625f5fcb92b3ecf7b3d4cad127552420a5967d890b980bd"));
+        assert(block.hashMerkleRoot == uint256("0xc2a32a8c3061d95a431b0dace72d266c00ec0cf68004d552f6dc72e8802e6709"));
         block.print();
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4996,51 +4997,6 @@ uint64 CTxOutCompressor::CompressAmount(uint64 n)
 }
 
 uint64 CTxOutCompressor::DecompressAmount(uint64 x)
-{
-    // x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
-    if (x == 0)
-        return 0;
-    x--;
-    // x = 10*(9*n + d - 1) + e
-    int e = x % 10;
-    x /= 10;
-    uint64 n = 0;
-    if (e < 9) {
-        // x = 9*n + d - 1
-        int d = (x % 9) + 1;
-        x /= 9;
-        // x = n
-        n = x*10 + d;
-    } else {
-        n = x+1;
-    }
-    while (e) {
-        n *= 10;
-        e--;
-    }
-    return n;
-}
-
-uint64 CTxChnCompressor::CompressAmount(uint64 n)
-{
-    if (n == 0)
-        return 0;
-    int e = 0;
-    while (((n % 10) == 0) && e < 9) {
-        n /= 10;
-        e++;
-    }
-    if (e < 9) {
-        int d = (n % 10);
-        assert(d >= 1 && d <= 9);
-        n /= 10;
-        return 1 + (n*9 + d - 1)*10 + e;
-    } else {
-        return 1 + (n - 1)*10 + 9;
-    }
-}
-
-uint64 CTxChnCompressor::DecompressAmount(uint64 x)
 {
     // x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
     if (x == 0)
