@@ -2348,9 +2348,11 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             blockname = vchn.name;
             CKeyID keydel;
             pwalletMain->GetAddress(blockname).GetKeyID(keydel);
-            pwalletMain->DelAddressBookName((CKeyID)keydel);
-            if(address.IsValid() == true)
-                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+            if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
+            {
+                if(address.IsValid() == true)
+                    pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+            }
         }
     }
    // if(pblock->GetHash() == hashGenesisBlock)

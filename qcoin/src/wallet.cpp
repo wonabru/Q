@@ -1680,6 +1680,9 @@ CQcoinAddress CWallet::GetAddress(std::string name)
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)
 {
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
+    if((mi == mapAddressBook.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
+        return false;
     mapAddressBook.erase(address);
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address), CT_DELETED);
     if (!fFileBacked)
