@@ -1174,13 +1174,20 @@ uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHea
     if (nActualTimespan > nTargetTimespan*4)
         nActualTimespan = nTargetTimespan*4;
 
-    double multiplier = 2;
-    multiplier = log(nTargetTimespan / nActualTimespan) / log(2.0);
+    double multiplier = 1.0;
+    double powmult = log(nTargetTimespan / nActualTimespan) / log(2.0);
+    if(powmult >= 1)
+        multiplier = round(pow(2.0,powmult) / 2.0) * 2.0;
+    else
+        multiplier = 1.0 / round(pow(2.0,1.0 / powmult) / 2.0) * 2.0;
 
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    bnNew *= (int)pow(2,round(multiplier));
+    if(multiplier >= 1)
+        bnNew *= (int)multiplier;
+    else
+        bnNew /= (int)(1.0 / multiplier);
 
     if (bnNew > bnProofOfWorkLimit)
         bnNew = bnProofOfWorkLimit;
