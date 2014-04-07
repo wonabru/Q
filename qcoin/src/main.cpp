@@ -4789,7 +4789,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         if (!ProcessBlock(state, NULL, pblock))
             return error("QcoinMiner : ProcessBlock, block not accepted");
     }
-    rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+    //rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     return true;
 }
 
