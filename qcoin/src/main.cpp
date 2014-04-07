@@ -2349,16 +2349,32 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     vector<CTransaction> tx = pblock->vtx;
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
-        BOOST_FOREACH(const CTxChn &vchn, vtx.vchn)
+        bool isOK = true;
+        if(vtx.vout.size() == vtx.vchn.size())
         {
-            CQcoinAddress address(vchn.keyID);
-            blockname = vchn.name;
-            CKeyID keydel;
-            pwalletMain->GetAddress(blockname).GetKeyID(keydel);
-            if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
+            for(int i = 0;i<vtx.vchn.size();i++)
             {
-                if(address.IsValid() == true)
-                    pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                if(vtx.vout[i].nValue != COIN)
+                {
+                    isOK = false;
+                }
+            }
+        }else{
+            isOK = false;
+        }
+        if(isOK == true)
+        {
+            BOOST_FOREACH(const CTxChn &vchn, vtx.vchn)
+            {
+                CQcoinAddress address(vchn.keyID);
+                blockname = vchn.name;
+                CKeyID keydel;
+                pwalletMain->GetAddress(blockname).GetKeyID(keydel);
+                if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
+                {
+                    if(address.IsValid() == true)
+                        pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                }
             }
         }
     }
