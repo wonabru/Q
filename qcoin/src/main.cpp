@@ -2352,7 +2352,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         bool isOK = true;
         if(vtx.vout.size() == vtx.vchn.size())
         {
-            for(int i = 0;i<vtx.vchn.size();i++)
+            for(unsigned i = 0;i<vtx.vchn.size();i++)
             {
                 if(vtx.vout[i].nValue != COIN)
                 {
