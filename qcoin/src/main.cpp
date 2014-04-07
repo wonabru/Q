@@ -1174,13 +1174,13 @@ uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHea
     if (nActualTimespan > nTargetTimespan*4)
         nActualTimespan = nTargetTimespan*4;
 
+    double multiplier = 2;
+    multiplier = log(nTargetTimespan / nActualTimespan) / log(2.0);
+
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    if(nActualTimespan > nTargetTimespan * 1.5)
-        bnNew /= 2;
-    else if(nActualTimespan < nTargetTimespan * 0.75)
-        bnNew *= 2;
+    bnNew *= (int)pow(2,round(multiplier));
 
     if (bnNew > bnProofOfWorkLimit)
         bnNew = bnProofOfWorkLimit;
@@ -3781,8 +3781,17 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (state.IsInvalid(nDoS))
             if (nDoS > 0)
                 pfrom->Misbehaving(nDoS);
-      //  if(rescaningonly == false && synchronizingComplete == true)
-       //     rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+/*
+        if(rescaningonly == false && synchronizingComplete == true)
+        {
+            CBlockIndex* pindexrescan = pindexBest;
+            for(int i = 0;i<6;i++)
+            {
+                if(pindexrescan != pindexGenesisBlock)
+                    pindexrescan = pindexrescan->pprev;
+            }
+            rescan(pwalletMain,pindexBest,pindexrescan);
+        }*/
     }
 
 

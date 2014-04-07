@@ -8,6 +8,8 @@
 class CWallet;
 class CWalletTx;
 
+
+
 /** UI model for transaction status. The transaction status is the part of a transaction that will change over time.
  */
 class TransactionStatus
