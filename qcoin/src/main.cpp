@@ -3779,7 +3779,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (state.IsInvalid(nDoS))
             if (nDoS > 0)
                 pfrom->Misbehaving(nDoS);
-        rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+        if(rescaningonly == false)
+            rescan(pwalletMain,pindexBest,pindexGenesisBlock);
     }
 
 
