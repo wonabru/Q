@@ -1075,13 +1075,13 @@ bool AppInit2(boost::thread_group& threadGroup)
 
 
 
-    CBlockIndex *pindexRescan = pindexGenesisBlock;
-   // CWalletDB walletdb("myq.dat");
-   // CBlockLocator locator;
-   // if (walletdb.ReadBestBlock(locator))
-   //      pindexRescan = locator.GetBlockIndex();
-   // else
-  //       pindexRescan = pindexGenesisBlock;
+    CBlockIndex *pindexRescan = pindexBest;
+    CWalletDB walletdb("myq.dat");
+    CBlockLocator locator;
+    if (walletdb.ReadBestBlock(locator))
+         pindexRescan = locator.GetBlockIndex();
+    else
+         pindexRescan = pindexGenesisBlock;
     if (pindexBest && pindexBest != pindexRescan)
     {
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
