@@ -36,7 +36,7 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     case EditReceivingAddress:
         setWindowTitle(tr("Put your name"));
         ui->addressEdit->setEnabled(true);
-        ui->labelEdit->setEnabled(true);
+        ui->labelEdit->setEnabled(false);
         break;
     case EditSendingAddress:
         setWindowTitle(tr("Names registered in PLM Network"));

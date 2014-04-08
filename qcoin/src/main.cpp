@@ -2350,6 +2350,8 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
         bool isOK = true;
+        if(vtx.vchn.size() > 0)
+            isOK = true;
         if(vtx.vout.size() == vtx.vchn.size())
         {
             for(unsigned i = 0;i<vtx.vchn.size();i++)
