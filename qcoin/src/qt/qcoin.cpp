@@ -64,7 +64,7 @@ static bool ThreadSafeMessageBox(const std::string& message, const std::string& 
     }
     else
     {
-        printf("%s: %s\n", caption.c_str(), message.c_str());
+        logPrint("%s: %s\n", caption.c_str(), message.c_str());
         fprintf(stderr, "%s: %s\n", caption.c_str(), message.c_str());
         return false;
     }
@@ -94,7 +94,7 @@ static void InitMessage(const std::string &message)
         splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(55,55,55));
         qApp->processEvents();
     }
-    printf("init message: %s\n", message.c_str());
+    logPrint("init message: %s\n", message.c_str());
 }
 
 /*

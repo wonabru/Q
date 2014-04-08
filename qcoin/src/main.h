@@ -315,7 +315,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 
@@ -395,7 +395,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 
@@ -467,7 +467,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 
@@ -541,7 +541,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 
@@ -774,7 +774,7 @@ public:
 
     void print() const
     {
-        printf("%s", ToString().c_str());
+        logPrint("%s", ToString().c_str());
     }
 
 
@@ -1688,7 +1688,7 @@ public:
     {
         std::string myname = GetBlockName();
         std::string myPubKey = GetBlockPubKey();
-        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%llu, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
+        logPrint("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%llu, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),
@@ -1697,13 +1697,13 @@ public:
             vtx.size());
         for (unsigned int i = 0; i < vtx.size(); i++)
         {
-            printf("  ");
+            logPrint("  ");
             vtx[i].print();
         }
-        printf("  vMerkleTree: ");
+        logPrint("  vMerkleTree: ");
         for (unsigned int i = 0; i < vMerkleTree.size(); i++)
-            printf("%s ", vMerkleTree[i].ToString().c_str());
-        printf("\n");
+            logPrint("%s ", vMerkleTree[i].ToString().c_str());
+        logPrint("\n");
     }
 
 
@@ -2015,7 +2015,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 
@@ -2101,7 +2101,7 @@ public:
 
     void print() const
     {
-        printf("%s\n", ToString().c_str());
+        logPrint("%s\n", ToString().c_str());
     }
 };
 

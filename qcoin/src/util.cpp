@@ -167,7 +167,7 @@ void RandAddSeedPerfmon()
     {
         RAND_add(pdata, nSize, nSize/100.0);
         OPENSSL_cleanse(pdata, nSize);
-        printf("RandAddSeed() %lu bytes\n", nSize);
+        logPrint("RandAddSeed() %lu bytes\n", nSize);
     }
 #endif
 }
@@ -210,13 +210,13 @@ static boost::mutex* mutexDebugLog = NULL;
 
 
 //
-// printf (aka printf -- there is a #define that we really
+// logPrint (aka logPrint -- there is a #define that we really
 // should get rid of one day) has been broken a couple of times now
 // by well-meaning people adding mutexes in the most straightforward way.
 // It breaks because it may be called by global destructors during shutdown.
 // Since the order of destruction of static/global objects is undefined,
 // defining a mutex as a global object doesn't work (the mutex gets
-// destroyed, and then some later destructor calls printf,
+// destroyed, and then some later destructor calls logPrint,
 // maybe indirectly, and you get a core dump at shutdown trying to lock
 // the mutex).
 
@@ -335,7 +335,7 @@ bool error(const char *format, ...)
     va_start(arg_ptr, format);
     std::string str = vstrprintf(format, arg_ptr);
     va_end(arg_ptr);
-    printf("ERROR: %s\n", str.c_str());
+    logPrint("ERROR: %s\n", str.c_str());
     return false;
 }
 
@@ -1125,13 +1125,13 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
 void LogException(std::exception* pex, const char* pszThread)
 {
     std::string message = FormatException(pex, pszThread);
-    printf("\n%s", message.c_str());
+    logPrint("\n%s", message.c_str());
 }
 
 void PrintException(std::exception* pex, const char* pszThread)
 {
     std::string message = FormatException(pex, pszThread);
-    printf("\n\n************************\n%s\n", message.c_str());
+    logPrint("\n\n************************\n%s\n", message.c_str());
     fprintf(stderr, "\n\n************************\n%s\n", message.c_str());
     strMiscWarning = message;
     throw;
@@ -1140,7 +1140,7 @@ void PrintException(std::exception* pex, const char* pszThread)
 void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 {
     std::string message = FormatException(pex, pszThread);
-    printf("\n\n************************\n%s\n", message.c_str());
+    logPrint("\n\n************************\n%s\n", message.c_str());
     fprintf(stderr, "\n\n************************\n%s\n", message.c_str());
     strMiscWarning = message;
 }
@@ -1183,7 +1183,7 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 
     fs::path &path = pathCached[fNetSpecific];
 
-    // This can be called during exceptions by printf, so we cache the
+    // This can be called during exceptions by logPrint, so we cache the
     // value so we don't have to do memory allocations after that.
     if (fCachedPath[fNetSpecific])
         return path;
@@ -1447,7 +1447,7 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
 
     // Add data
     vTimeOffsets.input(nOffsetSample);
-    printf("Added time data, samples %d, offset %+"PRI64d" (%+"PRI64d" minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample/60);
+    logPrint("Added time data, samples %d, offset %+"PRI64d" (%+"PRI64d" minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample/60);
     if (vTimeOffsets.size() >= 5 && vTimeOffsets.size() % 2 == 1)
     {
         int64 nMedian = vTimeOffsets.median();
@@ -1476,17 +1476,17 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
                     fDone = true;
                     string strMessage = _("Warning: Please check that your computer's date and time are correct! If your clock is wrong Mark will not work properly.");
                     strMiscWarning = strMessage;
-                    printf("*** %s\n", strMessage.c_str());
+                    logPrint("*** %s\n", strMessage.c_str());
                     uiInterface.ThreadSafeMessageBox(strMessage, "", CClientUIInterface::MSG_WARNING);
                 }
             }
         }
         if (fDebug) {
             BOOST_FOREACH(int64 n, vSorted)
-                printf("%+"PRI64d"  ", n);
-            printf("|  ");
+                logPrint("%+"PRI64d"  ", n);
+            logPrint("|  ");
         }
-        printf("nTimeOffset = %+"PRI64d"  (%+"PRI64d" minutes)\n", nTimeOffset, nTimeOffset/60);
+        logPrint("nTimeOffset = %+"PRI64d"  (%+"PRI64d" minutes)\n", nTimeOffset, nTimeOffset/60);
     }
 }
 
@@ -1548,7 +1548,7 @@ boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate)
         return fs::path(pszPath);
     }
 
-    printf("SHGetSpecialFolderPathA() failed, could not obtain requested path.\n");
+    logPrint("SHGetSpecialFolderPathA() failed, could not obtain requested path.\n");
     return fs::path("");
 }
 #endif
@@ -1568,7 +1568,7 @@ boost::filesystem::path GetTempPath() {
     path = boost::filesystem::path("/tmp");
 #endif
     if (path.empty() || !boost::filesystem::is_directory(path)) {
-        printf("GetTempPath(): failed to find temp path\n");
+        logPrint("GetTempPath(): failed to find temp path\n");
         return boost::filesystem::path("");
     }
     return path;
@@ -1579,7 +1579,7 @@ void runCommand(std::string strCommand)
 {
     int nErr = ::system(strCommand.c_str());
     if (nErr)
-        printf("runCommand error: system(%s) returned %d\n", strCommand.c_str(), nErr);
+        logPrint("runCommand error: system(%s) returned %d\n", strCommand.c_str(), nErr);
 }
 
 void RenameThread(const char* name)
@@ -1612,7 +1612,7 @@ bool NewThread(void(*pfn)(void*), void* parg)
     {
         boost::thread(pfn, parg); // thread detaches when out of scope
     } catch(boost::thread_resource_error &e) {
-        printf("Error creating thread: %s\n", e.what());
+        logPrint("Error creating thread: %s\n", e.what());
         return false;
     }
     return true;

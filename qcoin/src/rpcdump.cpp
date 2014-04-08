@@ -9,7 +9,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#define printf printf
+#define logPrint logPrint
 
 using namespace json_spirit;
 using namespace std;

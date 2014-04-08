@@ -179,14 +179,14 @@ static void NotifyBlocksChanged(ClientModel *clientmodel)
 
 static void NotifyNumConnectionsChanged(ClientModel *clientmodel, int newNumConnections)
 {
-    // Too noisy: printf("NotifyNumConnectionsChanged %i\n", newNumConnections);
+    // Too noisy: logPrint("NotifyNumConnectionsChanged %i\n", newNumConnections);
     QMetaObject::invokeMethod(clientmodel, "updateNumConnections", Qt::QueuedConnection,
                               Q_ARG(int, newNumConnections));
 }
 
 static void NotifyAlertChanged(ClientModel *clientmodel, const uint256 &hash, ChangeType status)
 {
-    printf("NotifyAlertChanged %s status=%i\n", hash.GetHex().c_str(), status);
+    logPrint("NotifyAlertChanged %s status=%i\n", hash.GetHex().c_str(), status);
     QMetaObject::invokeMethod(clientmodel, "updateAlert", Qt::QueuedConnection,
                               Q_ARG(QString, QString::fromStdString(hash.GetHex())),
                               Q_ARG(int, status));

@@ -65,7 +65,7 @@ struct AddressTableEntryLessThan
         case CT_NEW:
             if(inModel)
             {
-                printf("Warning: AddressTablePriv::updateEntry: Got CT_NOW, but entry is already in model\n");
+                logPrint("Warning: AddressTablePriv::updateEntry: Got CT_NOW, but entry is already in model\n");
                 break;
             }
             parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex);
@@ -75,7 +75,7 @@ struct AddressTableEntryLessThan
         case CT_UPDATED:
             if(!inModel)
             {
-                printf("Warning: AddressTablePriv::updateEntry: Got CT_UPDATED, but entry is not in model\n");
+                logPrint("Warning: AddressTablePriv::updateEntry: Got CT_UPDATED, but entry is not in model\n");
                 break;
             }
             lower->type = newEntryType;
@@ -85,7 +85,7 @@ struct AddressTableEntryLessThan
         case CT_DELETED:
             if(!inModel)
             {
-                printf("Warning: AddressTablePriv::updateEntry: Got CT_DELETED, but entry is not in model\n");
+                logPrint("Warning: AddressTablePriv::updateEntry: Got CT_DELETED, but entry is not in model\n");
                 break;
             }
             parent->beginRemoveRows(QModelIndex(), lowerIndex, upperIndex-1);

@@ -147,9 +147,9 @@ extern volatile bool fReopenDebugLog;
 
 void RandAddSeed();
 void RandAddSeedPerfmon();
-//int ATTR_WARN_PRINTF(1,2) printf(const char* pszFormat, ...);
+//int ATTR_WARN_PRINTF(1,2) logPrint(const char* pszFormat, ...);
 
-//#define printf LogPrint
+//#define logPrint LogPrint
 /*
   Rationale for the real_strprintf / strprintf construction:
     It is not allowed to use va_start with a pass-by-reference argument.
@@ -168,13 +168,13 @@ std::string vstrprintf(const char *format, va_list ap);
 
 bool ATTR_WARN_PRINTF(1,2) error(const char *format, ...);
 
-/* Redefine printf so that it directs output to debug.log
+/* Redefine logPrint so that it directs output to debug.log
  *
- * Do this *after* defining the other printf-like functions, because otherwise the
- * __attribute__((format(printf,X,Y))) gets expanded to __attribute__((format(printf,X,Y)))
+ * Do this *after* defining the other logPrint-like functions, because otherwise the
+ * __attribute__((format(logPrint,X,Y))) gets expanded to __attribute__((format(logPrint,X,Y)))
  * which confuses gcc.
  */
-//#define printf printf
+//#define logPrint(format,...) logPrint(const char* format,__VA_ARGS__)
 
 void LogException(std::exception* pex, const char* pszThread);
 void PrintException(std::exception* pex, const char* pszThread);
@@ -233,10 +233,14 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 void AddTimeData(const CNetAddr& ip, int64 nTime);
 void runCommand(std::string strCommand);
 
+inline void logPrint(const char * format, ...)
+{
+    return;
+}
 
 int LogPrintStr(const std::string &str);
 
-//#define printf(format, ...) {char *logstr;try{sprintf(logstr,format,__VA_ARGS__);LogPrintStr(logstr);}catch(...){LogPrintStr(format);}}
+//#define logPrint(format, ...) {char *logstr;try{sprintf(logstr,format,__VA_ARGS__);LogPrintStr(logstr);}catch(...){LogPrintStr(format);}}
 
 
 inline std::string i64tostr(int64 n)
@@ -314,12 +318,12 @@ inline std::string HexStr(const std::vector<unsigned char>& vch, bool fSpaces=fa
 template<typename T>
 void PrintHex(const T pbegin, const T pend, const char* pszFormat="%s", bool fSpaces=true)
 {
-    printf(pszFormat, HexStr(pbegin, pend, fSpaces).c_str());
+    logPrint(pszFormat, HexStr(pbegin, pend, fSpaces).c_str());
 }
 
 inline void PrintHex(const std::vector<unsigned char>& vch, const char* pszFormat="%s", bool fSpaces=true)
 {
-    printf(pszFormat, HexStr(vch, fSpaces).c_str());
+    logPrint(pszFormat, HexStr(vch, fSpaces).c_str());
 }
 
 inline int64 GetPerformanceCounter()
@@ -562,7 +566,7 @@ template <typename Callable> void LoopForever(const char* name,  Callable func, 
 {
     std::string s = strprintf("qcoin-%s", name);
     RenameThread(s.c_str());
-    printf("%s thread start\n", name);
+    logPrint("%s thread start\n", name);
     try
     {
         while (1)
@@ -573,7 +577,7 @@ template <typename Callable> void LoopForever(const char* name,  Callable func, 
     }
     catch (boost::thread_interrupted)
     {
-        printf("%s thread stop\n", name);
+        logPrint("%s thread stop\n", name);
         throw;
     }
     catch (std::exception& e) {
@@ -590,13 +594,13 @@ template <typename Callable> void TraceThread(const char* name,  Callable func)
     RenameThread(s.c_str());
     try
     {
-        printf("%s thread start\n", name);
+        logPrint("%s thread start\n", name);
         func();
-        printf("%s thread exit\n", name);
+        logPrint("%s thread exit\n", name);
     }
     catch (boost::thread_interrupted)
     {
-        printf("%s thread interrupt\n", name);
+        logPrint("%s thread interrupt\n", name);
         throw;
     }
     catch (std::exception& e) {

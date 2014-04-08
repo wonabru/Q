@@ -104,7 +104,7 @@ static CCoinsViewDB *pcoinsdbview;
 
 void Shutdown()
 {
-    printf("Shutdown : In progress...\n");
+    logPrint("Shutdown : In progress...\n");
     static CCriticalSection cs_Shutdown;
     TRY_LOCK(cs_Shutdown, lockShutdown);
     if (!lockShutdown) return;
@@ -130,7 +130,7 @@ void Shutdown()
     boost::filesystem::remove(GetPidFile());
     UnregisterWallet(pwalletMain);
     delete pwalletMain;
-    printf("Shutdown : done\n");
+    logPrint("Shutdown : done\n");
 }
 
 //
@@ -416,13 +416,13 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
             FILE *file = OpenBlockFile(pos, true);
             if (!file)
                 break;
-            printf("Reindexing block file blk%05u.dat...\n", (unsigned int)nFile);
+            logPrint("Reindexing block file blk%05u.dat...\n", (unsigned int)nFile);
             LoadExternalBlockFile(file, &pos);
             nFile++;
         }
         pblocktree->WriteReindexing(false);
         fReindex = false;
-        printf("Reindexing finished\n");
+        logPrint("Reindexing finished\n");
         // To avoid ending up in a situation without genesis block, re-try initializing (no-op if reindexing worked):
 
         InitBlockIndex();
@@ -435,7 +435,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
         if (file) {
             CImportingNow imp;
             filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
-            printf("Importing bootstrap.dat...\n");
+            logPrint("Importing bootstrap.dat...\n");
             LoadExternalBlockFile(file);
             RenameOver(pathBootstrap, pathBootstrapOld);
         }
@@ -446,7 +446,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
         FILE *file = fopen(path.string().c_str(), "rb");
         if (file) {
             CImportingNow imp;
-            printf("Importing %s...\n", path.string().c_str());
+            logPrint("Importing %s...\n", path.string().c_str());
             LoadExternalBlockFile(file);
         }
     }
@@ -455,12 +455,12 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 void rescan(CWallet *wallet, CBlockIndex* pindexBest, CBlockIndex* pindexGenesisBlock)
 {
  //   uiInterface.InitMessage(_("Rescanning..."));
-//    printf("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexGenesisBlock->nHeight, pindexGenesisBlock->nHeight);
+//    logPrint("Rescanning last %i blocks (from block %i)...\n", pindexBest->nHeight - pindexGenesisBlock->nHeight, pindexGenesisBlock->nHeight);
   //  nStart = GetTimeMillis();
   //  static CBlockIndex* lastblockvisited = pindexGenesisBlock;
     rescaningonly = true;
     wallet->ScanForWalletTransactions(pindexGenesisBlock, true);
-  //  printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+  //  logPrint(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
     wallet->SetBestChain(CBlockLocator(pindexBest));
     rescaningonly = false;
 
@@ -659,21 +659,21 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (GetBoolArg("-shrinkdebugfile", !fDebug))
         ShrinkDebugFile();
-    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-    printf("Mark version %s (%s)\n", FormatFullVersion().c_str(), CLIENT_DATE.c_str());
-    printf("Using OpenSSL version %s\n", SSLeay_version(SSLEAY_VERSION));
+    logPrint("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    logPrint("Mark version %s (%s)\n", FormatFullVersion().c_str(), CLIENT_DATE.c_str());
+    logPrint("Using OpenSSL version %s\n", SSLeay_version(SSLEAY_VERSION));
     if (!fLogTimestamps)
-        printf("Startup time: %s\n", DateTimeStrFormat("%Y-%m-%d %H:%M:%S", GetTime()).c_str());
-    printf("Default data directory %s\n", GetDefaultDataDir().string().c_str());
-    printf("Using data directory %s\n", strDataDir.c_str());
-    printf("Using at most %i connections (%i file descriptors available)\n", nMaxConnections, nFD);
+        logPrint("Startup time: %s\n", DateTimeStrFormat("%Y-%m-%d %H:%M:%S", GetTime()).c_str());
+    logPrint("Default data directory %s\n", GetDefaultDataDir().string().c_str());
+    logPrint("Using data directory %s\n", strDataDir.c_str());
+    logPrint("Using at most %i connections (%i file descriptors available)\n", nMaxConnections, nFD);
     std::ostringstream strErrors;
 
     if (fDaemon)
         fprintf(stdout, "Mark server starting\n");
 
     if (nScriptCheckThreads) {
-        printf("Using %u threads for script verification\n", nScriptCheckThreads);
+        logPrint("Using %u threads for script verification\n", nScriptCheckThreads);
         for (int i=0; i<nScriptCheckThreads-1; i++)
             threadGroup.create_thread(&ThreadScriptCheck);
     }
@@ -691,7 +691,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         boost::filesystem::path pathDatabaseBak = GetDataDir() / strprintf("database.%"PRI64d".bak", GetTime());
         try {
             boost::filesystem::rename(pathDatabase, pathDatabaseBak);
-            printf("Moved old %s to %s. Retrying.\n", pathDatabase.string().c_str(), pathDatabaseBak.string().c_str());
+            logPrint("Moved old %s to %s. Retrying.\n", pathDatabase.string().c_str(), pathDatabaseBak.string().c_str());
         } catch(boost::filesystem::filesystem_error &error) {
              // failure is ok (well, not really, but it's not worse than what we started with)
         }
@@ -840,12 +840,12 @@ bool AppInit2(boost::thread_group& threadGroup)
             filesystem::path dest = blocksDir / strprintf("blk%05u.dat", i-1);
             try {
                 filesystem::create_hard_link(source, dest);
-                printf("Hardlinked %s -> %s\n", source.string().c_str(), dest.string().c_str());
+                logPrint("Hardlinked %s -> %s\n", source.string().c_str(), dest.string().c_str());
                 linked = true;
             } catch (filesystem::filesystem_error & e) {
                 // Note: hardlink creation failing is not a disaster, it just means
                 // blocks will get re-downloaded from peers.
-                printf("Error hardlinking blk%04u.dat : %s\n", i, e.what());
+                logPrint("Error hardlinking blk%04u.dat : %s\n", i, e.what());
                 break;
             }
         }
@@ -886,7 +886,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 //    walletQ->LoadWallet(fFirstRunQ);
 //    walletWonabru->LoadWallet(fFirstRunWonabru);
 
-    printf("%s\n",printNamesInQNetwork().c_str());
+    logPrint("%s\n",printNamesInQNetwork().c_str());
 
     if (nLoadWalletRet != DB_LOAD_OK)
     {
@@ -903,7 +903,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         else if (nLoadWalletRet == DB_NEED_REWRITE)
         {
             strErrors << _("Root needed to be rewritten: restart Mark to complete") << "\n";
-            printf("%s", strErrors.str().c_str());
+            logPrint("%s", strErrors.str().c_str());
             return InitError(strErrors.str());
         }
         else
@@ -915,12 +915,12 @@ bool AppInit2(boost::thread_group& threadGroup)
         int nMaxVersion = GetArg("-upgradewallet", 90909);
         if (nMaxVersion == 0) // the -upgradewallet without argument case
         {
-            printf("Performing wallet upgrade to %i\n", FEATURE_LATEST);
+            logPrint("Performing wallet upgrade to %i\n", FEATURE_LATEST);
             nMaxVersion = CLIENT_VERSION;
             pwalletMain->SetMinVersion(FEATURE_LATEST); // permanently upgrade the wallet immediately
         }
         else
-            printf("Allowing wallet upgrade up to %i\n", nMaxVersion);
+            logPrint("Allowing wallet upgrade up to %i\n", nMaxVersion);
         if (nMaxVersion < pwalletMain->GetVersion())
             strErrors << _("Cannot downgrade wallet") << "\n";
         pwalletMain->SetMaxVersion(nMaxVersion);
@@ -949,9 +949,9 @@ bool AppInit2(boost::thread_group& threadGroup)
     CSecret secretDefault;
     bool fcompressed;
     pwalletMain->GetSecret(keyDefault,secretDefault,fcompressed);
-    printf("%s", (const char *)(&secretDefault));
-    //printf("%d", (int)(*fcompressed));
-    printf(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+    logPrint("%s", (const char *)(&secretDefault));
+    //logPrint("%d", (int)(*fcompressed));
+    logPrint(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
 
     RegisterWallet(pwalletMain);
 
@@ -1027,10 +1027,10 @@ bool AppInit2(boost::thread_group& threadGroup)
     // As the program has not fully started yet, Shutdown() is possibly overkill.
     if (fRequestShutdown)
     {
-        printf("Shutdown requested. Exiting.\n");
+        logPrint("Shutdown requested. Exiting.\n");
         return false;
     }
-    printf(" block index %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+    logPrint(" block index %15"PRI64d"ms\n", GetTimeMillis() - nStart);
 
     if (GetBoolArg("-printblockindex") || GetBoolArg("-printblocktree"))
     {
@@ -1052,12 +1052,12 @@ bool AppInit2(boost::thread_group& threadGroup)
                 block.ReadFromDisk(pindex);
                 block.BuildMerkleTree();
                 block.print();
-                printf("\n");
+                logPrint("\n");
                 nFound++;
             }
         }
         if (nFound == 0)
-            printf("No blocks matching %s were found\n", strMatch.c_str());
+            logPrint("No blocks matching %s were found\n", strMatch.c_str());
         return false;
     }
 
@@ -1119,11 +1119,11 @@ bool AppInit2(boost::thread_group& threadGroup)
     RandAddSeedPerfmon();
 
     //// debug print
-    printf("mapBlockIndex.size() = %"PRIszu"\n",   mapBlockIndex.size());
-    printf("nBestHeight = %d\n",                   nBestHeight);
-    printf("setKeyPool.size() = %"PRIszu"\n",      pwalletMain->setKeyPool.size());
-    printf("mapWallet.size() = %"PRIszu"\n",       pwalletMain->mapWallet.size());
-    printf("mapAddressBook.size() = %"PRIszu"\n",  pwalletMain->mapAddressBook.size());
+    logPrint("mapBlockIndex.size() = %"PRIszu"\n",   mapBlockIndex.size());
+    logPrint("nBestHeight = %d\n",                   nBestHeight);
+    logPrint("setKeyPool.size() = %"PRIszu"\n",      pwalletMain->setKeyPool.size());
+    logPrint("mapWallet.size() = %"PRIszu"\n",       pwalletMain->mapWallet.size());
+    logPrint("mapAddressBook.size() = %"PRIszu"\n",  pwalletMain->mapAddressBook.size());
 
 
 
@@ -1168,7 +1168,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     addrman.Add(addr5, addr5);
     addrman.Good(addr5);
 
-    printf("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
+    logPrint("Loaded %i addresses from peers.dat  %"PRI64d"ms\n",
            addrman.size(), GetTimeMillis() - nStart);
 
     StartNode(threadGroup);
