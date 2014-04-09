@@ -8,7 +8,7 @@ Compiled wallet is available
 
 To download source and compiled version:
 
-	sudo apt-get install git
+	sudo apt-get install git -y
 	git clone https://github.com/wonabru/Q
 
 http://www.q-coin.org
@@ -86,6 +86,17 @@ Optional:
 
 	sudo apt-get install libminiupnpc-dev -y (see USE_UPNP compile flag)
 
+Boost
+-----
+If you need to build Boost yourself:
+
+	tar xfz boost_1_50_0.tar.gz
+	cd boost_1_50_0
+	./bootstrap.sh
+	./b2
+	sudo ./b2 install
+	cd ..
+
 miniupnpc
 ---------
 	
@@ -93,6 +104,7 @@ miniupnpc
 	cd miniupnpc-1.6
 	make
 	sudo make install
+	cd ..
 
 
 Berkeley DB
@@ -108,17 +120,10 @@ You need Berkeley DB 4.8.  If you have to build Berkeley DB yourself:
 	echo "/usr/local/BerkeleyDB.4.8/lib" > /etc/ld.so.conf.d/db.conf
 	ldconfig
 	exit
+	cd ../..
 
 
-Boost
------
-If you need to build Boost yourself:
 
-	tar xfz boost_1_50_0.tar.gz
-	cd boost_1_50_0
-	./bootstrap.sh
-	./b2
-	sudo ./b2 install
 
 OpenSSL
 -----
@@ -128,6 +133,7 @@ OpenSSL
 	./config
 	make
 	sudo make install
+	cd ..
 
 Qt
 -----
