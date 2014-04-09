@@ -9,7 +9,6 @@
 #include "sync.h"
 #include "net.h"
 #include "script.h"
-#include "qstring.h"
 #include "base58.h"
 
 #include <list>
@@ -117,13 +116,11 @@ class CCoinsView;
 class CCoinsViewCache;
 class CScriptCheck;
 class CValidationState;
-class QString;
 class SendCoinsRecipient;
 
 struct CBlockTemplate;
 
 std::string printNamesInQNetwork();
-std::string NamesToChange(QList<SendCoinsRecipient> &recipients);
 extern std::string yourName;
 
 

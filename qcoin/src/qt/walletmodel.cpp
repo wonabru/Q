@@ -334,18 +334,6 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
     }
 
     SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
-    QList<SendCoinsRecipient> recipientsToChn;
-    recipientsToChn.clear();
-    foreach(const SendCoinsRecipient &rcp, recipients)
-    {
-        if(rcp.amount == -100)
-        {
-            recipientsToChn.append(rcp);
-        }
-    }
-    if(recipientsToChn.size() > 0)
-        NamesToChange(recipientsToChn);
-
     return ret;
 }
 

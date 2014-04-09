@@ -2380,6 +2380,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
+    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
    //    initAccountsRegister();
@@ -4398,35 +4399,6 @@ std::string printNamesInQNetwork()
     return rets;
 }
 
-std::string NamesToChange(QList<SendCoinsRecipient> &recipients)
-{
-    std::string rets = "";
-    NamesInQNetworkToChange.clear();
-    {
-    BOOST_FOREACH(const SendCoinsRecipient& item, recipients)
-    {
-        const CQcoinAddress address(item.address.toStdString());
-        const std::string strName = item.label.toStdString();
-        CScript scriptPubKey;
-        scriptPubKey.SetDestination(address.Get());
-        NamesInQNetworkToChange.append(AddressTableEntry(AddressTableEntry::Sending,
-                          QString::fromStdString(strName),
-                          QString::fromStdString(address.ToString())));
-    }
-    }
-    BOOST_FOREACH(AddressTableEntry item, NamesInQNetworkToChange)
-    {
-        if(item.label != "")
-        {
-            string to = item.address.toStdString();
-            CQcoinAddress address(to.c_str());
-            if (!address.IsValid())
-                logPrint("Invalid Mark address");
-            rets += "ToChange: Name " + item.label.toStdString() + " scriptPubKey " + address.ToString() + "\n";
-        }
-    }
-    return rets;
-}
 
 CBlockTemplate* CreateNewBlock(CKeyID key)
 {
@@ -4852,14 +4824,14 @@ void RestartMining()
     {
         mapArgs["-gen"] = 1;
        // reconnection();
-        logPrint("Restart mining!\n");
+        printf("Restart mining!\n");
         if (minerThreads != NULL)
         {
            minerThreads->interrupt_all();
            delete minerThreads;
            minerThreads = NULL;
         }
-
+        sleep(10);
         GenerateMarks(true, reserved.last());
       //  reconnection();
       //  rescan(pwalletMain,pindexBest,pindexGenesisBlock);
