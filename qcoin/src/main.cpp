@@ -4820,7 +4820,7 @@ void RestartMining()
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
-    if(synchronizingComplete == true || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
+    if(synchronizingComplete == true)// || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
     {
         mapArgs["-gen"] = 1;
        // reconnection();
