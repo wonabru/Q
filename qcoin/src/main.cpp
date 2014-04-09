@@ -2301,7 +2301,7 @@ void reconnection()
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     logPrint("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
-
+    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
     address.Set(key);
@@ -2380,7 +2380,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
+
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
    //    initAccountsRegister();
