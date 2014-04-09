@@ -147,3 +147,57 @@ Building
 	qtcreator Q-qt.pro
 	[Build -> Rebuild All]
 
+
+Windows Build
+-----
+
+Download:
+miniUPnPc binary http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20110215.zip.  Unzip to C:\upnpc-exe-win32-20110215
+miniUPnPc source http://miniupnp.tuxfamily.org/files/download.php?file=miniupnpc-1.5.20110215.tar.gz.  Untar to C:\upnpc-exe-win32-20110215\miniupnpc (you only need *.h, but the others won't hurt) untar with cd \c\upnpc-exe-win32-20110215 && tar xvvf \c\Users\Matt\Downloads\miniupnpc-1.5.20110215.tar.gz && mv miniupnpc-1.5.20110215 miniupnpc
+
+Note that the reason for using the binary miniupnpc release is that I was unable to get it to build on my system.
+
+Add C:\MinGW\bin to your PATH environment variable (Google is your friend as it depends on your Windows Version).
+
+In the DOS Shell:
+
+wxWidgets:
+-----
+
+	cd wxWidgets-2.8.12\build\msw
+	mingw32-make -f makefile.gcc
+
+Boost:
+-----
+
+	cd boost-1.50.0
+	bootstrap.bat
+	b2
+	bjam.exe toolset=gcc --build-type=complete stage
+
+In the msys Shell (MinGW shell in your start folder or C:\MinGW\msys\1.0\msys.bat):
+OpenSSL:
+-----
+
+	cd openssl-1.0.1c
+	./config
+	make
+	perl util/mkdef.pl 32 libeay enable-static-engine > libeay32.def
+	dllwrap --dllname libeay32.dll --output-lib libeay32.a --def libeay32.def libcrypto.a -lws2_32 -lgdi32
+
+Copy the libeay32.dll file to the folder where you are building/running PLM.
+
+Berkeley DB:
+-----
+
+	cd db-4.8.30.NC/build_unix
+	sh ../dist/configure --enable-mingw --enable-cxx
+	make
+
+Q-coin
+-----
+
+	make -f makefile.mingw
+
+Run with PLM.exe (make sure you have the libeay32.dll in PLM folder)
+
