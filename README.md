@@ -161,6 +161,12 @@ Add C:\MinGW\bin to your PATH environment variable (Google is your friend as it 
 
 In the DOS Shell:
 
+GCC-4.4
+-----
+
+Install tdm-mingw-1.905.0-4.4.0-2.exe
+
+
 wxWidgets:
 -----
 
