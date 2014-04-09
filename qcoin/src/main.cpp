@@ -46,7 +46,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x321327dbd5000bce8be407686420a981fe18383d36a624f7af596ab21793fdf5");
+uint256 hashGenesisBlock("0x4aeb490c8c000cd0b3a0ec57a6ce3f7a9ea081dee450bb4a453cefaa270836b8");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2301,7 +2301,7 @@ void reconnection()
 bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     logPrint("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
-    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
+
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
     address.Set(key);
@@ -2464,6 +2464,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 
     if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
+    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     //RestartMining();
     //reconnection();
     return true;
@@ -2958,26 +2959,27 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
-        block.nTime    = 1396655999;
-        block.nBits    = 0x0000000000ffffff;
-        block.nNonce   = 409471825;
+        block.nTime    = 1397077200;
+        block.nBits    = 0x0000000003ffffff;
+        block.nNonce   = 1585965991;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
        // assert(block.nBits == bnProofOfWorkLimit.GetCompact());
-        block.print();
+      //  block.print();
 
      //   CheckProofOfWork(block.GetHash(), block.nBits);
 
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+      //  CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
-        assert(block.hashMerkleRoot == uint256("0xc2a32a8c3061d95a431b0dace72d266c00ec0cf68004d552f6dc72e8802e6709"));
         block.print();
+        assert(block.hashMerkleRoot == uint256("0xc2a32a8c3061d95a431b0dace72d266c00ec0cf68004d552f6dc72e8802e6709"));
+
         assert(block.GetHash() == hashGenesisBlock);
 
         initAccountsRegister();
@@ -4774,7 +4776,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     //// debug print
     logPrint("QcoinMiner:\n");
     //logPrint("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex().c_str(), hashTarget.GetHex().c_str());
-    pblock->print();
+   // pblock->print();
     logPrint("generated %s\n", FormatMoney(pblock->vtx[0].vout[0].nValue).c_str());
 
     // Found a solution
@@ -4820,7 +4822,7 @@ void RestartMining()
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
-    if(synchronizingComplete == true)// || pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru")
+    if(synchronizingComplete == true || (pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru" && GetBoolArg("-wonabru",false)))
     {
         mapArgs["-gen"] = 1;
        // reconnection();
