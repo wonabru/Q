@@ -154,6 +154,7 @@ Windows Build
 Download:
 miniUPnPc binary http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20110215.zip.  Unzip to C:\upnpc-exe-win32-20110215
 miniUPnPc source http://miniupnp.tuxfamily.org/files/download.php?file=miniupnpc-1.5.20110215.tar.gz.  Untar to C:\upnpc-exe-win32-20110215\miniupnpc (you only need *.h, but the others won't hurt) untar with cd \c\upnpc-exe-win32-20110215 && tar xvvf \c\Users\Matt\Downloads\miniupnpc-1.5.20110215.tar.gz && mv miniupnpc-1.5.20110215 miniupnpc
+QT-4.8 http://download.qt-project.org/development_releases/qt/4.8/4.8.6-rc1/qt-opensource-windows-x86-mingw482-4.8.6-rc1.exe
 
 Note that the reason for using the binary miniupnpc release is that I was unable to get it to build on my system.
 
@@ -166,6 +167,15 @@ GCC-4.4
 
 Install tdm-mingw-1.905.0-4.4.0-2.exe
 
+In the msys Shell (MinGW shell in your start folder or C:\MinGW\msys\1.0\msys.bat):
+
+w32api
+-----
+
+	cp w32api-3.13-mingw32-dev.tar.gz /c/
+	tar xfz w32api-3.13-mingw32-dev.tar.gz
+	
+In the DOS Shell:
 
 wxWidgets:
 -----
@@ -181,7 +191,8 @@ Boost:
 	b2
 	bjam.exe toolset=gcc --build-type=complete stage
 
-In the msys Shell (MinGW shell in your start folder or C:\MinGW\msys\1.0\msys.bat):
+In the msys Shell:
+
 OpenSSL:
 -----
 
