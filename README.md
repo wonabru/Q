@@ -187,8 +187,7 @@ Boost:
 -----
 
 	cd boost-1.50.0
-	bootstrap.bat
-	b2
+	cp bjam.exe boost-1.50.0
 	bjam.exe toolset=gcc --build-type=complete stage
 
 In the msys Shell:
