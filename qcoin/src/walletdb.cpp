@@ -375,7 +375,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
     pwallet->vchDefaultKey = CPubKey();
     int nFileVersion = 0;
     vector<uint256> vWalletUpgrade;
-    bool fIsEncrypted = true;
+    bool fIsEncrypted = false;
     bool fAnyUnordered = false;
     bool fNoncriticalErrors = false;
     DBErrors result = DB_LOAD_OK;

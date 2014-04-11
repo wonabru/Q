@@ -122,7 +122,6 @@ protected:
         Dbt datValue;
         datValue.set_flags(DB_DBT_MALLOC);
         int ret = pdb->get(activeTxn, &datKey, &datValue, 0);
-
         memset(datKey.get_data(), 0, datKey.get_size());
         if (datValue.get_data() == NULL)
             return false;
@@ -158,7 +157,7 @@ protected:
 
         // Value
         CDataStream ssValue(SER_DISK, CLIENT_VERSION);
-        ssValue.reserve(1000);
+        ssValue.reserve(10000);
         ssValue << value;
         Dbt datValue(&ssValue[0], ssValue.size());
 

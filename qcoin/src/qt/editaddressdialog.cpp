@@ -129,6 +129,12 @@ bool EditAddressDialog::saveCurrentRow()
         QList<SendCoinsRecipient> recipients;
         recipients.clear();
         recipients.append(toChn);
+        ::WalletModel::UnlockContext ctx(model->walletModel->requestUnlock());
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return false;
+        }
         if(this->model->walletModel != NULL)
            this->model->walletModel->changePubKey(recipients);
         }else if(address == addressOld && name == nameOld)

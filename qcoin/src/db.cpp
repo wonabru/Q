@@ -345,7 +345,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
                 bitdb.mapFileUseCount.erase(strFile);
 
                 bool fSuccess = true;
-                logPrint("Rewriting %s...\n", strFile.c_str());
+                //logPrint("Rewriting %s...\n", strFile);
                 string strFileRes = strFile + ".rewrite";
                 { // surround usage of db with extra {}
                     CDB db(strFile.c_str(), "r");
@@ -359,7 +359,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
                                             0);
                     if (ret > 0)
                     {
-                        logPrint("Cannot create database file %s\n", strFileRes.c_str());
+                        printf("Cannot create database file %s\n", strFileRes.c_str());
                         fSuccess = false;
                     }
 
@@ -384,7 +384,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
                             if (pszSkip &&
                                 strncmp(&ssKey[0], pszSkip, std::min(ssKey.size(), strlen(pszSkip))) == 0)
                                 continue;
-                            if (strncmp(&ssKey[0], "\x07version", 0) == 0)
+                            if (strncmp(&ssKey[0], "\x07version", 8) == 0)
                             {
                                 // Update version:
                                 ssValue.clear();
@@ -415,7 +415,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
                         fSuccess = false;
                 }
                 if (!fSuccess)
-                    logPrint("Rewriting of %s FAILED!\n", strFileRes.c_str());
+                    printf("Rewriting of %s FAILED!\n", strFileRes.c_str());
                 return fSuccess;
             }
         }
