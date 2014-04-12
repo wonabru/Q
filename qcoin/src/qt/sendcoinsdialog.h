@@ -32,6 +32,7 @@ public:
     void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handleURI(const QString &uri);
+    void newRecipientAllowed(bool f);
 
 public slots:
     void clear();

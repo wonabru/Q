@@ -36,6 +36,11 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     fNewRecipientAllowed = true;
 }
 
+void SendCoinsDialog::newRecipientAllowed(bool f)
+{
+    fNewRecipientAllowed = f;
+}
+
 void SendCoinsDialog::setModel(WalletModel *model)
 {
     this->model = model;

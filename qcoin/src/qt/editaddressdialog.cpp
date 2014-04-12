@@ -1,7 +1,7 @@
 #include "editaddressdialog.h"
 #include "ui_editaddressdialog.h"
 #include "addressbookpage.h"
-
+#include "sendcoinsdialog.h"
 #include "addresstablemodel.h"
 #include "guiutil.h"
 #include "main.h"
@@ -12,6 +12,7 @@
 
 QString addressOld = "";
 QString nameOld = "";
+class SendCoinsDialog;
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),

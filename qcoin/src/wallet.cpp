@@ -60,9 +60,11 @@ CPubKey CWallet::GenerateNewKey()
     // Compressed public keys were introduced in version 0.6.0
     if (fCompressed)
         SetMinVersion(FEATURE_COMPRPUBKEY);
-
-    if (!AddKey(key))
-        throw std::runtime_error("CWallet::GenerateNewKey() : AddKey failed");
+    if (!IsCrypted())
+        if (!AddKey(key))
+        {
+         printf("CWallet::GenerateNewKey() : AddKey failed");
+        }
     return key.GetPubKey();
 }
 
