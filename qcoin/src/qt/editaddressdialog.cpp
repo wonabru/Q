@@ -81,7 +81,7 @@ bool EditAddressDialog::saveCurrentRow()
     if(!model)
         return false;
 
-    if(yourName == "")
+    if(yourName == "" || synchronizingComplete == false)
         acceptAndDestroy();
 
     switch(mode)
@@ -155,6 +155,11 @@ bool EditAddressDialog::saveCurrentRow()
 
 void EditAddressDialog::acceptAndDestroy()
 {
+    if(synchronizingComplete == false)
+    {
+        QMessageBox::warning(this,QString("Wait for synchronization !"),"Synchronization with network is in progress ...", QMessageBox::Ok);
+        return;
+    }
     QString name((const char *)yourName.c_str());
     CQcoinAddress qaddress((CKeyID)(model->wallet->GetWalletDefaultPubKey()));
     QString address((const char *)(qaddress.ToString().c_str()));
@@ -164,7 +169,10 @@ void EditAddressDialog::acceptAndDestroy()
         name = ui->labelEdit->text();
         if(name != "")
             if(model->changeName(name,address,"") == false)
-                break;
+            {
+                name = "";
+                return;
+            }
     }
     yourName =name.toStdString();
     this->hide();

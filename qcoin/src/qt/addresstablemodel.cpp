@@ -313,6 +313,7 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr, st
     }else{
         return false;
     }
+
     editStatus = OK;
     return true;
 }
