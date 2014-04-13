@@ -11,7 +11,7 @@
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
 extern QList<CKeyID> reserved;
-
+bool DoNotReguster = true;
 
 struct AddressTableEntryLessThan
 {
@@ -385,7 +385,8 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
             }
         }
         strAddress = CQcoinAddress(newKey.GetID()).ToString();
-        reserved.push_back(newKey.GetID());
+        if(DoNotReguster == false)
+            reserved.push_back(newKey.GetID());
     }
     else
     {

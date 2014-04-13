@@ -56,6 +56,13 @@
     </layout>
    </item>
    <item>
+    <widget class="QCheckBox" name="DoNotRegusterChb">
+     <property name="text">
+      <string>Do Not Register Name</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
