@@ -170,7 +170,9 @@ void EditAddressDialog::acceptAndDestroy()
         if(name != "")
             if(model->changeName(name,address,"") == false)
             {
+                QMessageBox::warning(this,QString("Could not register name !"),QString("%1 is existing in network").arg(name), QMessageBox::Ok);
                 name = "";
+
                 return;
             }
     }
