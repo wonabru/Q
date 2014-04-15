@@ -18,7 +18,8 @@
 
 #include <string>
 #include <vector>
-
+#include <QMessageBox>
+#include "editaddressdialog.h"
 #include "key.h"
 #include "base58.h"
 #include "uint256.h"
@@ -29,6 +30,7 @@
 using namespace json_spirit;
 
 std::string yourName = "";
+bool yourNameIsRegistered = false;
 bool rescaningonly = false;
 
 using namespace std;
@@ -2315,13 +2317,18 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         {
         logPrint("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
         reserved.removeAll(key);
+        et2:
         if(reserved.size() == 0)
         {
             CPubKey newKey = pwalletMain->GenerateNewKey();
             std::string newName = yourName + "/" + newKey.GetID().GetHex();
-            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+            if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+            {
+                if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
                     logPrint("Reserved.size() == 0 and cannot write default address\n");
-            reserved.push_back((CKeyID)(newKey.GetID()));
+                reserved.push_back((CKeyID)(newKey.GetID()));
+            }else
+                goto et2;
         }
         return false;
         }
@@ -2336,13 +2343,18 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     }
     reserved.removeAll(key);
+    et1:
     if(reserved.size() == 0)
     {
         CPubKey newKey = pwalletMain->GenerateNewKey();
         std::string newName = yourName + "/" + newKey.GetID().GetHex();
-        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+        if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+        {
+            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
                 logPrint("Reserved.size() == 0 and cannot write default address\n");
-        reserved.push_back((CKeyID)(newKey.GetID()));
+            reserved.push_back((CKeyID)(newKey.GetID()));
+        }else
+            goto et1;
     }
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
@@ -2380,7 +2392,16 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-
+    if((blockname == yourName) && (yourNameIsRegistered == false))
+    {
+        yourName = "";
+        EditAddressDialog edg(EditAddressDialog::EditReceivingAddress);
+        QMessageBox::warning(edg.parentWidget(),"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
+        edg.setModal(true);
+        AddressTableModel addrTableModel(pwalletMain);
+        edg.setModel(&addrTableModel);
+        edg.show();
+    }
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
    //    initAccountsRegister();

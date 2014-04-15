@@ -35,13 +35,14 @@ public:
 
     QString getAddress() const;
     void setAddress(const QString &address);
+
+
 signals:
 public slots:
     void accept();
     void acceptAndDestroy();
 private:
     bool saveCurrentRow();
-
     Ui::EditAddressDialog *ui;
     QDataWidgetMapper *mapper;
     Mode mode;

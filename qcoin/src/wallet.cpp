@@ -1657,12 +1657,12 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
 std::string CWallet::GetName(CKeyID key)
 {
     CTxDestination address = key;
-    std::string name = mapAddressBook[address];
-    /*if(name.size() <= 0)
+    std::string name = "";
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
+    if(mi != mapAddressBook.end())
     {
-        address = reserved[0];
-        return mapAddressBook[address];
-    }*/
+        name = mapAddressBook[address];
+    }
     return name;
 }
 
@@ -1679,6 +1679,14 @@ CQcoinAddress CWallet::GetAddress(std::string name)
         }
     }
     return address;
+}
+
+CKeyID CWallet::GetKeyID(std::string name)
+{
+    CQcoinAddress address(GetAddress(name));
+    CKeyID key;
+    address.GetKeyID(key);
+    return key;
 }
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)

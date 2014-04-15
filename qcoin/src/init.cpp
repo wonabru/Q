@@ -40,6 +40,7 @@ bool synchronizingComplete = false;
 std::string whoami = "";
 boost::thread_group* minerThreads = NULL;
 extern bool rescaningonly;
+extern bool yourNameIsRegistered;
 
 string mainNodes[mainNodesNumber];
 
@@ -943,7 +944,24 @@ bool AppInit2(boost::thread_group& threadGroup)
         yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
 
-    reserved.push_back(pwalletMain->vchDefaultKey.GetID());
+    if(pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) != "")
+        yourNameIsRegistered = true;
+    if(yourNameIsRegistered == false)
+        reserved.push_back(pwalletMain->vchDefaultKey.GetID());
+
+    et4:
+    if(reserved.size() == 0)
+    {
+        CPubKey newKey = pwalletMain->GenerateNewKey();
+        std::string newName = yourName + "/" + newKey.GetID().GetHex();
+        if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+        {
+        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+            logPrint("Reserved.size() == 0 and cannot write default address\n");
+            reserved.push_back((CKeyID)(newKey.GetID()));
+        }else
+            goto et4;
+    }
 
     CKeyID keyDefault;
     CSecret secretDefault;

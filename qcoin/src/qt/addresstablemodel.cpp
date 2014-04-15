@@ -387,7 +387,15 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         }
         strAddress = CQcoinAddress(newKey.GetID()).ToString();
         if(DoNotReguster == false)
-            reserved.push_back(newKey.GetID());
+        {
+            if(wallet->GetKeyID(strLabel) == (CKeyID)0)
+                reserved.push_back(newKey.GetID());
+            else{
+                QWidget qw;
+                QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
+                return QString();
+            }
+        }
     }
     else
     {
