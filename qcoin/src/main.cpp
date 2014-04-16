@@ -2394,11 +2394,12 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-    if((blockname == yourName) && (yourNameIsRegistered == false))
+    if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         yourName = "";
         EditAddressDialog edg(EditAddressDialog::EditReceivingAddress);
-        QMessageBox::warning(edg.parentWidget(),"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
+        QWidget qw;
+        QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
         edg.setModal(true);
         AddressTableModel addrTableModel(pwalletMain);
         edg.setModel(&addrTableModel);
