@@ -1654,14 +1654,29 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }
 
+bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string& strName, int ato)
+{
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == strName)
+            if(ato < 3)
+                return false;
+    }
+    mapNamesBook[address] = strName;
+    if (!fFileBacked)
+        return false;
+    return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
+}
+
 std::string CWallet::GetName(CKeyID key)
 {
     CTxDestination address = key;
     std::string name = "";
-    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
-    if(mi != mapAddressBook.end())
+    std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.find(address);
+    if(mi != mapNamesBook.end())
     {
-        name = mapAddressBook[address];
+        name = mapNamesBook[address];
     }
     return name;
 }
@@ -1669,7 +1684,7 @@ std::string CWallet::GetName(CKeyID key)
 CQcoinAddress CWallet::GetAddress(std::string name)
 {
     CQcoinAddress address((CKeyID)0);
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
     {
         const std::string nameIs = item.second;
         if(nameIs == name)

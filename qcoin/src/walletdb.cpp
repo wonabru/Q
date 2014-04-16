@@ -26,12 +26,26 @@ bool CWalletDB::WriteName(const string& strAddress, const string& strName)
     return Write(make_pair(string("name"), strAddress), strName);
 }
 
+bool CWalletDB::WriteNameBlock(const string& strAddress, const string& strName)
+{
+    nWalletDBUpdated++;
+    return Write(make_pair(string("nameBlock"), strAddress), strName);
+}
+
 bool CWalletDB::EraseName(const string& strAddress)
 {
     // This should only be used for sending addresses, never for receiving addresses,
     // receiving addresses must always have an address book entry if they're not change return.
     nWalletDBUpdated++;
     return Erase(make_pair(string("name"), strAddress));
+}
+
+bool CWalletDB::EraseNameBlock(const string& strAddress)
+{
+    // This should only be used for sending addresses, never for receiving addresses,
+    // receiving addresses must always have an address book entry if they're not change return.
+    nWalletDBUpdated++;
+    return Erase(make_pair(string("nameBlock"), strAddress));
 }
 
 bool CWalletDB::ReadAccount(const string& strAccount, CAccount& account)
@@ -199,6 +213,12 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             string strAddress;
             ssKey >> strAddress;
             ssValue >> pwallet->mapAddressBook[CQcoinAddress(strAddress).Get()];
+        }
+        if (strType == "nameBlock")
+        {
+            string strAddress;
+            ssKey >> strAddress;
+            ssValue >> pwallet->mapNamesBook[CQcoinAddress(strAddress).Get()];
         }
         else if (strType == "tx")
         {

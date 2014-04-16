@@ -116,6 +116,7 @@ public:
     std::map<uint256, int> mapRequestCount;
 
     std::map<CTxDestination, std::string> mapAddressBook;
+    std::map<CTxDestination, std::string> mapNamesBook;
 
     CPubKey vchDefaultKey;
 
@@ -286,7 +287,7 @@ public:
     DBErrors LoadWallet(bool& fFirstRunRet);
 
     bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 2);
-
+    bool SetNameBookRegistered(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool DelAddressBookName(const CTxDestination& address);
 
     void UpdatedTransaction(const uint256 &hashTx);

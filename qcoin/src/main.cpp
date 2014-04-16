@@ -48,7 +48,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x4aeb490c8c000cd0b3a0ec57a6ce3f7a9ea081dee450bb4a453cefaa270836b8");
+uint256 hashGenesisBlock("0x1f7af38fbc000aa3ce499cb1f15e33564b1b6280ae3b5f7e1511216538fb80fa");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2162,6 +2162,10 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
     if (mapBlockIndex.count(hash))
         return state.Invalid(error("AcceptBlock() : block already in mapBlockIndex"));
 
+
+    if(pwalletMain->GetKeyID(GetBlockName()) != (CKeyID)0)
+        return state.DoS(100, error("AcceptBlock() : name of block just in the network"));
+
     // Get prev block index
     CBlockIndex* pindexPrev = NULL;
     int nHeight = 0;
@@ -2311,36 +2315,31 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     pblock->print();
     if(address.IsValid() == true)
     {
-    if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
-    {
-        if(rescaningonly == false)
+        if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
+            return false;
+        if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
         {
-        logPrint("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
-        reserved.removeAll(key);
-        et2:
-        if(reserved.size() == 0)
-        {
-            CPubKey newKey = pwalletMain->GenerateNewKey();
-            std::string newName = yourName + "/" + newKey.GetID().GetHex();
-            if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+            if(rescaningonly == false)
             {
-                if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
-                    logPrint("Reserved.size() == 0 and cannot write default address\n");
-                reserved.push_back((CKeyID)(newKey.GetID()));
-            }else
-                goto et2;
+                logPrint("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
+                if(address.IsValid() == true)
+                    pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                reserved.removeAll(key);
+                et2:
+                if(reserved.size() == 0)
+                {
+                    CPubKey newKey = pwalletMain->GenerateNewKey();
+                    std::string newName = yourName + "/" + newKey.GetID().GetHex();
+                    if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+                    {
+                        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
+                            logPrint("Reserved.size() == 0 and cannot write default address\n");
+                        reserved.push_back((CKeyID)(newKey.GetID()));
+                    }else
+                        goto et2;
+                }
+            }
         }
-        return false;
-        }
-        /*if(pwalletMain->IsMine(address.Get()) == false)
-        {
-          CKeyID keydel;
-          pwalletMain->GetAddress(blockname).GetKeyID(keydel);
-          if(pwalletMain->IsMine(keydel) == true)
-          pwalletMain->DelAddressBookName((CKeyID)keydel);
-      //  pwalletMain->SetAddressBookName(address.Get(),blockname, 3);
-        }*/
-    }
     }
     reserved.removeAll(key);
     et1:
@@ -2387,7 +2386,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                 if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
                 {
                     if(address.IsValid() == true)
+                    {
                         pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                        pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
+                    }
                 }
             }
         }
@@ -2980,9 +2982,9 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
-        block.nTime    = 1397077200;
+        block.nTime    = 1397671200;
         block.nBits    = 0x0000000003ffffff;
-        block.nNonce   = 1585965991;
+        block.nNonce   = 494826652;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
