@@ -2324,37 +2324,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                 logPrint("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
                 if(address.IsValid() == true)
                     pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
-                reserved.removeAll(key);
-                et2:
-                if(reserved.size() == 0)
-                {
-                    CPubKey newKey = pwalletMain->GenerateNewKey();
-                    std::string newName = yourName + "/" + newKey.GetID().GetHex();
-                    if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
-                    {
-                        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
-                            logPrint("Reserved.size() == 0 and cannot write default address\n");
-                        reserved.push_back((CKeyID)(newKey.GetID()));
-                    }else
-                        goto et2;
-                }
             }
         }
     }
     reserved.removeAll(key);
-    et1:
-    if(reserved.size() == 0)
-    {
-        CPubKey newKey = pwalletMain->GenerateNewKey();
-        std::string newName = yourName + "/" + newKey.GetID().GetHex();
-        if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
-        {
-            if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
-                logPrint("Reserved.size() == 0 and cannot write default address\n");
-            reserved.push_back((CKeyID)(newKey.GetID()));
-        }else
-            goto et1;
-    }
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
@@ -2394,6 +2367,8 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
+    if(pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) != "")
+        yourNameIsRegistered = true;
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         yourName = "";
@@ -4436,12 +4411,12 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     if(!pblocktemplate.get())
         return NULL;
     CBlock *pblock = &pblocktemplate->block; // pointer for convenience
-    std::string myname = pwalletMain->GetName(key);
+    std::string myname = pwalletMain->GetNameAddressBook(key);
     logPrint("MyName: %s\n",myname.c_str());
     pblock->SetBlockName(myname);
     pblock->SetBlockPubKey((uint160)(key));
     myname = pblock->GetBlockName();
-    logPrint("MyName: %s\n",myname.c_str());
+    printf("MyName: %s\n",myname.c_str());
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
@@ -4831,6 +4806,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 void static QcoinMiner(CKeyID key)
 {
     logPrint("QcoinMiner started...........\n");
+
      auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(key));
      if (!pblocktemplate.get())
         return;
@@ -4846,7 +4822,8 @@ void RestartMining()
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
-    if(synchronizingComplete == true || (pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) == "wonabru" && GetBoolArg("-wonabru",false)))
+
+    if((yourName !="") &&(synchronizingComplete == true || (pwalletMain->GetNameAddressBook(pwalletMain->vchDefaultKey.GetID()) == "wonabru" && GetBoolArg("-wonabru",false))))
     {
         mapArgs["-gen"] = 1;
        // reconnection();
@@ -4858,9 +4835,25 @@ void RestartMining()
            minerThreads = NULL;
         }
         sleep(10);
-        GenerateMarks(true, reserved.last());
-      //  reconnection();
-      //  rescan(pwalletMain,pindexBest,pindexGenesisBlock);
+        if(reserved.size() > 0)
+            GenerateMarks(true, reserved.last());
+        else
+        {
+            et5:
+            if(reserved.size() == 0)
+            {
+                CPubKey newKey = pwalletMain->GenerateNewKey();
+                std::string newName = yourName + "/" + newKey.GetID().GetHex();
+                if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+                {
+                    if (pwalletMain->SetAddressBookName(newKey.GetID(), newName, 5))
+                        reserved.push_back((CKeyID)(newKey.GetID()));
+                }else
+                    goto et5;
+            }else{
+                GenerateMarks(true, reserved.last());
+            }
+        }
     }else{
         if (minerThreads != NULL)
         {

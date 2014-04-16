@@ -293,6 +293,8 @@ public:
     void UpdatedTransaction(const uint256 &hashTx);
 
     std::string GetName(CKeyID key);
+    std::string GetNameAddressBook(CKeyID key);
+    std::string GetDefaultName();
 
     void PrintWallet(const CBlock& block);
 

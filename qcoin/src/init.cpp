@@ -11,6 +11,7 @@
 #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
+#include "editaddressdialog.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -929,39 +930,26 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (fFirstRun)
     {
-
+        std::string defaultname = "";
         // Create new keyUser and set as default key
         RandAddSeedPerfmon();
 
       //  std::string Qbuntuname = "Name Is Your Destiny. Will You Jailbreak This?";
-        std::string defaultname = "";
 
         CPubKey newDefaultKey = pwalletMain->GenerateNewKey();
         pwalletMain->SetDefaultKey(newDefaultKey);
-        if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 0))
+        if (!pwalletMain->SetAddressBookName(newDefaultKey.GetID(), defaultname, 5))
             strErrors << _("Cannot write default address") << "\n";
     }else{
-        yourName = pwalletMain->GetName((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
+        yourName = pwalletMain->GetNameAddressBook((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
 
     if(pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) != "")
         yourNameIsRegistered = true;
-    if(yourNameIsRegistered == false)
+    if(yourNameIsRegistered == false && pwalletMain->GetDefaultName() != "")
         reserved.push_back(pwalletMain->vchDefaultKey.GetID());
 
-    et4:
-    if(reserved.size() == 0)
-    {
-        CPubKey newKey = pwalletMain->GenerateNewKey();
-        std::string newName = yourName + "/" + newKey.GetID().GetHex();
-        if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
-        {
-        if (!pwalletMain->SetAddressBookName(newKey.GetID(), newName, 0))
-            logPrint("Reserved.size() == 0 and cannot write default address\n");
-            reserved.push_back((CKeyID)(newKey.GetID()));
-        }else
-            goto et4;
-    }
+
 
     CKeyID keyDefault;
     CSecret secretDefault;

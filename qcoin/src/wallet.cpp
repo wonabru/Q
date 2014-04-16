@@ -14,7 +14,6 @@
 #include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
-extern QList<CKeyID> reserved;
 extern bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp);
 
 
@@ -1559,7 +1558,7 @@ string CWallet::SendMoney(CKeyID scriptPubKey, int64 nValue, CWalletTx& wtxNew, 
         return strError;
     }
     }else{
-        std::string name = this->GetName(scriptPubKey);
+        std::string name = this->GetNameAddressBook(scriptPubKey);
         if (!CreateChangeName(scriptPubKey, name, wtxNew, reservekey, nFeeRequired, strError))
         {
             if (nValue + nFeeRequired > GetBalance())
@@ -1677,6 +1676,30 @@ std::string CWallet::GetName(CKeyID key)
     if(mi != mapNamesBook.end())
     {
         name = mapNamesBook[address];
+    }
+    return name;
+}
+
+std::string CWallet::GetNameAddressBook(CKeyID key)
+{
+    CTxDestination address = key;
+    std::string name = "";
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
+    if(mi != mapAddressBook.end())
+    {
+        name = mapAddressBook[address];
+    }
+    return name;
+}
+
+std::string CWallet::GetDefaultName()
+{
+    CQcoinAddress address((CKeyID)this->vchDefaultKey.GetID());
+    std::string name = "";
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address.Get());
+    if(mi != mapAddressBook.end())
+    {
+        name = mapAddressBook[address.Get()];
     }
     return name;
 }

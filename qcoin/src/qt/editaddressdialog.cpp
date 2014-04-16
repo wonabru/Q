@@ -14,6 +14,7 @@ QString addressOld = "";
 QString nameOld = "";
 class SendCoinsDialog;
 extern bool DoNotReguster;
+extern QList<CKeyID> reserved;
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
@@ -164,13 +165,14 @@ void EditAddressDialog::acceptAndDestroy()
         return;
     }
     QString name((const char *)yourName.c_str());
-    CQcoinAddress qaddress((CKeyID)(model->wallet->GetWalletDefaultPubKey()));
+    CQcoinAddress qaddress((CKeyID)(model->wallet->vchDefaultKey.GetID()));
     QString address((const char *)(qaddress.ToString().c_str()));
     while(name == "")
     {
         sleep(2);
         name = ui->labelEdit->text();
         if(name != "")
+        {
             if(model->changeName(name,address,"") == false)
             {
                 QMessageBox::warning(this,QString("Could not register name !"),QString("%1 is existing in network").arg(name), QMessageBox::Ok);
@@ -178,8 +180,14 @@ void EditAddressDialog::acceptAndDestroy()
 
                 return;
             }
+        }else{
+            QMessageBox::warning(this,QString("Could not register name !"),QString("Name cannot be empty string!").arg(name), QMessageBox::Ok);
+            return;
+        }
     }
     yourName =name.toStdString();
+    if(model->wallet->GetName(model->wallet->vchDefaultKey.GetID()) == "")
+        reserved.push_back(model->wallet->vchDefaultKey.GetID());
     this->hide();
 }
 

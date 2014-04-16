@@ -303,9 +303,13 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr, st
     CQcoinAddress a(address);
     CKeyID key;
     a.GetKeyID(key);
+    if(name == "")
+        return false;
     if(CQcoinAddress(address).IsValid() == true && name != nameOld)
     {
         LOCK(wallet->cs_wallet);
+        if(wallet->GetKeyID(name) != (CKeyID)0)
+            return false;
         if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
         {
             return false;
@@ -412,7 +416,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
 
 void AddressTableModel::addDefaultReceive()
 {
-    std::string strLabel = wallet->GetName((CKeyID)(wallet->vchDefaultKey.GetID()));
+    std::string strLabel = wallet->GetNameAddressBook((CKeyID)(wallet->vchDefaultKey.GetID()));
     CQcoinAddress address((CKeyID)(wallet->GetWalletDefaultPubKey()));
     // Add entry
     {
