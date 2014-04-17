@@ -325,7 +325,7 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr, st
     if(CQcoinAddress(address).IsValid() == true && name != nameOld)
     {
         LOCK(wallet->cs_wallet);
-        if(wallet->isNameRegistered(name) == false)
+        if(wallet->isNameRegistered(name) == true)
             return false;
         if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
         {
