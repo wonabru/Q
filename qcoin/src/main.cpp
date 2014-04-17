@@ -4891,6 +4891,7 @@ void RestartMining()
                 }else
                     goto et5;
             }
+            RestartMining();
         }
     }else{
         if (minerThreads != NULL)
