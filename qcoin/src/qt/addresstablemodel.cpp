@@ -11,7 +11,7 @@
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
 extern QList<CKeyID> reserved;
-bool DoNotReguster = true;
+bool DoNotRegister = true;
 
 struct AddressTableEntryLessThan
 {
@@ -380,6 +380,12 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     }
     else if(type == Receive)
     {
+        if(wallet->GetName(wallet->vchDefaultKey.GetID()) == "")
+        {
+            QWidget qw;
+            QMessageBox::warning(&qw,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
+            return QString();
+        }
         CPubKey newKey = wallet->GenerateNewKey();
         {
             LOCK(wallet->cs_wallet);
@@ -390,7 +396,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
             }
         }
         strAddress = CQcoinAddress(newKey.GetID()).ToString();
-        if(DoNotReguster == false)
+        if(DoNotRegister == false)
         {
             if(wallet->GetKeyID(strLabel) == (CKeyID)0)
                 reserved.push_back(newKey.GetID());

@@ -48,7 +48,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x1f7af38fbc000aa3ce499cb1f15e33564b1b6280ae3b5f7e1511216538fb80fa");
+uint256 hashGenesisBlock("0x2d29dc5e48000d34b2aea983a1ec59cb9ccf486ad33c661006b71ab47acfd9a8");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2312,6 +2312,8 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     CQcoinAddress address;
     address.Set(key);
     std::string blockname = pblock->GetBlockName();
+    if(blockname == "")
+        return false;
     pblock->print();
     if(address.IsValid() == true)
     {
@@ -2943,13 +2945,6 @@ bool InitBlockIndex() {
         txNew.vout.resize(1);
         txNew.vout[0].nValue = COIN;
         txNew.vout[0].scriptPubKey = scriptGenesis;
-        txNew.vchn.resize(2);
-        txNew.vchn[0].keyID = keyGenesis2;
-        txNew.vchn[0].nValue = COIN;
-        txNew.vchn[0].name = "Q";
-        txNew.vchn[1].keyID = keyGenesis3;
-        txNew.vchn[1].nValue = COIN;
-        txNew.vchn[1].name = "1";
         CBlock block;
         block.SetBlockName("0");
         block.SetBlockPubKey((uint160)keyGenesis);
@@ -2958,9 +2953,9 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
-        block.nTime    = 1397671200;
+        block.nTime    = 1397732400;
         block.nBits    = 0x0000000003ffffff;
-        block.nNonce   = 494826652;
+        block.nNonce   = 1204694944;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2972,12 +2967,12 @@ bool InitBlockIndex() {
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-      //  CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
         block.print();
-        assert(block.hashMerkleRoot == uint256("0xc2a32a8c3061d95a431b0dace72d266c00ec0cf68004d552f6dc72e8802e6709"));
+        assert(block.hashMerkleRoot == uint256("0xbec4e3e2efd6372e37846a1b27692529b846a537f5c8a10339c3950612e3b694"));
 
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -4834,9 +4829,17 @@ void RestartMining()
            delete minerThreads;
            minerThreads = NULL;
         }
+        for(int i = 0;i<reserved.size();i++)
+        {
+            if(pwalletMain->GetName(reserved[i]) != "")
+            {
+                reserved.removeAll(reserved[i]);
+                i = 0;
+            }
+        }
         sleep(10);
         if(reserved.size() > 0)
-            GenerateMarks(true, reserved.last());
+            GenerateMarks(true, reserved.first());
         else
         {
             et5:
@@ -4851,7 +4854,7 @@ void RestartMining()
                 }else
                     goto et5;
             }else{
-                GenerateMarks(true, reserved.last());
+                GenerateMarks(true, reserved.first());
             }
         }
     }else{

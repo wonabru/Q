@@ -13,7 +13,7 @@
 QString addressOld = "";
 QString nameOld = "";
 class SendCoinsDialog;
-extern bool DoNotReguster;
+extern bool DoNotRegister;
 extern QList<CKeyID> reserved;
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
@@ -94,7 +94,7 @@ bool EditAddressDialog::saveCurrentRow()
             model->noChanges();
         break;
         case NewReceivingAddress:
-        DoNotReguster = ui->DoNotRegusterChb->isChecked();
+        DoNotRegister = ui->DoNotRegusterChb->isChecked();
         address = model->addRow(
                 mode == NewSendingAddress ? AddressTableModel::Send : AddressTableModel::Receive,
                 ui->labelEdit->text(),
@@ -153,7 +153,7 @@ bool EditAddressDialog::saveCurrentRow()
     }
     if(name.isEmpty())
         return false;
-    DoNotReguster = false;
+    DoNotRegister = false;
     return !address.isEmpty();
 }
 
