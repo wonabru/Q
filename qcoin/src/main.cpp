@@ -4842,6 +4842,15 @@ void RestartMining()
             GenerateMarks(true, reserved.first());
         else
         {
+            BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+            {
+                const std::string nameIs = item.second;
+                CQcoinAddress address(item.first);
+                CKeyID key;
+                address.GetKeyID(key);
+                if(pwalletMain->GetKeyID(nameIs) == 0)
+                    reserved.push_back(key);
+            }
             et5:
             if(reserved.size() == 0)
             {
