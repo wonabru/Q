@@ -4858,7 +4858,6 @@ void RestartMining()
             string name = pwalletMain->GetNameAddressBook(reserved[i]);
             if(pwalletMain->isNameRegistered(name) == true || name == "")
             {
-                reserved.removeAll(reserved[i]);
                 CQcoinAddress address(reserved[i]);
                 pwalletMain->DelAddressBookName(address.Get());
                 i = 0;
