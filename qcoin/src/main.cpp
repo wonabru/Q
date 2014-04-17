@@ -4890,8 +4890,6 @@ void RestartMining()
                         reserved.push_back((CKeyID)(newKey.GetID()));
                 }else
                     goto et5;
-            }else{
-                GenerateMarks(true, reserved.first());
             }
         }
     }else{
