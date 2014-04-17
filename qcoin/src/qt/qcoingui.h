@@ -69,6 +69,7 @@ public:
     QAction * getEditNameAction() { return editNameAction; }
     QAction * getChangeInformationContent() { return changePassphraseAction; }
     QAction * getReceiveCoinsAction() { return receiveCoinsAction; }
+    QAction * getNotRegisteredCoinsAction() { return notRegisteredCoinsAction; }
     QAction * getSendCoinsAction() { return sendCoinsAction; }
 
 protected:
@@ -99,6 +100,7 @@ private:
     QAction *verifyMessageAction;
     QAction *aboutAction;
     QAction *receiveCoinsAction;
+    QAction *notRegisteredCoinsAction;
     QAction *optionsAction;
     QAction *toggleHideAction;
     QAction *encryptWalletAction;
@@ -175,6 +177,7 @@ private slots:
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
+    void gotoNotRegisteredCoinsPage();
     void gotoSendCoinsPage(QString addr = "");
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */

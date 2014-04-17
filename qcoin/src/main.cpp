@@ -2163,7 +2163,7 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
         return state.Invalid(error("AcceptBlock() : block already in mapBlockIndex"));
 
 
-    if(pwalletMain->GetKeyID(GetBlockName()) != (CKeyID)0)
+    if(pwalletMain->isNameRegistered(GetBlockName()) == true)
         return state.DoS(100, error("AcceptBlock() : name of block just in the network"));
 
     // Get prev block index
@@ -2356,8 +2356,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             {
                 CQcoinAddress address(vchn.keyID);
                 blockname = vchn.name;
-                CKeyID keydel;
-                pwalletMain->GetAddress(blockname).GetKeyID(keydel);
+                CKeyID keydel(pwalletMain->GetKeyID(blockname));
                 if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
                 {
                     if(address.IsValid() == true)
@@ -2369,12 +2368,12 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-    if(pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) != "")
+    if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         yourName = "";
-        EditAddressDialog edg(EditAddressDialog::EditReceivingAddress);
+        EditAddressDialog edg(EditAddressDialog::EditNotRegisteredAddress);
        // edg.set
       //  QWidget qw;
       //  QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
@@ -4831,13 +4830,18 @@ void RestartMining()
            delete minerThreads;
            minerThreads = NULL;
         }
-        for(int i = 0;i<reserved.size();i++)
+        for(int i=0;i<reserved.size();i++)
         {
-            if(pwalletMain->GetName(reserved[i]) != "")
+            string name = pwalletMain->GetNameAddressBook(reserved[i]);
+            if(pwalletMain->isNameRegistered(name) == true)
             {
                 reserved.removeAll(reserved[i]);
+                CQcoinAddress address(reserved[i]);
+                pwalletMain->DelAddressBookName(address.Get());
                 i = 0;
+                continue;
             }
+            printf("Names to mine: %s\n",name.c_str());
         }
         sleep(10);
         if(reserved.size() > 0)
@@ -4847,10 +4851,10 @@ void RestartMining()
             BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
             {
                 const std::string nameIs = item.second;
-                CQcoinAddress address(item.first);
+                CQcoinAddress address(nameIs);
                 CKeyID key;
                 address.GetKeyID(key);
-                if(pwalletMain->GetKeyID(nameIs) == 0)
+                if(pwalletMain->isNameRegistered(nameIs) == false)
                     reserved.push_back(key);
             }
             et5:
@@ -4858,7 +4862,7 @@ void RestartMining()
             {
                 CPubKey newKey = pwalletMain->GenerateNewKey();
                 std::string newName = yourName + "/" + newKey.GetID().GetHex();
-                if(pwalletMain->GetKeyID(newName) == (CKeyID)0)
+                if(pwalletMain->isNameRegistered(newName) == false)
                 {
                     if (pwalletMain->SetAddressBookName(newKey.GetID(), newName, 5))
                         reserved.push_back((CKeyID)(newKey.GetID()));

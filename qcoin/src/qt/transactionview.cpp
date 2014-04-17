@@ -344,7 +344,7 @@ void TransactionView::editLabel()
 
             EditAddressDialog dlg(type==AddressTableModel::Receive
                                          ? EditAddressDialog::EditReceivingAddress
-                                         : EditAddressDialog::EditSendingAddress,
+                                         : EditAddressDialog::EditNotRegisteredAddress,
                                   this);
             dlg.setModel(addressBook);
             dlg.loadRow(idx);

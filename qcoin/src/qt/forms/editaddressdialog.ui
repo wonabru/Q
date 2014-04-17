@@ -56,7 +56,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="DoNotRegusterChb">
+    <widget class="QCheckBox" name="DoNotRegisterChb">
      <property name="text">
       <string>Do Not Register Name</string>
      </property>

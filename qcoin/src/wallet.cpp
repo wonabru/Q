@@ -1626,7 +1626,7 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 
 bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
     {
         const std::string nameIs = item.second;
         if(nameIs == strName)
@@ -1653,9 +1653,21 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
 }
 
+bool CWallet::isNameRegistered(const std::string name)
+{
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == name)
+            return true;
+    }
+    return false;
+}
+
+
 bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string& strName, int ato)
 {
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
     {
         const std::string nameIs = item.second;
         if(nameIs == strName)
@@ -1665,7 +1677,7 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     mapNamesBook[address] = strName;
     if (!fFileBacked)
         return false;
-    return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
+    return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
 }
 
 std::string CWallet::GetName(CKeyID key)
@@ -1707,7 +1719,7 @@ std::string CWallet::GetDefaultName()
 CQcoinAddress CWallet::GetAddress(std::string name)
 {
     CQcoinAddress address((CKeyID)0);
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
     {
         const std::string nameIs = item.second;
         if(nameIs == name)

@@ -55,12 +55,18 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     switch(tab)
     {
     case SendingTab:
-        ui->labelExplanation->setText(tr("These are your Mark addresses for sending payments. Always check the amount and the receiving address before sending coins."));
-        ui->deleteAddress->setVisible(true);
+        ui->labelExplanation->setText(tr("These are your Mark addresses registered in network. Always check the amount and the receiving address before sending coins."));
+        ui->deleteAddress->setVisible(false);
         ui->signMessage->setVisible(false);
         break;
     case ReceivingTab:
-        ui->labelExplanation->setText(tr("These are your Mark addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you."));
+        ui->labelExplanation->setText(tr("These are your Mark addresses your registered names."));
+        ui->deleteAddress->setVisible(false);
+        ui->deleteAddress->setEnabled(false);
+        ui->signMessage->setVisible(true);
+        break;
+    case NotRegisteredTab:
+        ui->labelExplanation->setText(tr("These are your Mark addresses that are not registered yet. You may want to add new one."));
         ui->deleteAddress->setVisible(true);
         ui->deleteAddress->setEnabled(true);
         ui->signMessage->setVisible(true);
@@ -135,6 +141,11 @@ void AddressBookPage::setModel(AddressTableModel *model)
         proxyModel->setFilterRole(AddressTableModel::TypeRole);
         proxyModel->setFilterFixedString(AddressTableModel::Receive);
         break;
+    case NotRegisteredTab:
+        // Receive filter
+        proxyModel->setFilterRole(AddressTableModel::TypeRole);
+        proxyModel->setFilterFixedString(AddressTableModel::NotRegistered);
+        break;
     case SendingTab:
         // Send filter
         proxyModel->setFilterRole(AddressTableModel::TypeRole);
@@ -181,8 +192,8 @@ void AddressBookPage::onEditAction()
         return;
 
     EditAddressDialog dlg(
-            tab == SendingTab ?
-            EditAddressDialog::EditSendingAddress :
+            tab == NotRegisteredTab ?
+            EditAddressDialog::EditNotRegisteredAddress :
             EditAddressDialog::EditReceivingAddress);
     dlg.setModel(model);
     QModelIndex origIndex = proxyModel->mapToSource(indexes.at(0));
@@ -232,9 +243,7 @@ void AddressBookPage::on_newAddress_clicked()
         return;
 
     EditAddressDialog dlg(
-            tab == SendingTab ?
-            EditAddressDialog::NewSendingAddress :
-            EditAddressDialog::NewReceivingAddress, this);
+            EditAddressDialog::NewNotRegisteredAddress, this);
     dlg.setModel(model);
     if(dlg.exec())
     {
@@ -256,6 +265,7 @@ void AddressBookPage::on_deleteAddress_clicked()
 
 }
 
+
 void AddressBookPage::selectionChanged()
 {
     // Set button states based on selected tab and selection
@@ -269,9 +279,9 @@ void AddressBookPage::selectionChanged()
         {
         case SendingTab:
             // In sending tab, allow deletion of selection
-            ui->deleteAddress->setEnabled(true);
-            ui->deleteAddress->setVisible(true);
-            deleteAction->setEnabled(true);
+            ui->deleteAddress->setEnabled(false);
+            ui->deleteAddress->setVisible(false);
+            deleteAction->setEnabled(false);
             ui->signMessage->setEnabled(false);
             ui->signMessage->setVisible(false);
             ui->verifyMessage->setEnabled(true);
@@ -279,13 +289,19 @@ void AddressBookPage::selectionChanged()
             break;
         case ReceivingTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(true);
-            ui->deleteAddress->setVisible(true);
-            deleteAction->setEnabled(true);
+            ui->deleteAddress->setEnabled(false);
+            ui->deleteAddress->setVisible(false);
+            deleteAction->setEnabled(false);
             ui->signMessage->setEnabled(true);
             ui->signMessage->setVisible(true);
             ui->verifyMessage->setEnabled(false);
             ui->verifyMessage->setVisible(false);
+            break;
+        case NotRegisteredTab:
+            // Deleting receiving addresses, however, is not allowed
+            ui->deleteAddress->setEnabled(true);
+            ui->deleteAddress->setVisible(true);
+            deleteAction->setEnabled(true);
             break;
         }
         ui->copyAddress->setEnabled(true);

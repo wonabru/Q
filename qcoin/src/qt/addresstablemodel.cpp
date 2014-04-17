@@ -10,6 +10,7 @@
 
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
+const QString AddressTableModel::NotRegistered = "N";
 extern QList<CKeyID> reserved;
 bool DoNotRegister = true;
 
@@ -39,9 +40,20 @@ struct AddressTableEntryLessThan
                 const CQcoinAddress& address = item.first;
                 const std::string& strName = item.second;
                 bool fMine = IsMine(*wallet, address.Get());
-                cachedAddressTable.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                if(wallet->isNameRegistered(strName)==true)
+                {
+                    if(fMine == true)
+                        cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Receiving,
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString())));
+                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Sending,
+                                  QString::fromStdString(strName),
+                                  QString::fromStdString(address.ToString())));
+                }else{
+                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::NotRegistered,
+                              QString::fromStdString(strName),
+                              QString::fromStdString(address.ToString())));
+                }
             }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
@@ -58,8 +70,11 @@ struct AddressTableEntryLessThan
         int lowerIndex = (lower - cachedAddressTable.begin());
         int upperIndex = (upper - cachedAddressTable.begin());
         bool inModel = (lower != upper);
-        AddressTableEntry::Type newEntryType = isMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending;
-
+        AddressTableEntry::Type newEntryType;
+        if(wallet->isNameRegistered(label.toStdString()) == true)
+            newEntryType = isMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending;
+        else
+            newEntryType = AddressTableEntry::NotRegistered;
         switch(status)
         {
         case CT_NEW:
@@ -179,6 +194,8 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
             return Send;
         case AddressTableEntry::Receiving:
             return Receive;
+        case AddressTableEntry::NotRegistered:
+            return NotRegistered;
         default: break;
         }
     }
@@ -266,8 +283,8 @@ Qt::ItemFlags AddressTableModel::flags(const QModelIndex &index) const
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     // Can edit address and label for sending addresses,
     // and only label for receiving addresses.
-    if(rec->type == AddressTableEntry::Sending ||
-      (rec->type == AddressTableEntry::Receiving && index.column()==Label))
+    if(rec->type == AddressTableEntry::NotRegistered || rec->type == AddressTableEntry::Receiving ||
+      rec->type == AddressTableEntry::Sending)
     {
         retval |= Qt::ItemIsEditable;
     }
@@ -308,7 +325,7 @@ bool AddressTableModel::changeName(const QString &label, const QString &addr, st
     if(CQcoinAddress(address).IsValid() == true && name != nameOld)
     {
         LOCK(wallet->cs_wallet);
-        if(wallet->GetKeyID(name) != (CKeyID)0)
+        if(wallet->isNameRegistered(name) == false)
             return false;
         if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 2) == false)
         {
@@ -361,26 +378,9 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
 
     editStatus = OK;
 
-    if(type == Send)
+    if(type == NotRegistered)
     {
-        if(!walletModel->validateAddress(address))
-        {
-            editStatus = INVALID_ADDRESS;
-            return QString();
-        }
-        // Check for duplicate addresses
-        {
-            LOCK(wallet->cs_wallet);
-            if(wallet->mapAddressBook.count(CQcoinAddress(strAddress).Get()))
-            {
-                editStatus = DUPLICATE_ADDRESS;
-                return QString();
-            }
-        }
-    }
-    else if(type == Receive)
-    {
-        if(wallet->GetName(wallet->vchDefaultKey.GetID()) == "")
+        if(wallet->isNameRegistered(wallet->GetDefaultName()) == false)
         {
             QWidget qw;
             QMessageBox::warning(&qw,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
@@ -398,7 +398,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         strAddress = CQcoinAddress(newKey.GetID()).ToString();
         if(DoNotRegister == false)
         {
-            if(wallet->GetKeyID(strLabel) == (CKeyID)0)
+            if(wallet->isNameRegistered(strLabel) == false)
                 reserved.push_back(newKey.GetID());
             else{
                 QWidget qw;
@@ -434,10 +434,9 @@ void AddressTableModel::addDefaultReceive()
 
 bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    return false;
     Q_UNUSED(parent);
     AddressTableEntry *rec = priv->index(row);
-    if(count != 1 || !rec || rec->type == AddressTableEntry::Receiving)
+    if(count != 1 || !rec || rec->type == AddressTableEntry::Sending || rec->type == AddressTableEntry::Receiving)
     {
         // Can only remove one row at a time, and cannot remove rows not in model.
         // Also refuse to remove receiving addresses.

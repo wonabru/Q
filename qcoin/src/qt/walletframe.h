@@ -47,6 +47,7 @@ public slots:
     void gotoEditName();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
+    void gotoNotRegisteredCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 

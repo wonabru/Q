@@ -944,7 +944,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         yourName = pwalletMain->GetNameAddressBook((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
 
-    if(pwalletMain->GetName(pwalletMain->vchDefaultKey.GetID()) != "")
+    if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
     if(yourNameIsRegistered == false && pwalletMain->GetDefaultName() != "")
         reserved.push_back(pwalletMain->vchDefaultKey.GetID());

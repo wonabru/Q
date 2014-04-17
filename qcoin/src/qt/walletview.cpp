@@ -56,6 +56,8 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
 
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
 
+    notRegisteredCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::NotRegisteredTab);
+
     sendCoinsPage = new SendCoinsDialog(gui);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(gui);
@@ -65,6 +67,7 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
     addWidget(addressBookPage);
     addWidget(editName);
     addWidget(receiveCoinsPage);
+    addWidget(notRegisteredCoinsPage);
     addWidget(sendCoinsPage);
 
     // Clicking on a transaction on the overview page simply sends you to transaction history page
@@ -80,6 +83,7 @@ WalletView::WalletView(QWidget *parent, QcoinGUI *_gui):
     connect(addressBookPage, SIGNAL(verifyMessage(QString)), this, SLOT(gotoVerifyMessageTab(QString)));
     // Clicking on "Sign Message" in the receive coins page opens the sign message tab in the Sign/Verify Message dialog
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
+    connect(notRegisteredCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
     // Clicking on "Export" allows to export the transaction list
     connect(exportButton, SIGNAL(clicked()), transactionView, SLOT(exportClicked()));
 
@@ -103,6 +107,7 @@ void WalletView::setClientModel(ClientModel *clientModel)
         overviewPage->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
+        notRegisteredCoinsPage->setOptionsModel(clientModel->getOptionsModel());
     }
 }
 
@@ -119,6 +124,7 @@ void WalletView::setWalletModel(WalletModel *walletModel)
         overviewPage->setWalletModel(walletModel);
         addressBookPage->setModel(walletModel->getAddressTableModel());
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
+        notRegisteredCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
 
@@ -178,6 +184,12 @@ void WalletView::gotoReceiveCoinsPage()
 {
     gui->getReceiveCoinsAction()->setChecked(true);
     setCurrentWidget(receiveCoinsPage);
+}
+
+void WalletView::gotoNotRegisteredCoinsPage()
+{
+    gui->getNotRegisteredCoinsAction()->setChecked(true);
+    setCurrentWidget(notRegisteredCoinsPage);
 }
 
 void WalletView::gotoSendCoinsPage(QString addr)

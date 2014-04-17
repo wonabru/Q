@@ -109,6 +109,13 @@ void WalletStack::gotoReceiveCoinsPage()
         i.value()->gotoReceiveCoinsPage();
 }
 
+void WalletStack::gotoNotRegisteredCoinsPage()
+{
+    QMap<QString, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoNotRegisteredCoinsPage();
+}
+
 void WalletStack::gotoSendCoinsPage(QString addr)
 {
     QMap<QString, WalletView*>::const_iterator i;

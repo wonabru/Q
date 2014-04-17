@@ -14,7 +14,8 @@ struct AddressTableEntry
 public:
     enum Type {
         Sending,
-        Receiving
+        Receiving,
+        NotRegistered
     };
 
     Type type;
@@ -77,6 +78,7 @@ public:
 
     static const QString Send;      /**< Specifies send address */
     static const QString Receive;   /**< Specifies receive address */
+    static const QString NotRegistered;   /**< Specifies NotRegistered address */
 
     /** @name Methods overridden from QAbstractTableModel
         @{*/

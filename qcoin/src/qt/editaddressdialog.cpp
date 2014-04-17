@@ -29,7 +29,13 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
     {
     case NewReceivingAddress:
         setWindowTitle(tr("Propose new names"));
+        ui->addressEdit->setEnabled(false);
+        ui->labelEdit->setEnabled(false);
+        break;
+    case NewNotRegisteredAddress:
+        setWindowTitle(tr("One can register name only by solving block"));
         ui->addressEdit->setEnabled(true);
+        ui->labelEdit->setEnabled(true);
         break;
     case NewSendingAddress:
         setWindowTitle(tr("One can register name only by solving block"));
@@ -37,17 +43,19 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :
         ui->labelEdit->setEnabled(false);
         break;
     case EditReceivingAddress:
-        setWindowTitle(tr("Put your name"));
+        setWindowTitle(tr("You can edit only your addresses"));
         ui->addressEdit->setEnabled(true);
-        if(yourName == "")
-            ui->labelEdit->setEnabled(true);
-        else
-            ui->labelEdit->setEnabled(false);
+        ui->labelEdit->setEnabled(false);
         break;
     case EditSendingAddress:
         setWindowTitle(tr("Names registered in PLM Network"));
-        ui->addressEdit->setEnabled(true);
+        ui->addressEdit->setEnabled(false);
         ui->labelEdit->setEnabled(false);
+        break;
+    case EditNotRegisteredAddress:
+        setWindowTitle(tr("Put your name"));
+        ui->addressEdit->setEnabled(true);
+        ui->labelEdit->setEnabled(true);
         break;
     }
 
@@ -94,15 +102,20 @@ bool EditAddressDialog::saveCurrentRow()
             model->noChanges();
         break;
         case NewReceivingAddress:
-        DoNotRegister = ui->DoNotRegusterChb->isChecked();
+            model->noChanges();
+        break;
+        case NewNotRegisteredAddress:
+        DoNotRegister = ui->DoNotRegisterChb->isChecked();
+        name = ui->labelEdit->text();
         address = model->addRow(
-                mode == NewSendingAddress ? AddressTableModel::Send : AddressTableModel::Receive,
+                AddressTableModel::NotRegistered,
                 ui->labelEdit->text(),
                 ui->addressEdit->text());
         break;
         case EditSendingAddress:
-     //       model->noChanges();
-     //   break;
+            model->noChanges();
+        break;
+        case EditNotRegisteredAddress:
         case EditReceivingAddress:
 
         if(::IsMine(*(model->wallet),model->wallet->GetAddress(nameOld.toStdString()).Get()) == false && ::IsMine(*(model->wallet),CQcoinAddress(addressOld.toStdString()).Get()) == false)
@@ -186,7 +199,7 @@ void EditAddressDialog::acceptAndDestroy()
         }
     }
     yourName =name.toStdString();
-    if(model->wallet->GetName(model->wallet->vchDefaultKey.GetID()) == "")
+    if(model->wallet->isNameRegistered(model->wallet->GetDefaultName()) == false)
         reserved.push_back(model->wallet->vchDefaultKey.GetID());
     this->hide();
 }

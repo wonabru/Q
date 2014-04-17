@@ -96,6 +96,11 @@ void WalletFrame::gotoReceiveCoinsPage()
     walletStack->gotoReceiveCoinsPage();
 }
 
+void WalletFrame::gotoNotRegisteredCoinsPage()
+{
+    walletStack->gotoNotRegisteredCoinsPage();
+}
+
 void WalletFrame::gotoSendCoinsPage(QString addr)
 {
     walletStack->gotoSendCoinsPage(addr);

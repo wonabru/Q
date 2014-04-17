@@ -176,12 +176,19 @@ void QcoinGUI::createActions()
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
     tabGroup->addAction(sendCoinsAction);
 
-    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("Mine"), this);
-    receiveCoinsAction->setStatusTip(tr("Show the list of addresses for receiving payments"));
+    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("Mine Registered"), this);
+    receiveCoinsAction->setStatusTip(tr("Show the list of addresses of mine registered names"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
     receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
     tabGroup->addAction(receiveCoinsAction);
+
+    notRegisteredCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("Mine not Registered"), this);
+    notRegisteredCoinsAction->setStatusTip(tr("Show the list of addressesof mine not registered names yet"));
+    notRegisteredCoinsAction->setToolTip(notRegisteredCoinsAction->statusTip());
+    notRegisteredCoinsAction->setCheckable(true);
+    notRegisteredCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
+    tabGroup->addAction(notRegisteredCoinsAction);
 
     historyAction = new QAction(QIcon(":/icons/history"), tr("Transactions"), this);
     historyAction->setStatusTip(tr("Browse transaction history"));
@@ -210,6 +217,8 @@ void QcoinGUI::createActions()
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
+    connect(notRegisteredCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(notRegisteredCoinsAction, SIGNAL(triggered()), this, SLOT(gotoNotRegisteredCoinsPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -298,6 +307,7 @@ void QcoinGUI::createToolBars()
     toolbar->addAction(overviewAction);
     toolbar->addAction(sendCoinsAction);
     toolbar->addAction(receiveCoinsAction);
+    toolbar->addAction(notRegisteredCoinsAction);
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
 }
@@ -400,6 +410,7 @@ void QcoinGUI::createTrayIconMenu()
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(sendCoinsAction);
     trayIconMenu->addAction(receiveCoinsAction);
+    trayIconMenu->addAction(notRegisteredCoinsAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(signMessageAction);
     trayIconMenu->addAction(verifyMessageAction);
@@ -484,6 +495,11 @@ void QcoinGUI::gotoEditName()
 void QcoinGUI::gotoReceiveCoinsPage()
 {
     if (walletFrame) walletFrame->gotoReceiveCoinsPage();
+}
+
+void QcoinGUI::gotoNotRegisteredCoinsPage()
+{
+    if (walletFrame) walletFrame->gotoNotRegisteredCoinsPage();
 }
 
 void QcoinGUI::gotoSendCoinsPage(QString addr)
