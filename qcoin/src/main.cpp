@@ -2375,8 +2375,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     {
         yourName = "";
         EditAddressDialog edg(EditAddressDialog::EditReceivingAddress);
-        QWidget qw;
-        QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
+       // edg.set
+      //  QWidget qw;
+      //  QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
+        printf("Choose another name!\n Your name %s is taken\n",blockname.c_str());
         edg.setModal(true);
         AddressTableModel addrTableModel(pwalletMain);
         edg.setModel(&addrTableModel);
