@@ -199,8 +199,6 @@ void EditAddressDialog::acceptAndDestroy()
         }
     }
     yourName =name.toStdString();
-    if(model->wallet->isNameRegistered(model->wallet->GetDefaultName()) == false)
-        reserved.push_back(model->wallet->vchDefaultKey.GetID());
     this->hide();
 }
 

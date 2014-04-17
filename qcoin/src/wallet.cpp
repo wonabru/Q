@@ -1749,10 +1749,7 @@ bool CWallet::DelAddressBookName(const CTxDestination& address)
     if (!fFileBacked)
         return false;
     CQcoinAddress addr(address);
-    CKeyID key;
-    addr.GetKeyID(key);
-    reserved.removeAll(key);
-    return CWalletDB(strWalletFile).EraseName(CQcoinAddress(address).ToString());
+    return CWalletDB(strWalletFile).EraseName(addr.ToString());
 }
 
 

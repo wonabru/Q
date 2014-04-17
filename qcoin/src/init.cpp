@@ -946,10 +946,6 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
-    if(yourNameIsRegistered == false && pwalletMain->GetDefaultName() != "")
-        reserved.push_back(pwalletMain->vchDefaultKey.GetID());
-
-
 
     CKeyID keyDefault;
     CSecret secretDefault;

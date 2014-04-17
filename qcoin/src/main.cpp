@@ -4853,32 +4853,27 @@ void RestartMining()
            delete minerThreads;
            minerThreads = NULL;
         }
-        for(int i=0;i<reserved.size();i++)
+        reserved.clear();
+        BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
         {
-            string name = pwalletMain->GetNameAddressBook(reserved[i]);
-            if(pwalletMain->isNameRegistered(name) == true || name == "")
+            const std::string name = item.second;
+            CQcoinAddress address(item.first);
+            CKeyID key;
+            address.GetKeyID(key);
+            if(pwalletMain->isNameRegistered(name) == false && name != "")
             {
-                CQcoinAddress address(reserved[i]);
-                pwalletMain->DelAddressBookName(address.Get());
-                i = 0;
-                continue;
+                if(address.IsValid() == true)
+                {
+                    reserved.push_back(key);
+                    printf("Names to mine: %s\n",name.c_str());
+                }
             }
-            printf("Names to mine: %s\n",name.c_str());
         }
         sleep(10);
         if(reserved.size() > 0)
             GenerateMarks(true, reserved.first());
         else
         {
-            BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
-            {
-                const std::string nameIs = item.second;
-                CQcoinAddress address(nameIs);
-                CKeyID key;
-                address.GetKeyID(key);
-                if(pwalletMain->isNameRegistered(nameIs) == false)
-                    reserved.push_back(key);
-            }
             et5:
             if(reserved.size() == 0)
             {
@@ -4886,12 +4881,10 @@ void RestartMining()
                 std::string newName = yourName + "/" + newKey.GetID().GetHex();
                 if(pwalletMain->isNameRegistered(newName) == false)
                 {
-                    if (pwalletMain->SetAddressBookName(newKey.GetID(), newName, 5))
-                        reserved.push_back((CKeyID)(newKey.GetID()));
+                    pwalletMain->SetAddressBookName(newKey.GetID(), newName, 5);
                 }else
                     goto et5;
             }
-            RestartMining();
         }
     }else{
         if (minerThreads != NULL)
@@ -4902,8 +4895,8 @@ void RestartMining()
            minerThreads = NULL;
         }
         sleep(60);
-        RestartMining();
     }
+    RestartMining();
 }
 
 const char *byte_to_binary(uint64 x)
