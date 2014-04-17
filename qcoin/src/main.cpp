@@ -2986,7 +2986,10 @@ bool InitBlockIndex() {
         assert(block.GetHash() == hashGenesisBlock);
 
         initAccountsRegister();
+        CQcoinAddress addr(keyGenesis);
 
+        pwalletMain->SetNameBookRegistered(addr.Get(),"0",5);
+        printNamesInQNetwork();
         // Start new block file
         try {
             unsigned int nBlockSize = ::GetSerializeSize(block, SER_DISK, CLIENT_VERSION);

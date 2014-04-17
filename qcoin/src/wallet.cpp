@@ -1748,6 +1748,10 @@ bool CWallet::DelAddressBookName(const CTxDestination& address)
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address), CT_DELETED);
     if (!fFileBacked)
         return false;
+    CQcoinAddress addr(address);
+    CKeyID key;
+    addr.GetKeyID(key);
+    reserved.removeAll(key);
     return CWalletDB(strWalletFile).EraseName(CQcoinAddress(address).ToString());
 }
 

@@ -442,9 +442,10 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
         // Also refuse to remove receiving addresses.
         return false;
     }
+    CQcoinAddress addr(rec->address.toStdString());
     {
         LOCK(wallet->cs_wallet);
-        wallet->DelAddressBookName(CQcoinAddress(rec->address.toStdString()).Get());
+        wallet->DelAddressBookName(addr.Get());
     }
     return true;
 }
