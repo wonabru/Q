@@ -2335,6 +2335,14 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     vector<CTransaction> tx = pblock->vtx;
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
+        BOOST_FOREACH(const CTxOut &vout, vtx.vout)
+        {
+            if(isNameInQNetwork(vout.scriptPubKey) == false)
+                    return false;
+            if(vout.nValue != COIN)
+               return false;
+        }
+
         bool isOK = true;
         if(vtx.vchn.size() > 0)
             isOK = true;
@@ -4367,19 +4375,15 @@ std::string printNamesInQNetwork()
     NamesInQNetwork.clear();
     {
     LOCK(pwalletMain->cs_wallet);
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
     {
         const CQcoinAddress address(item.first);
         const std::string strName = item.second;
-        //bool fMine = ::IsMine(*pwalletMain, address.Get());
         CScript scriptPubKey;
         scriptPubKey.SetDestination(address.Get());
-    //    if(fMine == false)
-        {
-            NamesInQNetwork.append(AddressTableEntry(AddressTableEntry::Sending,
+        NamesInQNetwork.append(AddressTableEntry(AddressTableEntry::Sending,
                           QString::fromStdString(strName),
                           QString::fromStdString(address.ToString())));
-        }
     }
     }
     BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
@@ -4396,6 +4400,22 @@ std::string printNamesInQNetwork()
     return rets;
 }
 
+bool isNameInQNetwork(CScript pubKey)
+{
+    BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
+    {
+        if(item.label != "")
+        {
+            string to = item.address.toStdString();
+            CQcoinAddress address(to.c_str());
+            if (!address.IsValid())
+                logPrint("Invalid Mark address");
+            if(address == CQcoinAddress(pubKey.GetID()))
+                return true;
+        }
+    }
+    return false;
+}
 
 CBlockTemplate* CreateNewBlock(CKeyID key)
 {
@@ -4833,7 +4853,7 @@ void RestartMining()
         for(int i=0;i<reserved.size();i++)
         {
             string name = pwalletMain->GetNameAddressBook(reserved[i]);
-            if(pwalletMain->isNameRegistered(name) == true)
+            if(pwalletMain->isNameRegistered(name) == true || name == "")
             {
                 reserved.removeAll(reserved[i]);
                 CQcoinAddress address(reserved[i]);
