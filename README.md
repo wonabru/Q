@@ -1,10 +1,10 @@
-Marka Polska (former Q-coin) started at 4/4/2014 23:59:59
+Marka Polska (former Q-coin) will start at 20/4/2014 21:00:00
 
 Compiled wallet is available 
 
-32 bit: https://github.com/wonabru/Q/blob/master/Debug_32/PLM
+32 bit: https://github.com/wonabru/Q/blob/master/Release_32/PLM
 
-64 bit: https://github.com/wonabru/Q/blob/master/Debug_64/PLM
+64 bit: https://github.com/wonabru/Q/blob/master/Release_64/PLM
 
 To download source and compiled version:
 

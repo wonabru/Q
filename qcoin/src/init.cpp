@@ -709,6 +709,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (GetBoolArg("-salvagewallet"))
     {
         // Recover readable keypairs:
+
         if (!CWalletDB::Recover(bitdb, "myq.dat", true))
             return false;
     }
@@ -944,6 +945,8 @@ bool AppInit2(boost::thread_group& threadGroup)
         yourName = pwalletMain->GetNameAddressBook((CKeyID)(pwalletMain->vchDefaultKey.GetID()));
     }
 
+
+
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
 
@@ -956,6 +959,12 @@ bool AppInit2(boost::thread_group& threadGroup)
     logPrint(" wallet      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
 
     RegisterWallet(pwalletMain);
+
+    if(GetArg("-afterremoveblocks",false) == true)
+    {
+        pwalletMain->ereaseNameBookRegistered();
+        printf("-afterremoveblocks=true");
+    }
 
     bool fLoaded = false;
     while (!fLoaded) {
@@ -1112,7 +1121,7 @@ bool AppInit2(boost::thread_group& threadGroup)
          pindexRescan = locator.GetBlockIndex();
     else
          pindexRescan = pindexGenesisBlock;
-    if (pindexBest && pindexBest != pindexRescan)
+    if ((pindexBest && pindexBest != pindexRescan) || (GetArg("-afterremoveblocks",false) == true))
     {
         rescan(pwalletMain,pindexBest,pindexGenesisBlock);
         nWalletDBUpdated++;
