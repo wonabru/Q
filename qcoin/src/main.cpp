@@ -2330,8 +2330,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
-    if(rescaningonly == false)
-    {
+
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
         BOOST_FOREACH(const CTxOut &vout, vtx.vout)
@@ -2378,7 +2377,6 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-    }
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
@@ -2398,7 +2396,6 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     {
 
             if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-                if(rescaningonly == false)
                     return false;
     }
    // if(pblock->GetHash() == hashGenesisBlock)
@@ -2480,10 +2477,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
     // Store to disk
     if (!pblock->AcceptBlock(state, dbp))
-        return state.DoS(100, error("ProcessBlock() : AcceptBlock FAILED"));
+        return error("ProcessBlock() : AcceptBlock FAILED");
 
     if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
-        return state.DoS(100, error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk"));
+        return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     //RestartMining();
     //reconnection();

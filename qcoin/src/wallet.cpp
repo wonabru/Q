@@ -794,12 +794,12 @@ bool CWalletTx::WriteToDisk()
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
-   /* if(pindexStart == pindexGenesisBlock)
+    if(pindexStart == pindexGenesisBlock)
     {
         ereaseNameBookRegistered();
     //    CKeyID key((CKeyID)pindexGenesisBlock->GetBlockHeader().namePubKey);
     //    SetNameBookRegistered(key,"0",5);
-    }*/
+    }
     CBlockIndex* pindex = pindexStart;
     {
 
@@ -1674,6 +1674,7 @@ bool CWallet::ereaseNameBookRegistered()
         return false;
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
     {
+        mapNamesBook.erase(item.first);
         CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(item.first).ToString());
     }
     return true;
