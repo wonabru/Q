@@ -602,7 +602,6 @@ bool CNode::IsBanned(CNetAddr ip)
 
 bool CNode::Misbehaving(int howmuch)
 {
-
     if (addr.IsLocal())
     {
         logPrint("Warning: Local node %s misbehaving (delta: %d)!\n", addrName.c_str(), howmuch);
