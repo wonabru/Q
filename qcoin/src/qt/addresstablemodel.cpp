@@ -382,8 +382,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     {
         if(wallet->isNameRegistered(wallet->GetDefaultName()) == false)
         {
-            QWidget qw;
-            QMessageBox::warning(&qw,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
+         //   QMessageBox::critical(NULL,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
             return QString();
         }
         CPubKey newKey = wallet->GenerateNewKey();
@@ -400,8 +399,8 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         {
             if(wallet->isNameRegistered(strLabel) == true)
             {
-                QWidget qw;
-                QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
+             //   QWidget qw;
+                //QMessageBox::warning(this,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
                 return QString();
             }
         }

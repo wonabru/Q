@@ -1672,10 +1672,11 @@ bool CWallet::ereaseNameBookRegistered()
 {
     if (!fFileBacked)
         return false;
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
+    while(mapNamesBook.size() > 0)
     {
-        mapNamesBook.erase(item.first);
-        CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(item.first).ToString());
+        std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.begin();
+        CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress((*mi).first).ToString());
+        mapNamesBook.erase((*mi).first);
     }
     return true;
 }
