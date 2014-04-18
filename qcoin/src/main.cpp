@@ -2317,8 +2317,9 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     pblock->print();
     if(address.IsValid() == true)
     {
-        if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-            return false;
+        if(rescaningonly == false && synchronizingComplete == true)
+            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
+                return false;
         if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
         {
             if(rescaningonly == false)
@@ -2329,10 +2330,11 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             }
         }
     }
-    reserved.removeAll(key);
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
+    if(rescaningonly == false && synchronizingComplete == true)
+    {
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
         BOOST_FOREACH(const CTxOut &vout, vtx.vout)
@@ -2375,6 +2377,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                 }
             }
         }
+    }
     }
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
@@ -2990,6 +2993,7 @@ bool InitBlockIndex() {
 
         pwalletMain->SetNameBookRegistered(addr.Get(),"0",5);
         printNamesInQNetwork();
+     //   pindexBest =
         // Start new block file
         try {
             unsigned int nBlockSize = ::GetSerializeSize(block, SER_DISK, CLIENT_VERSION);
