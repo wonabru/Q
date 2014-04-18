@@ -793,24 +793,12 @@ bool CWalletTx::WriteToDisk()
 // exist in the wallet will be updated.
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
-    //double MaxNodes = addrman.size();
     int ret = 0;
-   /* CNode *node;
-    if(MaxNodes < 1)
+   /* if(pindexStart == pindexGenesisBlock)
     {
-         node = NULL;
-    }else{
-         CNetAddr myip;
-         GetMyExternalIP(myip);
-
-         uint64 hash = myip.GetHash();
-         while(hash == myip.GetHash())
-         {
-             unsigned i = (unsigned)(rand() * MaxNodes / (RAND_MAX - 1));
-             CAddress ad = addrman.GetAddr()[i];
-             node = new CNode((SOCKET)8444,ad);
-             hash = node->addr.GetHash();
-          }
+        ereaseNameBookRegistered();
+    //    CKeyID key((CKeyID)pindexGenesisBlock->GetBlockHeader().namePubKey);
+    //    SetNameBookRegistered(key,"0",5);
     }*/
     CBlockIndex* pindex = pindexStart;
     {
@@ -1678,6 +1666,17 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     if (!fFileBacked)
         return false;
     return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
+}
+
+bool CWallet::ereaseNameBookRegistered()
+{
+    if (!fFileBacked)
+        return false;
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
+    {
+        CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(item.first).ToString());
+    }
+    return true;
 }
 
 std::string CWallet::GetName(CKeyID key)

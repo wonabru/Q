@@ -2317,10 +2317,6 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     pblock->print();
     if(address.IsValid() == true)
     {
-
-            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-                 if(rescaningonly == false)
-                    return false;
         if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
         {
             if(rescaningonly == false)
@@ -2334,14 +2330,17 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
-    if(rescaningonly == false && synchronizingComplete == true)
+    if(rescaningonly == false)
     {
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
         BOOST_FOREACH(const CTxOut &vout, vtx.vout)
         {
-            if(isNameInQNetwork(vout.scriptPubKey) == false)
+            if(isNameInQNetwork(vout.scriptPubKey))
+            {
+                if(CQcoinAddress(vout.scriptPubKey.GetKeyID()).ToString() != address.ToString())
                     return false;
+            }
             if(vout.nValue != COIN)
                return false;
         }
@@ -2394,6 +2393,13 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         AddressTableModel addrTableModel(pwalletMain);
         edg.setModel(&addrTableModel);
         edg.show();
+    }
+    if(address.IsValid() == true)
+    {
+
+            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
+                if(rescaningonly == false)
+                    return false;
     }
    // if(pblock->GetHash() == hashGenesisBlock)
    // {
@@ -2992,7 +2998,7 @@ bool InitBlockIndex() {
         initAccountsRegister();
         CQcoinAddress addr(keyGenesis);
 
-        pwalletMain->SetNameBookRegistered(addr.Get(),"0",5);
+      //  pwalletMain->SetNameBookRegistered(addr.Get(),"0",5);
         printNamesInQNetwork();
      //   pindexBest =
         // Start new block file
@@ -4410,17 +4416,13 @@ std::string printNamesInQNetwork()
 
 bool isNameInQNetwork(CScript pubKey)
 {
-    BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
+    CQcoinAddress address(pubKey.GetKeyID());
+    std::string strName = address.ToString();
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
     {
-        if(item.label != "")
-        {
-            string to = item.address.toStdString();
-            CQcoinAddress address(to.c_str());
-            if (!address.IsValid())
-                logPrint("Invalid Mark address");
-            if(address.ToString() == CQcoinAddress(pubKey.GetID()).ToString())
+        const std::string name = CQcoinAddress(item.first).ToString();
+        if(name == strName)
                 return true;
-        }
     }
     return false;
 }

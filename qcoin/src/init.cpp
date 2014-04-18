@@ -725,7 +725,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             InitWarning(msg);
         }
         if (r == CDBEnv::RECOVER_FAIL)
-            return InitError(_("myq.dat corrupt, salvage failed"));
+                return InitError(_("myq.dat corrupt, salvage failed"));
     }
 
     // ********************************************************* Step 6: network initialization
