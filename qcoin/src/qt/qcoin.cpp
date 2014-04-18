@@ -242,47 +242,7 @@ int main(int argc, char *argv[])
 
         EditAddressDialog edg(EditAddressDialog::EditNotRegisteredAddress);
         edg.setModal(true);
-        //QObject::connect(&edg, SIGNAL(EditAddressDialog::show()), &edg, SLOT(EditAddressDialog::acceptAndDestroy()));
-                      /*
-                        qwidget.setWindowModality(Qt::WindowModal);
-                        editNamedlg.setWindowModality(Qt::WindowModal);
-                        editNamedlg.setVisible(true);
-                       // QAction::connect(window.getEditNameAction(), SIGNAL(triger()), &editNamedlg, SLOT(accept()));
-                        QTimer* apptime = new QTimer(guiref);
 
-                        while(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
-                        {
-                            window.addAction(window.getEditNameAction());
-                            guiref->show();
-                            apptime->start();
-
-                            qwidget.setWindowModality(Qt::WindowModal);
-                            qwidget.show();
-                            qwidget.activateWindow();
-                            apptime->stop();
-                            if(pwalletMain->GetName() == "0" || pwalletMain->GetName() == "")
-                                window.message("Improper Name","Name should be not empty and different from 0",10);
-                        }
-                        qwidget.disconnect();*/
-                        /*
-                        window.setEncryptionStatus(WalletModel::Unencrypted);
-                        while(pwalletMain->IsCrypted() == false)
-                        {
-                            window.addAction(window.getChangeInformationContent());
-                            window.show();
-                            if(pwalletMain->IsCrypted() == false)
-                                window.message("Error while encryption","Wrong password",10);
-                        }*/
-                      //  std::basic_string<string> myInformationContent = "independence4Q";
-                       // Ui::AskPassphraseDialog myPassphraseDialog;
-                       // while(myInformationContent == "independence4Q" || myInformationContent == "")
-                       // {
-                       //     myPassphraseDialog = new AskPassphraseDialog(AskPassphraseDialog::Encrypt);
-                       //     myPassphraseDialog.setModel(pwalletModelMain);
-                       //     myInformationContent = myPassphraseDialog;
-                       // }
-                       // myPassphraseDialog.accept();
-                       // pwalletMain->informationContentToQ = new SecureString(myInformationContent);
         window.setFocus();
 
 

@@ -7,6 +7,7 @@
 #include "base58.h"
 
 #include <QFont>
+#include "editaddressdialog.h"
 
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
@@ -382,7 +383,8 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     {
         if(wallet->isNameRegistered(wallet->GetDefaultName()) == false)
         {
-         //   QMessageBox::critical(NULL,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
+            QWidget qw;
+            QMessageBox::critical(&qw,"Your default name is not registered yet!",QString("You should first register your default name %1").arg(wallet->GetNameAddressBook(wallet->vchDefaultKey.GetID()).c_str()),QMessageBox::Ok);
             return QString();
         }
         CPubKey newKey = wallet->GenerateNewKey();
@@ -399,8 +401,8 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         {
             if(wallet->isNameRegistered(strLabel) == true)
             {
-             //   QWidget qw;
-                //QMessageBox::warning(this,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
+                QWidget qw;
+                QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
                 return QString();
             }
         }
@@ -416,6 +418,17 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         wallet->SetAddressBookName(CQcoinAddress(strAddress).Get(), strLabel);
     }
     return QString::fromStdString(strAddress);
+}
+
+void AddressTableModel::setNewName()
+{
+    EditAddressDialog edg(EditAddressDialog::EditNotRegisteredAddress);
+    QWidget qw;
+    QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(yourName.c_str())),QMessageBox::Ok);
+    yourName = "";
+    edg.setModal(true);
+    edg.setModel(this);
+    edg.show();
 }
 
 void AddressTableModel::addDefaultReceive()

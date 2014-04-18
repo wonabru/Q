@@ -14,7 +14,6 @@
 
 #include <QSortFilterProxyModel>
 #include <QClipboard>
-#include <QMessageBox>
 #include <QMenu>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :

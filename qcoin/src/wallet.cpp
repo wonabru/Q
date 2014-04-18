@@ -1668,6 +1668,14 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
 }
 
+bool CWallet::ereaseName(const CTxDestination& address)
+{
+    if (!fFileBacked)
+        return false;
+    mapNamesBook.erase(address);
+    return true;
+}
+
 bool CWallet::ereaseNameBookRegistered()
 {
     if (!fFileBacked)

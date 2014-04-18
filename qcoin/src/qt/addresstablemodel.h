@@ -101,6 +101,7 @@ public:
     bool changeAddress(const QString &label, const QString &addr, std::string addressOld);
 
     void addDefaultReceive();
+    void setNewName();
 
     /* Look up label for address in address book, if not found return empty string.
      */

@@ -18,7 +18,6 @@
 
 #include <string>
 #include <vector>
-#include <QMessageBox>
 #include "editaddressdialog.h"
 #include "key.h"
 #include "base58.h"
@@ -48,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x2d29dc5e48000d34b2aea983a1ec59cb9ccf486ad33c661006b71ab47acfd9a8");
+uint256 hashGenesisBlock("0x323abe39b8000aaed94e6ba8489366e9084a13e30b2aa4499fc02d9ab804c935");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2261,13 +2260,7 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
 
 void initAccountsRegister()
 {
-    ifstream fpss;
-    fpss.open("../../.wonabruQ1");
-    if(fpss != NULL)
-    {
-        whoami = "wonabruQ1";
-        char namePubKeyWonabru[32];
-        fpss.getline(namePubKeyWonabru,32);
+        std::string namePubKeyWonabru = "00000000000000000000000000000000";
         CSecret WonabruSecret;
         WonabruSecret.resize(32);
         memcpy(&WonabruSecret[0],&namePubKeyWonabru[0],32);
@@ -2285,11 +2278,9 @@ void initAccountsRegister()
         CQcoinAddress wonabruScript(keyWonabru.GetID());
         CQcoinAddress QScript(keyQ.GetID());
         CQcoinAddress Script1(CPubKey(WQ1.GetPubKey()).GetID());
-        logPrint("KeyWonabru pubKey: %s\n",wonabruScript.ToString().c_str());
-        logPrint("KeyQ pubKey: %s\n",QScript.ToString().c_str());
-        logPrint("Key1 pubKey: %s\n",Script1.ToString().c_str());
-    }
-    fpss.close();
+        printf("KeyWonabru pubKey: %s\n",wonabruScript.ToString().c_str());
+        printf("KeyQ pubKey: %s\n",QScript.ToString().c_str());
+        printf("Key1 pubKey: %s\n",Script1.ToString().c_str());
 }
 
 void reconnection()
@@ -2366,44 +2357,38 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                 CQcoinAddress address(vchn.keyID);
                 blockname = vchn.name;
                 CKeyID keydel(pwalletMain->GetKeyID(blockname));
-                if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
+                if(address.IsValid() == true)
                 {
-                    if(address.IsValid() == true)
+                    if(pwalletMain->isNameRegistered(pwalletMain->GetNameAddressBook(keydel)) == true)
                     {
-                        pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
-                        pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
+                        if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
+                        {
+                            if(pwalletMain->ereaseName((CKeyID)keydel) == true)
+                            {
+                                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
+                                pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
+                            }
+                        }
                     }
                 }
             }
         }
     }
-    if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
-        yourNameIsRegistered = true;
-    if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
-    {
-        yourName = "";
-        EditAddressDialog edg(EditAddressDialog::EditNotRegisteredAddress);
-       // edg.set
-      //  QWidget qw;
-      //  QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is taken").arg(QString(blockname.c_str())),QMessageBox::Ok);
-        printf("Choose another name!\n Your name %s is taken\n",blockname.c_str());
-        edg.setModal(true);
-        AddressTableModel addrTableModel(pwalletMain);
-        edg.setModel(&addrTableModel);
-        edg.show();
-    }
+
     if(address.IsValid() == true)
     {
 
             if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
                     return false;
     }
-   // if(pblock->GetHash() == hashGenesisBlock)
-   // {
-   //    initAccountsRegister();
-   // }
+    if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
+        yourNameIsRegistered = true;
+    if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
+    {
+        AddressTableModel atm(pwalletMain);
+        atm.setNewName();
+    }
 
-    //RestartMining();
     return true;
 }
 
@@ -2939,17 +2924,17 @@ bool InitBlockIndex() {
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if (!fReindex) {
 
-        std::string gnpk = "MVUPm9nks5omRaZfCNrKnb52SKUrvQYRR1";
+        std::string gnpk = "M9vynffvkabmZ35drGq3BQ1n6gXV6Awcpb";
         GenesisName.SetString(gnpk);
         CScript scriptGenesis;
         scriptGenesis.SetDestination(GenesisName.Get());
         CKeyID keyGenesis;
         GenesisName.GetKeyID(keyGenesis);
-        gnpk = "MMAswGBAiEwJEp2hyCariEJfUqZ8ECuZQ9";
+        gnpk = "MX7idBvUUWnKjYTyRtz8iS7TGVsMF3ACXF";
         CQcoinAddress GenesisName2(gnpk);
         CKeyID keyGenesis2;
         GenesisName2.GetKeyID(keyGenesis2);
-        gnpk = "MEycBkxfUvxXhP6TEVcSRZbUEj3DRG4BNj";
+        gnpk = "MA3hTMgTSDwQWEWvADBNPRLibNbWnoCtiP";
         CQcoinAddress GenesisName3(gnpk);
         CKeyID keyGenesis3;
         GenesisName3.GetKeyID(keyGenesis3);
@@ -2971,7 +2956,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1397732400;
         block.nBits    = 0x0000000003ffffff;
-        block.nNonce   = 1204694944;
+        block.nNonce   = 314917161;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2983,12 +2968,12 @@ bool InitBlockIndex() {
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+   //     CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
         block.print();
-        assert(block.hashMerkleRoot == uint256("0xbec4e3e2efd6372e37846a1b27692529b846a537f5c8a10339c3950612e3b694"));
+        assert(block.hashMerkleRoot == uint256("0xce4b18f0bcb9cc3165abd7ccbba1da9a50357b37d73f031a021358d91c3ef6cd"));
 
         assert(block.GetHash() == hashGenesisBlock);
 
@@ -3015,7 +3000,6 @@ bool InitBlockIndex() {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());
         }
     }
-    //RestartMining();
     return true;
 }
 
@@ -4846,7 +4830,7 @@ void RestartMining()
     RenameThread("qcoin-miner");
     bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
 
-    if((yourName !="") &&(synchronizingComplete == true || (pwalletMain->GetNameAddressBook(pwalletMain->vchDefaultKey.GetID()) == "wonabru" && GetBoolArg("-wonabru",false))))
+    if((yourName !="") && (synchronizingComplete == true))
     {
         mapArgs["-gen"] = 1;
        // reconnection();

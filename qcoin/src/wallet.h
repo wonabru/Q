@@ -290,6 +290,7 @@ public:
     bool SetNameBookRegistered(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool DelAddressBookName(const CTxDestination& address);
     bool ereaseNameBookRegistered();
+    bool ereaseName(const CTxDestination& address);
     bool isNameRegistered(const std::string name);
     void UpdatedTransaction(const uint256 &hashTx);
 
