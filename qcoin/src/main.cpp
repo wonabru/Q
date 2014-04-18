@@ -2317,9 +2317,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     pblock->print();
     if(address.IsValid() == true)
     {
-        if(rescaningonly == false && synchronizingComplete == true)
+
             if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-                return false;
+                 if(rescaningonly == false)
+                    return false;
         if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
         {
             if(rescaningonly == false)
@@ -2473,10 +2474,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
     // Store to disk
     if (!pblock->AcceptBlock(state, dbp))
-        return error("ProcessBlock() : AcceptBlock FAILED");
+        return state.DoS(100, error("ProcessBlock() : AcceptBlock FAILED"));
 
     if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
-        return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
+        return state.DoS(100, error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk"));
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     //RestartMining();
     //reconnection();
@@ -4417,7 +4418,7 @@ bool isNameInQNetwork(CScript pubKey)
             CQcoinAddress address(to.c_str());
             if (!address.IsValid())
                 logPrint("Invalid Mark address");
-            if(address == CQcoinAddress(pubKey.GetID()))
+            if(address.ToString() == CQcoinAddress(pubKey.GetID()).ToString())
                 return true;
         }
     }
