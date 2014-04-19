@@ -154,8 +154,6 @@ void WalletView::incomingTransaction(const QModelIndex& parent, int start, int /
     QString address = ttm->index(start, TransactionTableModel::ToAddress, parent).data().toString();
 
     gui->incomingTransaction(date, walletModel->getOptionsModel()->getDisplayUnit(), amount, type, address);
-    walletModel->refresh();
-    gui->update();
 }
 
 void WalletView::gotoOverviewPage()

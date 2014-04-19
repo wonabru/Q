@@ -2309,21 +2309,8 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     bool ret = true;
     if(address.IsValid() == true)
     {
-
-            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-                  ret = false;
-    }
-    if(address.IsValid() == true)
-    {
-        if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
-        {
-            if(rescaningonly == false)
-            {
-                logPrint("There is a conflict in names.\n In the PLM Network it is just registered one of your name!\n");
-                if(address.IsValid() == true)
-                    pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
-            }
-        }
+        if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
+              ret = false;
     }
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
@@ -2368,14 +2355,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                 {
                     if(pwalletMain->isNameRegistered(pwalletMain->GetNameAddressBook(keydel)) == true)
                     {
-                        if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
-                        {
                             if(pwalletMain->eraseName((CKeyID)keydel) == true)
                             {
-                                pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
                                 pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
                             }
-                        }
                     }
                 }
             }
@@ -2394,7 +2377,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     {
         pwalletMain->eraseName(key);
     }
-    pwalletMain->refresh();
+  //  pwalletMain->refresh();
     return ret;
 }
 
@@ -5003,7 +4986,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
 void GenerateMarks(bool fGenerate, CKeyID key)
 {
-    pwalletMain->refresh();
+   // pwalletMain->refresh();
    if (!fGenerate)
         return;
     QcoinMiner(key);

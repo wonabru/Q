@@ -56,26 +56,6 @@ struct AddressTableEntryLessThan
                               QString::fromStdString(address.ToString())));
                 }
             }
-            BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapNamesBookDoNotRegister)
-            {
-                const CQcoinAddress& address = item.first;
-                const std::string& strName = item.second;
-                bool fMine = IsMine(*wallet, address.Get());
-                if(wallet->isNameRegistered(strName)==true)
-                {
-                    if(fMine == true)
-                        cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Receiving,
-                                  QString::fromStdString(strName),
-                                  QString::fromStdString(address.ToString())));
-                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Sending,
-                                  QString::fromStdString(strName),
-                                  QString::fromStdString(address.ToString())));
-                }else{
-                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::NotRegistered,
-                              QString::fromStdString(strName),
-                              QString::fromStdString(address.ToString())));
-                }
-            }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
       //  qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
@@ -116,6 +96,7 @@ struct AddressTableEntryLessThan
             }
             lower->type = newEntryType;
             lower->label = label;
+            lower->address = address;
             parent->emitDataChanged(lowerIndex);
             break;
         case CT_DELETED:
@@ -129,6 +110,7 @@ struct AddressTableEntryLessThan
             parent->endRemoveRows();
             break;
         }
+        refreshAddressTable();
     }
 
     int AddressTablePriv::size()
@@ -335,7 +317,6 @@ void AddressTableModel::updateEntry(const QString &address, const QString &label
 {
     // Update address book model from Mark core
     priv->updateEntry(address, label, isMine, status);
- //   priv->updateEntry(address, label, false, status);
 }
 
 
