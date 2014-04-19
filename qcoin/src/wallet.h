@@ -178,6 +178,7 @@ public:
     void WalletUpdateSpent(const CTransaction& prevout);
     int ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate = false);
     void ReacceptWalletTransactions();
+    void refresh();
     void ResendWalletTransactions();
     int64 GetBalance() const;
     int64 GetUnconfirmedBalance() const;
@@ -289,8 +290,8 @@ public:
     bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool SetNameBookRegistered(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool DelAddressBookName(const CTxDestination& address);
-    bool ereaseNameBookRegistered();
-    bool ereaseName(const CTxDestination& address);
+    bool eraseNameBookRegistered();
+    bool eraseName(const CTxDestination& address);
     bool isNameRegistered(const std::string name);
     void UpdatedTransaction(const uint256 &hashTx);
 

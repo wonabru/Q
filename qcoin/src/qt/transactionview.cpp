@@ -256,6 +256,7 @@ void TransactionView::changedAmount(const QString &amount)
     {
         transactionProxyModel->setMinAmount(0);
     }
+    model->refresh();
 }
 
 void TransactionView::exportClicked()

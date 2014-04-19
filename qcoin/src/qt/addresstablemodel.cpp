@@ -142,6 +142,11 @@ AddressTableModel::~AddressTableModel()
     delete priv;
 }
 
+void AddressTableModel::refreshTable()
+{
+    priv->refreshAddressTable();
+}
+
 int AddressTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

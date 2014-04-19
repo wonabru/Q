@@ -23,7 +23,7 @@
 #include "base58.h"
 #include "uint256.h"
 #include "util.h"
-
+#include "clientmodel.h"
 #include "qcoinrpc.h"
 
 using namespace json_spirit;
@@ -2306,6 +2306,13 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     if(blockname == "")
         return false;
     pblock->print();
+    bool ret = true;
+    if(address.IsValid() == true)
+    {
+
+            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
+                  ret = false;
+    }
     if(address.IsValid() == true)
     {
         if(pwalletMain->SetAddressBookName(address.Get(),blockname, 2) == false)
@@ -2329,10 +2336,10 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             if(isNameInQNetwork(vout.scriptPubKey))
             {
                 if(CQcoinAddress(vout.scriptPubKey.GetKeyID()).ToString() != address.ToString())
-                    return false;
+                    ret = false;
             }
             if(vout.nValue != COIN)
-               return false;
+               ret = false;
         }
 
         bool isOK = true;
@@ -2363,7 +2370,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                     {
                         if(pwalletMain->DelAddressBookName((CKeyID)keydel) == true)
                         {
-                            if(pwalletMain->ereaseName((CKeyID)keydel) == true)
+                            if(pwalletMain->eraseName((CKeyID)keydel) == true)
                             {
                                 pwalletMain->SetAddressBookName(address.Get(),blockname, 5);
                                 pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
@@ -2375,12 +2382,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         }
     }
 
-    if(address.IsValid() == true)
-    {
 
-            if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-                    return false;
-    }
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
@@ -2388,8 +2390,12 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
         AddressTableModel atm(pwalletMain);
         atm.setNewName();
     }
-
-    return true;
+    if(ret == false)
+    {
+        pwalletMain->eraseName(key);
+    }
+    pwalletMain->refresh();
+    return ret;
 }
 
 
@@ -2467,8 +2473,6 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
-    //RestartMining();
-    //reconnection();
     return true;
 }
 
@@ -2912,7 +2916,6 @@ bool InitBlockIndex() {
 
     if (pindexGenesisBlock != NULL)
     {
-        //RestartMining();
         return true;
 }
     // Use the provided setting for -txindex in the new database
@@ -3807,17 +3810,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (state.IsInvalid(nDoS))
             if (nDoS > 0)
                 pfrom->Misbehaving(nDoS);
-/*
-        if(rescaningonly == false && synchronizingComplete == true)
-        {
-            CBlockIndex* pindexrescan = pindexBest;
-            for(int i = 0;i<6;i++)
-            {
-                if(pindexrescan != pindexGenesisBlock)
-                    pindexrescan = pindexrescan->pprev;
-            }
-            rescan(pwalletMain,pindexBest,pindexrescan);
-        }*/
+
     }
 
 
@@ -5010,6 +5003,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
 void GenerateMarks(bool fGenerate, CKeyID key)
 {
+    pwalletMain->refresh();
    if (!fGenerate)
         return;
     QcoinMiner(key);

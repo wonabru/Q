@@ -99,7 +99,7 @@ public:
     void noChanges();
     bool changeName(const QString &label, const QString &addr, std::string nameOld);
     bool changeAddress(const QString &label, const QString &addr, std::string addressOld);
-
+    void refreshTable();
     void addDefaultReceive();
     void setNewName();
 

@@ -11,6 +11,7 @@
 #include "base58.h"
 #include "main.h"
 #include "init.h"
+#include "optionsmodel.h"
 #include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
@@ -796,7 +797,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
     int ret = 0;
     if(pindexStart == pindexGenesisBlock)
     {
-        ereaseNameBookRegistered();
+        eraseNameBookRegistered();
     //    CKeyID key((CKeyID)pindexGenesisBlock->GetBlockHeader().namePubKey);
     //    SetNameBookRegistered(key,"0",5);
     }
@@ -830,6 +831,15 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
         }
     }
     return ret;
+}
+
+void CWallet::refresh()
+{
+    bool ftime;
+    this->LoadWallet(ftime);
+    OptionsModel om;
+    WalletModel wm(this, &om);
+    wm.refresh();
 }
 
 void CWallet::ReacceptWalletTransactions()
@@ -1668,15 +1678,16 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
 }
 
-bool CWallet::ereaseName(const CTxDestination& address)
+bool CWallet::eraseName(const CTxDestination& address)
 {
     if (!fFileBacked)
         return false;
     mapNamesBook.erase(address);
+    CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
     return true;
 }
 
-bool CWallet::ereaseNameBookRegistered()
+bool CWallet::eraseNameBookRegistered()
 {
     if (!fFileBacked)
         return false;

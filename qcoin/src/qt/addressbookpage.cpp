@@ -298,9 +298,9 @@ void AddressBookPage::selectionChanged()
             break;
         case NotRegisteredTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(true);
-            ui->deleteAddress->setVisible(true);
-            deleteAction->setEnabled(true);
+            ui->deleteAddress->setEnabled(false);
+            ui->deleteAddress->setVisible(false);
+            deleteAction->setEnabled(false);
             break;
         }
         ui->copyAddress->setEnabled(true);
@@ -339,7 +339,6 @@ void AddressBookPage::done(int retval)
         // If no address entry selected, return rejected
         retval = Rejected;
     }
-
     QDialog::done(retval);
 }
 

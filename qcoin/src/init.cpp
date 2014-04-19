@@ -962,7 +962,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if(GetArg("-afterremoveblocks",false) == true)
     {
-        pwalletMain->ereaseNameBookRegistered();
+        pwalletMain->eraseNameBookRegistered();
         printf("-afterremoveblocks=true");
     }
 
