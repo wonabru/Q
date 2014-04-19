@@ -105,7 +105,7 @@ bool EditAddressDialog::saveCurrentRow()
             model->noChanges();
         break;
         case NewNotRegisteredAddress:
-        DoNotRegister = ui->DoNotRegisterChb->isChecked();
+
         name = ui->labelEdit->text();
         address = model->addRow(
                 AddressTableModel::NotRegistered,
@@ -207,7 +207,7 @@ void EditAddressDialog::accept()
 {
     if(!model)
         return;
-
+    DoNotRegister = ui->DoNotRegisterChb->isChecked();
     model->setEditStatus(AddressTableModel::NO_CHANGES);
 
     if(!saveCurrentRow())

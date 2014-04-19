@@ -1689,10 +1689,10 @@ bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const st
             if(ato < 3)
                 return false;
     }
-    mapNamesBookDoNotRegister[address] = strName;
-    SetAddressBookName(address,strName,5);
     if (!fFileBacked)
         return false;
+    mapNamesBookDoNotRegister[address] = strName;
+    SetAddressBookName(address,strName,5);
     return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), strName);
 }
 
