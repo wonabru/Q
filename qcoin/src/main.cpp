@@ -3787,6 +3787,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
         {
             mapAlreadyAskedFor.erase(inv);
+            boost::this_thread::interruption_point();
         }else{
             pwalletMain->eraseName((CKeyID)block.namePubKey);
         }
@@ -4886,7 +4887,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwalletMain);
-
+    int nStart = GetTime();
     try { loop {
 
 
@@ -4906,6 +4907,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
       //  uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
       //  uint256 bestHash = pblock->GetHash();
         uint256 hash = pblock->GetHash();
+
         loop
         {
 
@@ -4937,11 +4939,6 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 nHPSTimerStart = GetTimeMillis();
                 nHashCounter = 0;
             }
-          /*  if(GetTimeMillis() - nHPSTimerStart2 > 100)
-            {
-                nHPSTimerStart2 = GetTimeMillis();
-                logPrint(".");
-            }*/
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
                 static CCriticalSection cs;
@@ -4972,8 +4969,8 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-          //  if (GetTime() - nStart > 666)
-          //      break;
+            if (GetTime() - nStart > 666)
+                break;
 
         }
     } }
