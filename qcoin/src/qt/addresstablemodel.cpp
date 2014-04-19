@@ -44,10 +44,12 @@ struct AddressTableEntryLessThan
                 if(wallet->isNameRegistered(strName)==true)
                 {
                     if(fMine == true)
+                    {
                         cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Receiving,
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString())));
-                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Sending,
+                    }else
+                        cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Sending,
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString())));
                 }else{
@@ -58,7 +60,7 @@ struct AddressTableEntryLessThan
             }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
-      //  qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
+        qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
     }
 
     void AddressTablePriv::updateEntry(const QString &address, const QString &label, bool isMine, int status)
