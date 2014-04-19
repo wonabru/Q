@@ -2375,7 +2375,7 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     }
     if(ret == false)
     {
-        pwalletMain->eraseName(key);
+        pwalletMain->eraseName((CKeyID)(pblock->namePubKey));
     }
   //  pwalletMain->refresh();
     return ret;
@@ -3787,7 +3787,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         CValidationState state;
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
+        {
             mapAlreadyAskedFor.erase(inv);
+            pwalletMain->eraseName((CKeyID)block.namePubKey);
+        }
 
         int nDoS = 0;
         if (state.IsInvalid(nDoS))

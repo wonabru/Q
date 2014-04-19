@@ -1712,9 +1712,13 @@ bool CWallet::eraseName(const CTxDestination& address)
 {
     if (!fFileBacked)
         return false;
+    DelAddressBookName(address);
+    std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.find(address);
+    if((mi == mapNamesBook.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
+        return false;
     mapNamesBook.erase(address);
     CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
-    DelAddressBookName(address);
+
     return true;
 }
 
@@ -1722,9 +1726,13 @@ bool CWallet::eraseNameDoNotRegister(const CTxDestination& address)
 {
     if (!fFileBacked)
         return false;
+    DelAddressBookName(address);
+    std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.find(address);
+    if((mi == mapNamesBookDoNotRegister.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
+        return false;
     mapNamesBookDoNotRegister.erase(address);
     CWalletDB(strWalletFile).EraseNameDoNotRegister(CQcoinAddress(address).ToString());
-    DelAddressBookName(address);
+
     return true;
 }
 
