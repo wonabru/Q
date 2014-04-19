@@ -4828,7 +4828,7 @@ void RestartMining()
             address.GetKeyID(key);
             if(pwalletMain->isNameRegistered(name) == false && name != "" && pwalletMain->isNameNotToRegister(name) == false)
             {
-                if(name.find("+/notToRegister/+") ==false)
+                if(name.find_first_of("+/notToRegister/+") == name.size())
                 {
                     if(address.IsValid() == true)
                     {
