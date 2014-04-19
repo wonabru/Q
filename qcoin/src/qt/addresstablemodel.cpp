@@ -13,7 +13,7 @@ const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
 const QString AddressTableModel::NotRegistered = "N";
 extern QList<CKeyID> reserved;
-bool DoNotRegister = true;
+extern bool DoNotRegister;
 
 struct AddressTableEntryLessThan
 {
@@ -56,9 +56,29 @@ struct AddressTableEntryLessThan
                               QString::fromStdString(address.ToString())));
                 }
             }
+            BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, wallet->mapNamesBookDoNotRegister)
+            {
+                const CQcoinAddress& address = item.first;
+                const std::string& strName = item.second;
+                bool fMine = IsMine(*wallet, address.Get());
+                if(wallet->isNameRegistered(strName)==true)
+                {
+                    if(fMine == true)
+                        cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Receiving,
+                                  QString::fromStdString(strName),
+                                  QString::fromStdString(address.ToString())));
+                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::Sending,
+                                  QString::fromStdString(strName),
+                                  QString::fromStdString(address.ToString())));
+                }else{
+                    cachedAddressTable.append(AddressTableEntry(AddressTableEntry::NotRegistered,
+                              QString::fromStdString(strName),
+                              QString::fromStdString(address.ToString())));
+                }
+            }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
-        qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
+      //  qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
     }
 
     void AddressTablePriv::updateEntry(const QString &address, const QString &label, bool isMine, int status)
@@ -410,6 +430,12 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
                 QMessageBox::warning(&qw,"Choose another name!",QString("Your name %1 is just registered in network").arg(strLabel.c_str()),QMessageBox::Ok);
                 return QString();
             }
+        }else{
+            {
+                LOCK(wallet->cs_wallet);
+                wallet->SetNameBookNotToRegistered(CQcoinAddress(strAddress).Get(), strLabel);
+            }
+            return QString::fromStdString(strAddress);
         }
     }
     else

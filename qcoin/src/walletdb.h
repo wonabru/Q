@@ -38,8 +38,9 @@ public:
 
     bool EraseName(const std::string& strAddress);
     bool WriteNameBlock(const std::string& strAddress, const std::string& strName);
-
+    bool WriteNameBlockDoNotRegister(const std::string& strAddress, const std::string& strName);
     bool EraseNameBlock(const std::string& strAddress);
+    bool EraseNameDoNotRegister(const std::string& strAddress);
     bool WriteTx(uint256 hash, const CWalletTx& wtx)
     {
         nWalletDBUpdated++;

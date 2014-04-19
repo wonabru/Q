@@ -117,6 +117,7 @@ public:
 
     std::map<CTxDestination, std::string> mapAddressBook;
     std::map<CTxDestination, std::string> mapNamesBook;
+    std::map<CTxDestination, std::string> mapNamesBookDoNotRegister;
 
     CPubKey vchDefaultKey;
 
@@ -289,10 +290,13 @@ public:
 
     bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool SetNameBookRegistered(const CTxDestination& address, const std::string& strName, int ato = 2);
+    bool SetNameBookNotToRegistered(const CTxDestination& address, const std::string& strName, int ato = 5);
     bool DelAddressBookName(const CTxDestination& address);
     bool eraseNameBookRegistered();
     bool eraseName(const CTxDestination& address);
+    bool eraseNameDoNotRegister(const CTxDestination& address);
     bool isNameRegistered(const std::string name);
+    bool isNameNotToRegister(const std::string name);
     void UpdatedTransaction(const uint256 &hashTx);
 
     std::string GetName(CKeyID key);

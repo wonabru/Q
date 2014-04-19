@@ -13,7 +13,7 @@
 QString addressOld = "";
 QString nameOld = "";
 class SendCoinsDialog;
-extern bool DoNotRegister;
+bool DoNotRegister;
 extern QList<CKeyID> reserved;
 
 EditAddressDialog::EditAddressDialog(Mode mode, QWidget *parent) :

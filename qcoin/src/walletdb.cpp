@@ -32,6 +32,12 @@ bool CWalletDB::WriteNameBlock(const string& strAddress, const string& strName)
     return Write(make_pair(string("nameBlock"), strAddress), strName);
 }
 
+bool CWalletDB::WriteNameBlockDoNotRegister(const string& strAddress, const string& strName)
+{
+    nWalletDBUpdated++;
+    return Write(make_pair(string("nameBlockNot"), strAddress), strName);
+}
+
 bool CWalletDB::EraseName(const string& strAddress)
 {
     // This should only be used for sending addresses, never for receiving addresses,
@@ -46,6 +52,14 @@ bool CWalletDB::EraseNameBlock(const string& strAddress)
     // receiving addresses must always have an address book entry if they're not change return.
     nWalletDBUpdated++;
     return Erase(make_pair(string("nameBlock"), strAddress));
+}
+
+bool CWalletDB::EraseNameDoNotRegister(const string& strAddress)
+{
+    // This should only be used for sending addresses, never for receiving addresses,
+    // receiving addresses must always have an address book entry if they're not change return.
+    nWalletDBUpdated++;
+    return Erase(make_pair(string("nameBlockNot"), strAddress));
 }
 
 bool CWalletDB::ReadAccount(const string& strAccount, CAccount& account)

@@ -1662,6 +1662,16 @@ bool CWallet::isNameRegistered(const std::string name)
     return false;
 }
 
+bool CWallet::isNameNotToRegister(const std::string name)
+{
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == name)
+            return true;
+    }
+    return false;
+}
 
 bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string& strName, int ato)
 {
@@ -1672,10 +1682,28 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
             if(ato < 3)
                 return false;
     }
+    std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.find(address);
+    if(mi != mapNamesBookDoNotRegister.end())
+        eraseNameDoNotRegister(address);
     mapNamesBook[address] = strName;
     if (!fFileBacked)
         return false;
     return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
+}
+
+bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const string& strName, int ato)
+{
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
+    {
+        const std::string nameIs = item.second;
+        if(nameIs == strName)
+            if(ato < 3)
+                return false;
+    }
+    mapNamesBookDoNotRegister[address] = strName;
+    if (!fFileBacked)
+        return false;
+    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), strName);
 }
 
 bool CWallet::eraseName(const CTxDestination& address)
@@ -1684,6 +1712,15 @@ bool CWallet::eraseName(const CTxDestination& address)
         return false;
     mapNamesBook.erase(address);
     CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
+    return true;
+}
+
+bool CWallet::eraseNameDoNotRegister(const CTxDestination& address)
+{
+    if (!fFileBacked)
+        return false;
+    mapNamesBookDoNotRegister.erase(address);
+    CWalletDB(strWalletFile).EraseNameDoNotRegister(CQcoinAddress(address).ToString());
     return true;
 }
 

@@ -4841,7 +4841,7 @@ void RestartMining()
             CQcoinAddress address(item.first);
             CKeyID key;
             address.GetKeyID(key);
-            if(pwalletMain->isNameRegistered(name) == false && name != "")
+            if(pwalletMain->isNameRegistered(name) == false && name != "" && pwalletMain->isNameNotToRegister(name) == false)
             {
                 if(address.IsValid() == true)
                 {
