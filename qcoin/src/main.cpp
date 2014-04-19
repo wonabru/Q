@@ -4828,10 +4828,13 @@ void RestartMining()
             address.GetKeyID(key);
             if(pwalletMain->isNameRegistered(name) == false && name != "" && pwalletMain->isNameNotToRegister(name) == false)
             {
-                if(address.IsValid() == true)
+                if(name.find("+/notToRegister/+") ==false)
                 {
-                    reserved.push_back(key);
-                    printf("Names to mine: %s\n",name.c_str());
+                    if(address.IsValid() == true)
+                    {
+                        reserved.push_back(key);
+                        printf("Names to mine: %s\n",name.c_str());
+                    }
                 }
             }
         }
