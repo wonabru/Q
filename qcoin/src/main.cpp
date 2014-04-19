@@ -3789,6 +3789,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
         {
             mapAlreadyAskedFor.erase(inv);
+        }else{
             pwalletMain->eraseName((CKeyID)block.namePubKey);
         }
 
