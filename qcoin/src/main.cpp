@@ -2454,6 +2454,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
+    CQcoinAddress address2((CKeyID)(pblock->namePubKey));
+    std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address2.Get());
+
+    pwalletMain->NotifyAddressBookChanged(pwalletMain, address2.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, address2.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     return true;
 }
 
