@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x323abe39b8000aaed94e6ba8489366e9084a13e30b2aa4499fc02d9ab804c935");
+uint256 hashGenesisBlock("0xfaec262e7c000c64668d493d31dae7d3c10e0a68fc9bbbcbf562e40ec09b091b");
 static CBigNum bnProofOfWorkLimit;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2329,9 +2329,9 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                ret = false;
         }
 
-        bool isOK = true;
+        bool isOK = false;
         if(vtx.vchn.size() > 0)
-            isOK = true;
+            isOK = ret;
         if(vtx.vout.size() == vtx.vchn.size())
         {
             for(unsigned i = 0;i<vtx.vchn.size();i++)
@@ -2942,21 +2942,17 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
-        block.nTime    = 1397732400;//1398027600;
+        block.nTime    = 1398027600;
         block.nBits    = 0x0000000003ffffff;
-        block.nNonce   = 314917161;
+        block.nNonce   = 1023654907;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
-       // assert(block.nBits == bnProofOfWorkLimit.GetCompact());
-      //  block.print();
-
-     //   CheckProofOfWork(block.GetHash(), block.nBits);
 
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-   //     CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
@@ -2964,14 +2960,6 @@ bool InitBlockIndex() {
         assert(block.hashMerkleRoot == uint256("0xce4b18f0bcb9cc3165abd7ccbba1da9a50357b37d73f031a021358d91c3ef6cd"));
 
         assert(block.GetHash() == hashGenesisBlock);
-
-        initAccountsRegister();
-        CQcoinAddress addr(keyGenesis);
-
-      //  pwalletMain->SetNameBookRegistered(addr.Get(),"0",5);
-        printNamesInQNetwork();
-     //   pindexBest =
-        // Start new block file
         try {
             unsigned int nBlockSize = ::GetSerializeSize(block, SER_DISK, CLIENT_VERSION);
             CDiskBlockPos blockPos;
