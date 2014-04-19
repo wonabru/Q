@@ -1682,18 +1682,19 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
 
 bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const string& strName, int ato)
 {
+    std::string name = strName + "+/notToRegister/+";
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
     {
         const std::string nameIs = item.second;
-        if(nameIs == strName)
+        if(nameIs == name)
             if(ato < 3)
                 return false;
     }
     if (!fFileBacked)
         return false;
-    mapNamesBookDoNotRegister[address] = strName;
-    SetAddressBookName(address,strName,5);
-    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), strName);
+    mapNamesBookDoNotRegister[address] = name;
+    SetAddressBookName(address,name,5);
+    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
 }
 
 bool CWallet::eraseName(const CTxDestination& address)
