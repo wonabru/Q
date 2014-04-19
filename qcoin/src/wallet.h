@@ -288,7 +288,7 @@ public:
 
     DBErrors LoadWallet(bool& fFirstRunRet);
 
-    bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 2);
+    bool SetAddressBookName(const CTxDestination& address, const std::string& strName, int ato = 5);
     bool SetNameBookRegistered(const CTxDestination& address, const std::string& strName, int ato = 2);
     bool SetNameBookNotToRegistered(const CTxDestination& address, const std::string& strName, int ato = 5);
     bool DelAddressBookName(const CTxDestination& address);
