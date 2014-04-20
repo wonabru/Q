@@ -4961,7 +4961,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-            if (GetTime() - nStart > 666)
+            if (GetTime() - nStart > 60*2.5)
                 break;
 
         }
