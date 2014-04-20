@@ -1652,14 +1652,14 @@ bool CWallet::isNameRegistered(const std::string name)
 
 bool CWallet::isNameNotToRegister(const std::string name)
 {
-    /*BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
     {
         const std::string nameIs = item.second;
         if(nameIs == name)
             return true;
-    }*/
-    if(name.find("//notToRegister//") != string::npos)
-        return true;
+    }
+  //  if(name.find("//notToRegister//") != string::npos)
+   //     return true;
     return false;
 }
 
@@ -1695,8 +1695,8 @@ bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const st
     if (!fFileBacked)
         return false;
     mapNamesBookDoNotRegister[address] = name;
-    return SetAddressBookName(address,name,5);
-    //return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
+    SetAddressBookName(address,name,5);
+    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
 }
 
 bool CWallet::eraseName(const CTxDestination& address)

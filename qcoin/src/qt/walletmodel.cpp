@@ -340,7 +340,6 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
             }
         }
     }
-
     SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
     return ret;
 }

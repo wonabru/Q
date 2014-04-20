@@ -362,7 +362,8 @@ bool AddressTableModel::changeAddress(const QString &label, const QString &addr,
             {
                  return false;
             }
-            wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
+            if(wallet->isNameRegistered(name) == false)
+                wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
         }else{
             return false;
         }
