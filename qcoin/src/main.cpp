@@ -47,8 +47,9 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0xfaec262e7c000c64668d493d31dae7d3c10e0a68fc9bbbcbf562e40ec09b091b");
-static CBigNum bnProofOfWorkLimit;
+std::string efff = "00000000000000000000000001ffffff";
+uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
+static CBigNum bnProofOfWorkLimit = 0xffffffffffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 uint256 nBestChainWork = 0;
@@ -1130,7 +1131,28 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
     return bnResult.GetCompact();
 }
 
-uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
+unsigned int ComputeMinWork(uint128 nBase, int64 nTime)
+{
+    // Testnet has min-difficulty blocks
+    // after nTargetSpacing*2 time between blocks:
+   // if (fTestNet && nTime > nTargetSpacing*2)
+    //    return bnProofOfWorkLimit.GetCompact();
+
+    CBigNum bnResult;
+    bnResult.SetCompact(nBase);
+    while (nTime > 0 && bnResult < bnProofOfWorkLimit)
+    {
+        // Maximum 400% adjustment...
+        bnResult *= 4;
+        // ... in best-case exactly 4-times-normal target time
+        nTime -= nTargetTimespan*4;
+    }
+    if (bnResult > bnProofOfWorkLimit)
+        bnResult = bnProofOfWorkLimit;
+    return bnResult.GetCompact();
+}
+
+uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
 {
     uint64 nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
@@ -1202,45 +1224,27 @@ uint64 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHea
     return bnNew.GetCompact();
 }
 
-uint64 ControlSum(uint256 hash)
+uint128 ControlSum(uint256 hash)
 {
-    uint64 cs = 0;
-    vector<unsigned char> s;
-    s.resize(24);
-    memcpy(&s[0],&hash,24);
-    for(unsigned i=0;i<3;i++)
-    {
-        for(unsigned j=0;j<8;j++)
-            cs += (uint64)s[8*i+j];
-    }
-    s.clear();
-    return cs;
+    return hash.Get128();
 }
 
-uint64 getHashCS(uint256 hash)
+uint128 getHashCS(uint256 hash)
 {
-    uint64 s;
-    vector<unsigned char> ss;
-    ss.resize(32);
-    memcpy(&ss[0],&hash,32);
-    memcpy(&s,&ss[24],8);
-    ss.clear();
-    return s;
+    return hash.GetSecond128();
 }
 
-bool CheckProofOfWork(uint256 hash, uint64 nBits)
+bool CheckProofOfWork(uint256 hash, uint128 nBits)
 {
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     // Check range
-    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
-   // logPrint("%d\n",bnTarget.getint());
-  //  logPrint("%d\n",bnProofOfWorkLimit.getint());
-    if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
+
+    if (bnTarget <= 0)
         return false;
 
-    uint64 cs = getHashCS(hash);
-    uint64 csc = ControlSum(hash);
+    uint128 cs = getHashCS(hash);
+    uint128 csc = ControlSum(hash);
 
 
     // Check proof of work matches claimed amount
@@ -2902,14 +2906,13 @@ bool InitBlockIndex() {
     if (pindexGenesisBlock != NULL)
     {
         return true;
-}
+    }
     // Use the provided setting for -txindex in the new database
     fTxIndex = GetBoolArg("-txindex", true);
     pblocktree->WriteFlag("txindex", fTxIndex);
     logPrint("Initializing databases...\n");
 
     // Only add the genesis block if not reindexing (in which case we reuse the one already on disk)
-    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
     if (!fReindex) {
 
         std::string gnpk = "M9vynffvkabmZ35drGq3BQ1n6gXV6Awcpb";
@@ -2943,8 +2946,8 @@ bool InitBlockIndex() {
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
         block.nTime    = 1398027600;
-        block.nBits    = 0x0000000003ffffff;
-        block.nNonce   = 1023654907;
+        block.nBits    = (uint128)efff.c_str();
+        block.nNonce   = 1838306573;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -2952,7 +2955,7 @@ bool InitBlockIndex() {
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
@@ -4705,7 +4708,7 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
             uint256 hashPrevBlock;
             uint256 hashMerkleRoot;
             unsigned int nTime;
-            unsigned int nBits;
+            uint128 nBits;
             unsigned int nNonce;
             uint160 namePubKey;
             base_name name;
@@ -4799,7 +4802,6 @@ void RestartMining()
 {
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
-    bnProofOfWorkLimit.SetCompact((uint64)0xffffffffffffffff);
 
     if((yourName !="") && (synchronizingComplete == true))
     {
@@ -4858,13 +4860,13 @@ void RestartMining()
     RestartMining();
 }
 
-const char *byte_to_binary(uint64 x)
+const char *byte_to_binary(uint128 x)
 {
-    static char b[65];
+    static char b[129];
     b[0] = '\0';
-
-    uint64 z;
-    for (z = 0x7000000000000000; z > 0; z >>= 1)
+    uint128 z;
+    std::string cc = "70000000000000000000000000000000";
+    for (z = (uint128)cc.c_str(); z > 0; z = z >> 1)
     {
         strcat(b, ((x & z) == z) ? "1" : "0");
     }
@@ -4941,20 +4943,20 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                         dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
                         nHPSTimerStart = GetTimeMillis();
                         nHashCounter = 0;
-                        static int64 nLogTime;
+                        /*static int64 nLogTime;
                         if (GetTime() - nLogTime > 30)
                         {
-                            uint64 cs = getHashCS(hash);
-                            uint64 csc = ControlSum(hash);
+                        //    uint128 cs = getHashCS(hash);
+                        //    uint128 csc = ControlSum(hash);
                             nLogTime = GetTime();
-                            logPrint("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
-                            logPrint("nB: %s\n",byte_to_binary(pblock->nBits));
-                            logPrint("cs: %s\n", byte_to_binary(cs));
-                            logPrint("cc: %s\n", byte_to_binary(csc));
-                            logPrint("csb: %s\n", byte_to_binary(cs & pblock->nBits));
-                            logPrint("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
+                        //    printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
+                         //   printf("nB: %s\n",byte_to_binary(pblock->nBits));
+                         //   printf("cs: %s\n", byte_to_binary(cs));
+                         //   printf("cc: %s\n", byte_to_binary(csc));
+                         //   printf("csb: %s\n", byte_to_binary(cs & pblock->nBits));
+                         //   printf("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
                            // logPrint("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
-                        }
+                        }*/
                     }
                 }
             }

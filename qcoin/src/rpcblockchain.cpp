@@ -39,7 +39,8 @@ double GetDifficulty(const CBlockIndex* blockindex)
         nShift--;
     }
 */
-    return blockindex->nBits;
+    uint64 bb = blockindex->nBits.Get64();
+    return bb/((uint64)0x0000000001ffffff);
 }
 
 

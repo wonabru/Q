@@ -120,6 +120,15 @@ std::string HexBits(unsigned int nBits)
     return HexStr(BEGIN(uBits.cBits), END(uBits.cBits));
 }
 
+std::string HexBits(uint128 nBits)
+{
+    union {
+        int32_t nBits;
+        char cBits[4];
+    } uBits;
+    uBits.nBits = htonl((int32_t)nBits.Get64());
+    return HexStr(BEGIN(uBits.cBits), END(uBits.cBits));
+}
 
 
 ///

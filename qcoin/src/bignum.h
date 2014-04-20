@@ -90,6 +90,7 @@ public:
     CBigNum(unsigned long n)    { BN_init(this); setulong(n); }
     CBigNum(uint64 n)           { BN_init(this); setuint64(n); }
     explicit CBigNum(uint256 n) { BN_init(this); setuint256(n); }
+    explicit CBigNum(base_uint128 n) { BN_init(this); setuint128(n); }
 
     explicit CBigNum(const std::vector<unsigned char>& vch)
     {
@@ -221,7 +222,32 @@ public:
         pch[3] = (nSize >> 0) & 0xff;
         BN_mpi2bn(pch, p - pch, this);
     }
-
+    void setuint128(base_uint128 n)
+    {
+        unsigned char pch[sizeof(n) + 6];
+        unsigned char* p = pch + 4;
+        bool fLeadingZeroes = true;
+        unsigned char* pbegin = (unsigned char*)&n;
+        unsigned char* psrc = pbegin + sizeof(n);
+        while (psrc != pbegin)
+        {
+            unsigned char c = *(--psrc);
+            if (fLeadingZeroes)
+            {
+                if (c == 0)
+                    continue;
+                if (c & 0x80)
+                    *p++ = 0;
+                fLeadingZeroes = false;
+            }
+            *p++ = c;
+        }
+        unsigned int nSize = p - (pch + 4);
+        pch[0] = (nSize >> 16) & 0xff;
+        pch[1] = (nSize >> 8) & 0xff;
+        pch[2] = (nSize >> 0) & 0xff;
+        BN_mpi2bn(pch, p - pch, this);
+    }
     uint256 getuint256() const
     {
         unsigned int nSize = BN_bn2mpi(this, NULL);
@@ -286,6 +312,29 @@ public:
     //
     // This implementation directly uses shifts instead of going
     // through an intermediate MPI representation.
+    CBigNum& SetCompact(uint128 nCompact)
+    {
+        /*unsigned int nSize = nCompact >> 20;
+        bool fNegative     = (nCompact & 0x00000001) == 0;
+        unsigned int nWord = nCompact & 0x000fffff;
+        BN_set_word(this, nWord);
+        BN_lshift(this, this, nSize);
+        BN_set_negative(this, fNegative);*/
+
+        BN_set_word(this, nCompact.Get64());
+        return *this;
+    }
+    CBigNum& SetMax()
+    {
+        /*unsigned int nSize = nCompact >> 20;
+        bool fNegative     = (nCompact & 0x00000001) == 0;
+        unsigned int nWord = nCompact & 0x000fffff;
+        BN_set_word(this, nWord);
+        BN_lshift(this, this, nSize);
+        BN_set_negative(this, fNegative);*/
+        BN_set_word(this, (uint64)0xffffffffffffffff);
+        return *this;
+    }
     CBigNum& SetCompact(uint64 nCompact)
     {
         /*unsigned int nSize = nCompact >> 20;
@@ -294,10 +343,22 @@ public:
         BN_set_word(this, nWord);
         BN_lshift(this, this, nSize);
         BN_set_negative(this, fNegative);*/
+
         BN_set_word(this, nCompact);
         return *this;
     }
+    CBigNum& SetCompact(unsigned int nCompact)
+    {
+        /*unsigned int nSize = nCompact >> 20;
+        bool fNegative     = (nCompact & 0x00000001) == 0;
+        unsigned int nWord = nCompact & 0x000fffff;
+        BN_set_word(this, nWord);
+        BN_lshift(this, this, nSize);
+        BN_set_negative(this, fNegative);*/
 
+        BN_set_word(this, nCompact);
+        return *this;
+    }
     uint64 GetCompact() const
     {
     /*    unsigned int nSize = BN_num_bytes(this);
@@ -312,8 +373,7 @@ public:
         nCompact |= nSize << 20;
         nCompact |= (BN_is_negative(this) ? 0 : 1);
         return nCompact;*/
-        unsigned int nCompact = BN_get_word(this);
-        return nCompact;
+        return BN_get_word(this);
     }
 
     void SetHex(const std::string& str)

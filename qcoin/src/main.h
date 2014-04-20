@@ -174,7 +174,7 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 /** Check mined block */
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
-bool CheckProofOfWork(uint256 hash, uint64 nBits);
+bool CheckProofOfWork(uint256 hash, uint128 nBits);
 /** Calculate the minimum amount of work a received block needs, without knowing its direct parent */
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime);
 /** Get the number of active peers */
@@ -1420,7 +1420,7 @@ public:
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
     unsigned int nTime;
-    uint64 nBits;
+    uint128 nBits;
     unsigned int nNonce;
     uint160 namePubKey;
     base_name name;
@@ -1686,12 +1686,12 @@ public:
     {
         std::string myname = GetBlockName();
         std::string myPubKey = GetBlockPubKey();
-        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%llu, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
+        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%s, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),
             hashMerkleRoot.ToString().c_str(),
-            nTime, nBits, nNonce, myname.c_str(), myPubKey.c_str(),
+            nTime, nBits.ToString().c_str(), nNonce, myname.c_str(), myPubKey.c_str(),
             vtx.size());
         for (unsigned int i = 0; i < vtx.size(); i++)
         {
@@ -1855,7 +1855,7 @@ public:
     int nVersion;
     uint256 hashMerkleRoot;
     unsigned int nTime;
-    uint64 nBits;
+    uint128 nBits;
     unsigned int nNonce;
     uint160 namePubKey;
     base_name name;
@@ -1952,6 +1952,7 @@ public:
     CBigNum GetBlockWork() const
     {
         CBigNum bnTarget;
+
         bnTarget.SetCompact(nBits);
         if (bnTarget <= 0)
             return 0;
