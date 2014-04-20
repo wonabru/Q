@@ -1274,7 +1274,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
                     nFeeRet += nMoveToFee;
                 }
 
-                if (nChange > 0)
+             /*   if (nChange > 0)
                 {
                     // Note: We use a new key here to keep it from being obvious which side is the change.
                     //  The drawback is that by not reusing a previous key, the change may be lost if a
@@ -1309,7 +1309,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
                         wtxNew.vout.insert(position, newTxOut);
                     }
                 }
-                else
+                else*/
                     reservekey.ReturnKey();
 
                 // Fill vin
