@@ -1652,12 +1652,14 @@ bool CWallet::isNameRegistered(const std::string name)
 
 bool CWallet::isNameNotToRegister(const std::string name)
 {
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
+    /*BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBookDoNotRegister)
     {
         const std::string nameIs = item.second;
         if(nameIs == name)
             return true;
-    }
+    }*/
+    if(name.find("//notToRegister//") != string::npos)
+        return true;
     return false;
 }
 
@@ -1682,7 +1684,7 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
 
 bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const string& strName, int ato)
 {
-    std::string name = strName + "+/notToRegister/+";
+    std::string name = strName + "//notToRegister//";
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
     {
         const std::string nameIs = item.second;
@@ -1693,8 +1695,8 @@ bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const st
     if (!fFileBacked)
         return false;
     mapNamesBookDoNotRegister[address] = name;
-    SetAddressBookName(address,name,5);
-    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
+    return SetAddressBookName(address,name,5);
+    //return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
 }
 
 bool CWallet::eraseName(const CTxDestination& address)
@@ -1735,6 +1737,12 @@ bool CWallet::eraseNameBookRegistered()
         CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress((*mi).first).ToString());
         mapNamesBook.erase((*mi).first);
     }
+  /*  while(mapNamesBookDoNotRegister.size() > 0)
+    {
+        std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.begin();
+        CWalletDB(strWalletFile).EraseNameDoNotRegister(CQcoinAddress((*mi).first).ToString());
+        mapNamesBookDoNotRegister.erase((*mi).first);
+    }*/
     return true;
 }
 

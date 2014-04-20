@@ -238,8 +238,13 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         if (strType == "nameBlockNot")
         {
             string strAddress;
+            string strvalue;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapNamesBookDoNotRegister[CQcoinAddress(strAddress).Get()];
+            ssValue >> strvalue;
+            if(strvalue.find_first_of('+',0) == string::npos)
+                pwallet->mapNamesBookDoNotRegister[CQcoinAddress(strAddress).Get()] = strvalue;
+            else
+                pwallet->mapNamesBookDoNotRegister[CQcoinAddress(strAddress).Get()] = CQcoinAddress(strAddress).ToString();
         }
         else if (strType == "tx")
         {
