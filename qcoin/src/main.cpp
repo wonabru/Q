@@ -2361,8 +2361,6 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                     {
                             pwalletMain->eraseName((CKeyID)keydel);
                             pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
-                            std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address.Get());
-                            pwalletMain->NotifyAddressBookChanged(pwalletMain, address.Get(), blockname, ::IsMine(*pwalletMain, address.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
                     }
                 }
             }
@@ -4454,7 +4452,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     // Largest block you're willing to create:
     unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
-    nBlockMaxSize = std::max((unsigned int)10000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+    nBlockMaxSize = std::max((unsigned int)20000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
 
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
@@ -4552,7 +4550,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
         }
 
         // Collect transactions into block
-        uint64 nBlockSize = 10000;
+        uint64 nBlockSize = 20000;
         uint64 nBlockTx = 0;
         int nBlockSigOps = 100;
         bool fSortedByFee = (nBlockPrioritySize <= 0);
