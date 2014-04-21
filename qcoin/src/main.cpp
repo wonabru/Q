@@ -2470,7 +2470,9 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(ret > 3)
         return error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
-    uiInterface.NotifyBlocksChanged();
+    CQcoinAddress addr((CKeyID)pblock->namePubKey);
+    std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(addr.Get());
+    pwalletMain->NotifyAddressBookChanged(pwalletMain, addr.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, addr.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     return true;
 }
 
