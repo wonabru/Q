@@ -2366,6 +2366,8 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
                     {
                             pwalletMain->eraseName((CKeyID)keydel);
                             pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
+                            std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address.Get());
+                            pwalletMain->NotifyAddressBookChanged(pwalletMain, address.Get(), blockname, ::IsMine(*pwalletMain, address.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
                     }
                 }
             }
@@ -2472,7 +2474,6 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     CQcoinAddress address2((CKeyID)(pblock->namePubKey));
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address2.Get());
-
     pwalletMain->NotifyAddressBookChanged(pwalletMain, address2.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, address2.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
     return true;
 }
