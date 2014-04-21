@@ -211,10 +211,6 @@ bool EditAddressDialog::saveCurrentRow()
 
     }
     et7:
-    CQcoinAddress addr(address.toStdString());
-    std::map<CTxDestination, std::string>::iterator mi2 = model->wallet->mapAddressBook.find(addr.Get());
-    model->wallet->NotifyAddressBookChanged(model->wallet, addr.Get(), name.toStdString(), ::IsMine(*(model->wallet), addr.Get()), (mi2 == model->wallet->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-
     if(name.isEmpty())
         return false;
     DoNotRegister = false;
