@@ -33,6 +33,11 @@ struct AddressTableEntryLessThan
 
     void AddressTablePriv::refreshAddressTable()
     {
+        bool lfirst;
+        {
+        LOCK(wallet->cs_wallet);
+        wallet->LoadWallet(lfirst);
+        }
         cachedAddressTable.clear();
         {
             LOCK(wallet->cs_wallet);

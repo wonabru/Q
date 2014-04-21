@@ -2380,7 +2380,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
         AddressTableModel atm(pwalletMain);
         atm.setNewName();
     }
-    if(ret == false)
+    if(ret > 0)
     {
         pwalletMain->eraseName((CKeyID)(pblock->namePubKey));
     }
@@ -2470,6 +2470,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(ret > 3)
         return error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
+    uiInterface.NotifyBlocksChanged();
     return true;
 }
 
@@ -3790,9 +3791,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
         {
             mapAlreadyAskedFor.erase(inv);
-            boost::this_thread::interruption_point();
-        }else{
-            pwalletMain->eraseName((CKeyID)block.namePubKey);
         }
 
         int nDoS = 0;
