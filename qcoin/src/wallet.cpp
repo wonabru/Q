@@ -1624,6 +1624,8 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 
 bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
+    if (!fFileBacked)
+        return false;
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
     {
         const std::string nameIs = item.second;
@@ -1631,12 +1633,11 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
             if(ato < 3)
                 return false;
     }
-    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     mapAddressBook[address] = strName;
+    bool ret = CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-    if (!fFileBacked)
-        return false;
-    return CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
+    return ret;
 }
 
 bool CWallet::isNameRegistered(const std::string name)
@@ -1665,6 +1666,8 @@ bool CWallet::isNameNotToRegister(const std::string name)
 
 bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string& strName, int ato)
 {
+    if (!fFileBacked)
+        return false;
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
     {
         const std::string nameIs = item.second;
@@ -1676,14 +1679,16 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     if(mi != mapNamesBookDoNotRegister.end())
         eraseNameDoNotRegister(address);
     mapNamesBook[address] = strName;
+
+    bool ret = CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
     SetAddressBookName(address,strName,ato);
-    if (!fFileBacked)
-        return false;
-    return CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
+    return ret;
 }
 
 bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const string& strName, int ato)
 {
+    if (!fFileBacked)
+        return false;
     std::string name = strName + "//notToRegister//";
     BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
     {
@@ -1692,24 +1697,23 @@ bool CWallet::SetNameBookNotToRegistered(const CTxDestination& address, const st
             if(ato < 3)
                 return false;
     }
-    if (!fFileBacked)
-        return false;
     mapNamesBookDoNotRegister[address] = name;
+    bool ret = CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
     SetAddressBookName(address,name,5);
-    return CWalletDB(strWalletFile).WriteNameBlockDoNotRegister(CQcoinAddress(address).ToString(), name);
+    return ret;
 }
 
 bool CWallet::eraseName(const CTxDestination& address)
 {
     if (!fFileBacked)
         return false;
-    DelAddressBookName(address);
+
     std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.find(address);
     if((mi == mapNamesBook.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
         return false;
     mapNamesBook.erase(address);
     CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
-
+    DelAddressBookName(address);
     return true;
 }
 
@@ -1717,13 +1721,13 @@ bool CWallet::eraseNameDoNotRegister(const CTxDestination& address)
 {
     if (!fFileBacked)
         return false;
-    DelAddressBookName(address);
+
     std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.find(address);
     if((mi == mapNamesBookDoNotRegister.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
         return false;
     mapNamesBookDoNotRegister.erase(address);
     CWalletDB(strWalletFile).EraseNameDoNotRegister(CQcoinAddress(address).ToString());
-
+    DelAddressBookName(address);
     return true;
 }
 
@@ -1734,15 +1738,8 @@ bool CWallet::eraseNameBookRegistered()
     while(mapNamesBook.size() > 0)
     {
         std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.begin();
-        CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress((*mi).first).ToString());
-        mapNamesBook.erase((*mi).first);
+        eraseName((*mi).first);
     }
-  /*  while(mapNamesBookDoNotRegister.size() > 0)
-    {
-        std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.begin();
-        CWalletDB(strWalletFile).EraseNameDoNotRegister(CQcoinAddress((*mi).first).ToString());
-        mapNamesBookDoNotRegister.erase((*mi).first);
-    }*/
     return true;
 }
 
@@ -1807,15 +1804,16 @@ CKeyID CWallet::GetKeyID(std::string name)
 
 bool CWallet::DelAddressBookName(const CTxDestination& address)
 {
+    if (!fFileBacked)
+        return false;
     std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
     if((mi == mapAddressBook.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
         return false;
     mapAddressBook.erase(address);
-    NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address), CT_DELETED);
-    if (!fFileBacked)
-        return false;
     CQcoinAddress addr(address);
-    return CWalletDB(strWalletFile).EraseName(addr.ToString());
+    bool ret = CWalletDB(strWalletFile).EraseName(addr.ToString());
+    NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address), CT_DELETED);
+    return ret;
 }
 
 

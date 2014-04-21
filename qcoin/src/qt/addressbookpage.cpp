@@ -298,9 +298,9 @@ void AddressBookPage::selectionChanged()
             break;
         case NotRegisteredTab:
             // Deleting receiving addresses, however, is not allowed
-            ui->deleteAddress->setEnabled(false);
-            ui->deleteAddress->setVisible(false);
-            deleteAction->setEnabled(false);
+            ui->deleteAddress->setEnabled(true);
+            ui->deleteAddress->setVisible(true);
+            deleteAction->setEnabled(true);
             break;
         }
         ui->copyAddress->setEnabled(true);
