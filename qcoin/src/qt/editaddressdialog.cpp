@@ -199,11 +199,9 @@ bool EditAddressDialog::saveCurrentRow()
                     case WalletModel::Aborted: // User aborted, nothing to do
                         break;
                     case WalletModel::OK:
-                        accept();
-                        break;
+                        goto et7;
                     }
-            if(sendstatus.status != WalletModel::OK)
-                return false;
+            return false;
         }
         }else if(address == addressOld && name == nameOld)
         {
@@ -212,6 +210,7 @@ bool EditAddressDialog::saveCurrentRow()
         break;
 
     }
+    et7:
     if(name.isEmpty())
         return false;
     DoNotRegister = false;

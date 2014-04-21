@@ -2361,6 +2361,8 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
                     {
                             pwalletMain->eraseName((CKeyID)keydel);
                             pwalletMain->SetNameBookRegistered(address.Get(),blockname, 5);
+                            std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address.Get());
+                            pwalletMain->NotifyAddressBookChanged(pwalletMain, address.Get(), blockname, ::IsMine(*pwalletMain, address.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
                     }
                 }
             }
