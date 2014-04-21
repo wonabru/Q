@@ -358,12 +358,14 @@ bool AddressTableModel::changeAddress(const QString &label, const QString &addr,
     {
         if(wallet->mapAddressBook.find(CQcoinAddress(address).Get()) == wallet->mapAddressBook.end())
         {
-            if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
-            {
-                 return false;
-            }
             if(wallet->isNameRegistered(name) == false)
+            {
+                if(wallet->SetAddressBookName(CQcoinAddress(address).Get(), name, 5) == false)
+                {
+                     return false;
+                }
                 wallet->DelAddressBookName(CQcoinAddress(addressOld).Get());
+            }
         }else{
             return false;
         }

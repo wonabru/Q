@@ -2299,7 +2299,7 @@ void reconnection()
     }
 }
 
-bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
+int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     logPrint("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
@@ -2310,11 +2310,11 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
     if(blockname == "")
         return false;
     pblock->print();
-    bool ret = true;
+    int ret = 0;
     if(address.IsValid() == true)
     {
         if(pwalletMain->SetNameBookRegistered(address.Get(),blockname, 2)==false)
-              ret = false;
+              ret = 1;
     }
     std::string names = printNamesInQNetwork();
     logPrint("%s\n New name accepted\n",names.c_str());
@@ -2327,15 +2327,20 @@ bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock,
             if(isNameInQNetwork(vout.scriptPubKey))
             {
                 if(CQcoinAddress(vout.scriptPubKey.GetKeyID()).ToString() != address.ToString())
-                    ret = false;
+                    ret = 2;
             }
             if(vout.nValue != COIN)
-               ret = false;
+               ret = 3;
         }
 
         bool isOK = false;
         if(vtx.vchn.size() > 0)
-            isOK = ret;
+        {
+            if(ret == 0)
+                isOK = true;
+            else
+                isOK = false;
+        }
         if(vtx.vout.size() == vtx.vchn.size())
         {
             for(unsigned i = 0;i<vtx.vchn.size();i++)
@@ -2455,8 +2460,15 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if (!pblock->AcceptBlock(state, dbp))
         return error("ProcessBlock() : AcceptBlock FAILED");
 
-    if(acceptNameInQNetwork(state, pfrom, pblock, dbp) == false)
+    int ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
+    if(ret == 1)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
+    if(ret == 2)
+        return error("ProcessBlock() : AcceptBlock FAILED. Payout is not to accounts in network");
+    if(ret == 3)
+        return error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
+    if(ret > 3)
+        return error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
     printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     CQcoinAddress address2((CKeyID)(pblock->namePubKey));
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(address2.Get());
@@ -2973,7 +2985,7 @@ bool InitBlockIndex() {
                 return error("LoadBlockIndex() : writing genesis block to disk failed");
             if (!block.AddToBlockIndex(state, blockPos))
                 return error("LoadBlockIndex() : genesis block not accepted");
-            if(!acceptNameInQNetwork(state, NULL, &block, &blockPos))
+            if(acceptNameInQNetwork(state, NULL, &block, &blockPos)!=0)
                 return error("acceptNameInQNetwork() : genesis block not accepted");
         } catch(std::runtime_error &e) {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());

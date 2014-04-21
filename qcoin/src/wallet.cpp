@@ -15,7 +15,7 @@
 #include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
-extern bool acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp);
+extern int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -814,7 +814,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                 {
                     LOCK(cs_main);
                     CValidationState state;
-                    if(acceptNameInQNetwork(state, NULL, &block) == false)
+                    if(acceptNameInQNetwork(state, NULL, &block) != 0)
                         throw "Blocks are orphaned. No way to proceed";
                     if (state.IsError())
                         throw "Error in block process!";
