@@ -148,6 +148,13 @@ Building
 	[Build -> Rebuild All]
 
 
+Gittian Build (Windows, Linux and OSX installers building)
+-----
+
+Please look at: https://github.com/wonabru/Q/qcoin/doc/gitian-building.md
+
+
+
 Windows Build
 -----
 

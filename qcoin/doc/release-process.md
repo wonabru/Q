@@ -9,7 +9,7 @@ Release Process
 ###update (commit) version in sources
 
 
-	qcoin-qt.pro
+	Q-Qt.pro
 	contrib/verifysfbinaries/verify.sh
 	doc/README*
 	share/setup.nsi
@@ -30,7 +30,7 @@ Release Process
  From a directory containing the qcoin source, gitian-builder and gitian.sigs
   
 	export SIGNER=(your gitian key, ie bluematt, sipa, etc)
-	export VERSION=0.8.0
+	export VERSION=0.9.9.9
 	pushd ./gitian-builder
 
  Fetch and build inputs: (first time, or when dependency versions change)
@@ -52,73 +52,67 @@ Release Process
 	./bin/gbuild ../qcoin/contrib/gitian-descriptors/deps-win32.yml
 	mv build/out/qcoin-deps-0.0.5.zip inputs/
 
- Build qcoind and qcoin-qt on Linux32, Linux64, and Win32:
+ Build PLM on Linux32, Linux64, and Win32:
   
-	./bin/gbuild --commit qcoin=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian.yml
+	./bin/gbuild --commit PLM=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION} --destination ../gitian.sigs/ ../qcoin/contrib/gitian-descriptors/gitian.yml
 	pushd build/out
-	zip -r qcoin-${VERSION}-linux-gitian.zip *
-	mv qcoin-${VERSION}-linux-gitian.zip ../../../
+	zip -r PLM-${VERSION}-linux-gitian.zip *
+	mv PLM-${VERSION}-linux-gitian.zip ../../../
 	popd
-	./bin/gbuild --commit qcoin=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian-win32.yml
+	./bin/gbuild --commit PLM=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian-win32.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION}-win32 --destination ../gitian.sigs/ ../qcoin/contrib/gitian-descriptors/gitian-win32.yml
 	pushd build/out
-	zip -r qcoin-${VERSION}-win32-gitian.zip *
-	mv qcoin-${VERSION}-win32-gitian.zip ../../../
+	zip -r PLM-${VERSION}-win32-gitian.zip *
+	mv PLM-${VERSION}-win32-gitian.zip ../../../
 	popd
 	popd
 
   Build output expected:
 
-  1. linux 32-bit and 64-bit binaries + source (qcoin-${VERSION}-linux-gitian.zip)
-  2. windows 32-bit binary, installer + source (qcoin-${VERSION}-win32-gitian.zip)
+  1. linux 32-bit and 64-bit binaries + source (PLM-${VERSION}-linux-gitian.zip)
+  2. windows 32-bit binary, installer + source (PLM-${VERSION}-win32-gitian.zip)
   3. Gitian signatures (in gitian.sigs/${VERSION}[-win32]/(your gitian key)/
 
 repackage gitian builds for release as stand-alone zip/tar/installer exe
 
 **Linux .tar.gz:**
 
-	unzip qcoin-${VERSION}-linux-gitian.zip -d qcoin-${VERSION}-linux
-	tar czvf qcoin-${VERSION}-linux.tar.gz qcoin-${VERSION}-linux
-	rm -rf qcoin-${VERSION}-linux
+	unzip PLM-${VERSION}-linux-gitian.zip -d PLM-${VERSION}-linux
+	tar czvf PLM-${VERSION}-linux.tar.gz PLM-${VERSION}-linux
+	rm -rf PLM-${VERSION}-linux
 
 **Windows .zip and setup.exe:**
 
-	unzip qcoin-${VERSION}-win32-gitian.zip -d qcoin-${VERSION}-win32
-	mv qcoin-${VERSION}-win32/qcoin-*-setup.exe .
-	zip -r qcoin-${VERSION}-win32.zip qcoin-${VERSION}-win32
-	rm -rf qcoin-${VERSION}-win32
+	unzip PLM-${VERSION}-win32-gitian.zip -d PLM-${VERSION}-win32
+	mv PLM-${VERSION}-win32/PLM-*-setup.exe .
+	zip -r PLM-${VERSION}-win32.zip PLM-${VERSION}-win32
+	rm -rf PLM-${VERSION}-win32
 
 **Perform Mac build:**
 
   OSX binaries are created by Gavin Andresen on a 32-bit, OSX 10.6 machine.
 
-	qmake RELEASE=1 USE_UPNP=1 USE_QRCODE=1 qcoin-qt.pro
+	qmake RELEASE=1 USE_UPNP=1 USE_QRCODE=1 Q-Qt.pro
 	make
 	export QTDIR=/opt/local/share/qt4  # needed to find translations/qt_*.qm files
 	T=$(contrib/qt_translations.py $QTDIR/translations src/qt/locale)
 	python2.7 share/qt/clean_mac_info_plist.py
-	python2.7 contrib/macdeploy/macdeployqtplus Qcoin-Qt.app -add-qt-tr $T -dmg -fancy contrib/macdeploy/fancy.plist
+	python2.7 contrib/macdeploy/macdeployqtplus Q-Qt.app -add-qt-tr $T -dmg -fancy contrib/macdeploy/fancy.plist
 
- Build output expected: Qcoin-Qt.dmg
+ Build output expected: Q-Qt.dmg
 
 ###Next steps:
 
 * Code-sign Windows -setup.exe (in a Windows virtual machine) and
-  OSX Qcoin-Qt.app (Note: only Gavin has the code-signing keys currently)
+  OSX Q-Qt.app (Note: only Gavin has the code-signing keys currently)
 
 * upload builds to SourceForge
 
 * create SHA256SUMS for builds, and PGP-sign it
 
-* update qcoin.org version
+* update q-coin.org version
   make sure all OS download links go to the right versions
-
-* update forum version
-
-* update wiki download links
-
-* update wiki changelog: [https://en.qcoin.it/wiki/Changelog](https://en.qcoin.it/wiki/Changelog)
 
 Commit your signature to gitian.sigs:
 
@@ -133,32 +127,32 @@ Commit your signature to gitian.sigs:
 
 ### After 3 or more people have gitian-built, repackage gitian-signed zips:
 
-From a directory containing qcoin source, gitian.sigs and gitian zips
+From a directory containing PLM source, gitian.sigs and gitian zips
 
 	export VERSION=0.5.1
-	mkdir qcoin-${VERSION}-linux-gitian
-	pushd qcoin-${VERSION}-linux-gitian
-	unzip ../qcoin-${VERSION}-linux-gitian.zip
+	mkdir PLM-${VERSION}-linux-gitian
+	pushd PLM-${VERSION}-linux-gitian
+	unzip ../PLM-${VERSION}-linux-gitian.zip
 	mkdir gitian
 	cp ../qcoin/contrib/gitian-downloader/*.pgp ./gitian/
 	for signer in $(ls ../gitian.sigs/${VERSION}/); do
-	 cp ../gitian.sigs/${VERSION}/${signer}/qcoin-build.assert ./gitian/${signer}-build.assert
-	 cp ../gitian.sigs/${VERSION}/${signer}/qcoin-build.assert.sig ./gitian/${signer}-build.assert.sig
+	 cp ../gitian.sigs/${VERSION}/${signer}/PLM-build.assert ./gitian/${signer}-build.assert
+	 cp ../gitian.sigs/${VERSION}/${signer}/PLM-build.assert.sig ./gitian/${signer}-build.assert.sig
 	done
-	zip -r qcoin-${VERSION}-linux-gitian.zip *
-	cp qcoin-${VERSION}-linux-gitian.zip ../
+	zip -r PLM-${VERSION}-linux-gitian.zip *
+	cp PLM-${VERSION}-linux-gitian.zip ../
 	popd
-	mkdir qcoin-${VERSION}-win32-gitian
-	pushd qcoin-${VERSION}-win32-gitian
-	unzip ../qcoin-${VERSION}-win32-gitian.zip
+	mkdir PLM-${VERSION}-win32-gitian
+	pushd PLM-${VERSION}-win32-gitian
+	unzip ../PLM-${VERSION}-win32-gitian.zip
 	mkdir gitian
 	cp ../qcoin/contrib/gitian-downloader/*.pgp ./gitian/
 	for signer in $(ls ../gitian.sigs/${VERSION}-win32/); do
-	 cp ../gitian.sigs/${VERSION}-win32/${signer}/qcoin-build.assert ./gitian/${signer}-build.assert
-	 cp ../gitian.sigs/${VERSION}-win32/${signer}/qcoin-build.assert.sig ./gitian/${signer}-build.assert.sig
+	 cp ../gitian.sigs/${VERSION}-win32/${signer}/PLM-build.assert ./gitian/${signer}-build.assert
+	 cp ../gitian.sigs/${VERSION}-win32/${signer}/PLM-build.assert.sig ./gitian/${signer}-build.assert.sig
 	done
-	zip -r qcoin-${VERSION}-win32-gitian.zip *
-	cp qcoin-${VERSION}-win32-gitian.zip ../
+	zip -r PLM-${VERSION}-win32-gitian.zip *
+	cp PLM-${VERSION}-win32-gitian.zip ../
 	popd
 
 - Upload gitian zips to SourceForge
