@@ -217,7 +217,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
     }
 
     // Add addresses / update labels that we've sent to to the address book
-    foreach(const SendCoinsRecipient &rcp, recipients)
+    /*foreach(const SendCoinsRecipient &rcp, recipients)
     {
         std::string strAddress = rcp.address.toStdString();
         CTxDestination dest = CQcoinAddress(strAddress).Get();
@@ -233,7 +233,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
                 wallet->SetAddressBookName(dest, strLabel);
             }
         }
-    }
+    }*/
 
     SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
     return ret;
@@ -323,7 +323,7 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
     }
 
     // Add addresses / update labels that we've sent to to the address book
-    foreach(const SendCoinsRecipient &rcp, recipients)
+    /*foreach(const SendCoinsRecipient &rcp, recipients)
     {
         std::string strAddress = rcp.address.toStdString();
         CTxDestination dest = CQcoinAddress(strAddress).Get();
@@ -339,7 +339,7 @@ WalletModel::SendCoinsReturn WalletModel::changePubKey(const QList<SendCoinsReci
                 wallet->SetAddressBookName(dest, strLabel);
             }
         }
-    }
+    }*/
     SendCoinsReturn ret = SendCoinsReturn(OK, 0, hex);
     return ret;
 }
