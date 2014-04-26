@@ -1,15 +1,9 @@
 Marka Polska (former Q-coin) will start at 20/4/2014 21:00:00
 
-Compiled wallet is available 
-
-32 bit: https://github.com/wonabru/Q/blob/master/Release_32/PLM
-
-64 bit: https://github.com/wonabru/Q/blob/master/Release_64/PLM
-
 To download source and compiled version:
 
 	sudo apt-get install git -y
-	git clone https://github.com/wonabru/Q
+	git clone https://github.com/wonabru/qcoin
 
 http://www.q-coin.org
 
@@ -54,7 +48,7 @@ Licenses of statically linked libraries:
 -  GCC           4.3.3
 -  OpenSSL       1.0.1c
 -  Berkeley DB   4.8.30.NC
--  Boost         1.37
+-  Boost         1.50
 -  miniupnpc     1.6
 
 Dependency Build Instructions: Ubuntu & Debian
@@ -147,11 +141,39 @@ Building
 	qtcreator Q-qt.pro
 	[Build -> Rebuild All]
 
+Running program
+-----
+
+Goto catalog qcoin/Release_64/ or qcoin/Release_32/
+or qcoin/Debug_64/ or qcoin/Debug_32/
+
+	./PLM
+
+Recovering wallet
+-----
+
+If for longer time nothing happens kill process ./PLM
+Goto catalog qcoin/Release_64/ or qcoin/Release_32/
+or qcoin/Debug_64/ or qcoin/Debug_32/
+
+	./restart.sh
+
+In ~/.PLMBackup is backup your waller myq.dat
+
+If it appears error: 'Salvage fails' do not panic just do:
+Find your walllet myq.dat it should be in ~/.PLMBackup or in ~/.PLM/wallet.*.bak then to recover wallet:
+
+	/usr/local/BerkeleyDB.4.8/bin/db_dump myq.dat > dump.txt
+	/usr/local/BerkeleyDB.4.8/bin/db_load myqload.dat < dump.txt
+	mkdir backup
+	cp -rf myq.dat backup/
+	cp -rf myqload.dat myq.dat
+	./PLM -afterremoveblocks=1	
 
 Gittian Build (Windows, Linux and OSX installers building)
 -----
 
-Please look at: https://github.com/wonabru/Q/qcoin/doc/gitian-building.md
+Please look at: https://github.com/wonabru/qcoin/blob/master/doc/gitian-building.md
 
 
 
