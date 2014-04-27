@@ -797,6 +797,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
     int ret = 0;
     if(pindexStart == pindexGenesisBlock)
     {
+        mapBlockIndex.clear();
         this->eraseNameBookRegistered();
     }
     CBlockIndex* pindex = pindexStart;

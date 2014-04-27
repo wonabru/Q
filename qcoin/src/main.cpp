@@ -2394,7 +2394,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 {
     // Check for duplicate
     uint256 hash = pblock->GetHash();
-    if(rescaningonly == false)
+    if(synchronizingComplete == true)
     {
         if (mapBlockIndex.count(hash))
             return state.Invalid(error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString().c_str()));

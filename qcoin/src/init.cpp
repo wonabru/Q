@@ -461,6 +461,7 @@ void rescan(CWallet *wallet, CBlockIndex* pindexBest, CBlockIndex* pindexGenesis
   //  nStart = GetTimeMillis();
   //  static CBlockIndex* lastblockvisited = pindexGenesisBlock;
     rescaningonly = true;
+
     wallet->ScanForWalletTransactions(pindexGenesisBlock, true);
   //  logPrint(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
     wallet->SetBestChain(CBlockLocator(pindexBest));
