@@ -2162,9 +2162,11 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 {
     // Check for duplicate
     uint256 hash = GetHash();
+    if(synchronizingComplete == true)
+    {
     if (mapBlockIndex.count(hash))
         return state.Invalid(error("AcceptBlock() : block already in mapBlockIndex"));
-
+    }
 
     if(pwalletMain->isNameRegistered(GetBlockName()) == true)
         return state.DoS(100, error("AcceptBlock() : name of block just in the network"));
