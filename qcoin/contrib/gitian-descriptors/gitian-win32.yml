@@ -1,9 +1,9 @@
 ---
-name: "qcoin"
+name: "PLM"
 suites:
 - "precise"
 architectures:
-- "amd64"
+- "i386"
 packages:
 - "mingw32"
 - "git-core"
@@ -15,8 +15,8 @@ remotes: []
 files:
 - "qt-win32-4.8.3-gitian-r1.zip"
 - "boost-win32-1.50.0-gitian2.zip"
-- "qcoin-deps-0.0.1.zip"
-- "qcoin.zip"
+- "PLM-deps-0.0.5.zip"
+- "PLM.zip"
 script: |
   #
   mkdir $HOME/qt
@@ -38,7 +38,7 @@ script: |
   mv include/boost .
   cd ..
   #
-  unzip qcoin.zip
+  unzip PLM.zip
   #
   find -type f | xargs touch --date="$REFERENCE_DATETIME"
   #
@@ -52,13 +52,13 @@ script: |
   export TZ=UTC
   $HOME/qt/src/bin/qmake -spec unsupported/win32-g++-cross MINIUPNPC_LIB_PATH=$HOME/build/miniupnpc MINIUPNPC_INCLUDE_PATH=$HOME/build/ BDB_LIB_PATH=$HOME/build/db-4.8.30.NC/build_unix BDB_INCLUDE_PATH=$HOME/build/db-4.8.30.NC/build_unix BOOST_LIB_PATH=$HOME/build/boost_1_50_0/stage/lib BOOST_INCLUDE_PATH=$HOME/build/boost_1_50_0 BOOST_LIB_SUFFIX=-mt-s BOOST_THREAD_LIB_SUFFIX=_win32-mt-s OPENSSL_LIB_PATH=$HOME/build/openssl-1.0.1c OPENSSL_INCLUDE_PATH=$HOME/build/openssl-1.0.1c/include QRENCODE_LIB_PATH=$HOME/build/qrencode-3.2.0/.libs QRENCODE_INCLUDE_PATH=$HOME/build/qrencode-3.2.0 USE_QRCODE=1 INCLUDEPATH=$HOME/build DEFINES=BOOST_THREAD_USE_LIB BITCOIN_NEED_QT_PLUGINS=1 QMAKE_LRELEASE=lrelease QMAKE_CXXFLAGS=-frandom-seed=bitcoin USE_BUILD_INFO=1
   make $MAKEOPTS
-  cp release/Q-qt.exe $OUTDIR/
+  cp release/PLM.exe $OUTDIR/
   #
   cd src
   export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
   export FAKETIME=$REFERENCE_DATETIME
   export TZ=UTC
-  make -f makefile.linux-mingw $MAKEOPTS DEPSDIR=$HOME/build qcoind.exe USE_UPNP=0 DEBUGFLAGS="-frandom-seed=bitcoin"
+  make -f makefile.linux-mingw $MAKEOPTS DEPSDIR=$HOME/build PLM.exe USE_UPNP=0 DEBUGFLAGS="-frandom-seed=bitcoin"
   i586-mingw32msvc-strip qcoind.exe
   mkdir $OUTDIR/daemon
   cp qcoind.exe $OUTDIR/daemon
@@ -69,4 +69,4 @@ script: |
   cp ../../release/* ../release/
   cp ../../src/*.exe .
   makensis ../share/setup.nsi
-  cp ../share/qcoin-*-win32-setup.exe $OUTDIR/
+  cp ../share/PLM-*-win32-setup.exe $OUTDIR/

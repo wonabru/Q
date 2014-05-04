@@ -241,6 +241,8 @@ Then set up LXC and the rest with the following is a complex jumble of settings 
 # the version of lxc-start in Debian 7.4 needs to run as root, so make sure
 # that the build script can exectute it without providing a password
 echo "%sudo ALL=NOPASSWD: /usr/bin/lxc-start" > /etc/sudoers.d/gitian-lxc
+echo "%sudo ALL=NOPASSWD" >> /etc/sudoers
+echo "%sudo ALL=NOPASSWD: /usr/bin/lxc-start" >> /etc/sudoers
 # add cgroup for LXC
 echo "cgroup  /sys/fs/cgroup  cgroup  defaults  0   0" >> /etc/fstab
 # make /etc/rc.local script that sets up bridge between guest and host
@@ -283,8 +285,7 @@ Clone the git repositories for bitcoin and gitian,
 
 ```bash
 git clone https://github.com/devrandom/gitian-builder.git
-git clone https://github.com/wonabru/Q
-mv Q/coin .
+git clone https://github.com/wonabru/qcoin
 ```
 
 Setting up gitian images

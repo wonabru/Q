@@ -39,11 +39,33 @@ Release Process
 	wget 'http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.6.tar.gz' -O miniupnpc-1.6.tar.gz
 	wget 'http://www.openssl.org/source/openssl-1.0.1c.tar.gz'
 	wget 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
-	wget 'http://zlib.net/zlib-1.2.8.tar.gz'
-	wget 'ftp://ftp.simplesystems.org/pub/png/src/history/libpng16/libpng-1.6.8.tar.gz'
+	wget 'http://cocotron-tools-gpl3.googlecode.com/files/w32api-3.13-mingw32-dev.tar.gz'
+	wget 'ftp://ftp.simplesystems.org/pub/libpng/png/src/history/zlib/zlib-1.2.6.tar.gz'
+	wget 'ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng15/libpng-1.5.9.tar.gz'
 	wget 'http://fukuchi.org/works/qrencode/qrencode-3.2.0.tar.bz2'
 	wget 'http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_1_50_0.tar.bz2'
 	wget 'http://download.qt-project.org/archive/qt/4.8/4.8.3/qt-everywhere-opensource-src-4.8.3.tar.gz'
+	wget http://sourceforge.net/projects/mingw-w64/files/Toolchain%20sources/Automated%20Builds/mingw-w64-src_20140501.tar.bz2/download
+
+One have to change Makefile.mingw for miniupnpc
+
+	cd inputs
+	tar xfz miniupnpc-1.6.tar.gz
+	cd miniupnpc-1.6
+	pico Makefile.mingw
+	
+	find:
+	CC = gcc
+
+	replace with:
+	CC = i686-w64-mingw32-gcc
+
+	save.
+	cc ..
+	rm -rf miniupnpc-1.6.tar.gz
+	tar xfc miniupnpc-1.6.tar.gz miniupnpc-1.6
+	cd ..
+
 	cd ..
 	./bin/gbuild ../qcoin/contrib/gitian-descriptors/boost-win32.yml
 	mv build/out/boost-win32-1.50.0-gitian2.zip inputs/
