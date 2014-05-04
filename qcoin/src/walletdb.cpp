@@ -233,6 +233,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             string strAddress;
             ssKey >> strAddress;
             ssValue >> pwallet->mapNamesBook[CQcoinAddress(strAddress).Get()];
+            pwallet->mapNamesOnly[pwallet->mapNamesBook[CQcoinAddress(strAddress).Get()]] = true;
         }
         else
         if (strType == "nameBlockNot")

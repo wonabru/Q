@@ -117,6 +117,7 @@ public:
 
     std::map<CTxDestination, std::string> mapAddressBook;
     std::map<CTxDestination, std::string> mapNamesBook;
+    std::map<std::string,bool> mapNamesOnly;
     std::map<CTxDestination, std::string> mapNamesBookDoNotRegister;
 
     CPubKey vchDefaultKey;

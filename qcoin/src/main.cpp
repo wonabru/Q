@@ -2167,17 +2167,17 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
     if (mapBlockIndex.count(hash))
         return state.Invalid(error("AcceptBlock() : block already in mapBlockIndex"));
     }
-
+  //  printf("5a\n");
     if(pwalletMain->isNameRegistered(GetBlockName()) == true)
-        return state.DoS(100, error("AcceptBlock() : name of block just in the network"));
-
+        return error("AcceptBlock() : name of block just in the network");
+   // printf("5b\n");
     // Get prev block index
     CBlockIndex* pindexPrev = NULL;
     int nHeight = 0;
     if (hash != hashGenesisBlock) {
         map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashPrevBlock);
         if (mi == mapBlockIndex.end())
-            return state.DoS(10, error("AcceptBlock() : prev block not found"));
+            return state.DoS(10, warning("AcceptBlock() : prev block not found"));
         pindexPrev = (*mi).second;
         nHeight = pindexPrev->nHeight+1;
 
@@ -2303,7 +2303,7 @@ void reconnection()
 
 int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
-    logPrint("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
+   // printf("8ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
@@ -2319,7 +2319,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
               ret = 1;
     }
     std::string names = printNamesInQNetwork();
-    logPrint("%s\n New name accepted\n",names.c_str());
+  //  printf("9 %s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
 
     BOOST_FOREACH(const CTransaction& vtx, tx)
@@ -2373,10 +2373,11 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
             }
         }
     }
-
+  //  printf("10\n");
 
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
+  //  printf("11\n");
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         AddressTableModel atm(pwalletMain);
@@ -2395,6 +2396,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     // Check for duplicate
+  //  printf("2\n");
     uint256 hash = pblock->GetHash();
     if(synchronizingComplete == true)
     {
@@ -2424,10 +2426,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             return state.DoS(100, error("ProcessBlock() : block with too little proof-of-work"));
         }
     }
+   // printf("3\n");
     // If we don't already have its previous block, shunt it off to holding area until we get it
-    if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock))
+    if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock) && (pblock->GetHash() != hashGenesisBlock))
     {
-        logPrint("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().c_str());
+    //    printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().c_str());
 
         // Accept orphans as long as there is a node to request its parents from
         if (pfrom) {
@@ -2440,7 +2443,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         return true;
     }
-
+ //   printf("4\n");
     // Recursively process any orphan blocks that depended on this one
     vector<uint256> vWorkQueue;
     vWorkQueue.push_back(hash);
@@ -2461,10 +2464,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
+   // printf("5\n");
     // Store to disk
     if (!pblock->AcceptBlock(state, dbp))
         return error("ProcessBlock() : AcceptBlock FAILED");
-
+  //  printf("6\n");
     int ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
     if(ret == 1)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
@@ -2478,6 +2482,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     CQcoinAddress addr((CKeyID)pblock->namePubKey);
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(addr.Get());
     pwalletMain->NotifyAddressBookChanged(pwalletMain, addr.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, addr.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+ //   printf("20\n");
     return true;
 }
 
@@ -4386,12 +4391,9 @@ bool isNameInQNetwork(CScript pubKey)
 {
     CQcoinAddress address(pubKey.GetKeyID());
     std::string strName = address.ToString();
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapNamesBook)
-    {
-        const std::string name = CQcoinAddress(item.first).ToString();
-        if(name == strName)
+    std::map<std::string, bool>::iterator it=pwalletMain->mapNamesOnly.find(strName);
+    if(it != pwalletMain->mapNamesOnly.end())
                 return true;
-    }
     return false;
 }
 

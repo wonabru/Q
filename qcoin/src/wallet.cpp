@@ -1652,16 +1652,13 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     return ret;
 }
 
-bool CWallet::isNameRegistered(const std::string name)
+bool CWallet::isNameRegistered(const std::string strName)
 {
     {
         LOCK(this->cs_wallet);
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
-    {
-        const std::string nameIs = item.second;
-        if(nameIs == name)
-            return true;
-    }
+        std::map<std::string, bool>::iterator it=mapNamesOnly.find(strName);
+        if(it != mapNamesOnly.end())
+                    return true;
     }
     return false;
 }
@@ -1689,24 +1686,20 @@ bool CWallet::SetNameBookRegistered(const CTxDestination& address, const string&
     bool ret = true;
     {
            LOCK(this->cs_wallet);
-
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapNamesBook)
-    {
-        const std::string nameIs = item.second;
-        if(nameIs == strName)
-            if(ato < 3)
-                return false;
-    }
+           std::map<std::string, bool>::iterator it=mapNamesOnly.find(strName);
+           if(it != mapNamesOnly.end())
+                   if(ato < 3)
+                       return false;
     std::map<CTxDestination, std::string>::iterator mi = mapNamesBookDoNotRegister.find(address);
     if(mi != mapNamesBookDoNotRegister.end())
         eraseNameDoNotRegister(address);
-
 
     ret = CWalletDB(strWalletFile).WriteNameBlock(CQcoinAddress(address).ToString(), strName);
     SetAddressBookName(address,strName,ato);
     try
     {
             mapNamesBook[address] = strName;
+            mapNamesOnly[strName] = true;
     }
     catch(...)
     {
@@ -1756,6 +1749,10 @@ bool CWallet::eraseName(const CTxDestination& address)
     try
     {
         mapNamesBook.erase(address);
+        std::string nn = CQcoinAddress(address).ToString();
+        std::map<std::string, bool>::iterator it=mapNamesOnly.find(nn);
+        if(it != mapNamesOnly.end())
+                mapNamesOnly.erase(it);
     }
     catch(...)
     {
