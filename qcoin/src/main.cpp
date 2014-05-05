@@ -2167,10 +2167,6 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
     if (mapBlockIndex.count(hash))
         return state.Invalid(error("AcceptBlock() : block already in mapBlockIndex"));
     }
-  //  printf("5a\n");
-    if(pwalletMain->isNameRegistered(GetBlockName()) == true)
-        return error("AcceptBlock() : name of block just in the network");
-   // printf("5b\n");
     // Get prev block index
     CBlockIndex* pindexPrev = NULL;
     int nHeight = 0;
@@ -2401,7 +2397,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     if(synchronizingComplete == true)
     {
         if (mapBlockIndex.count(hash))
-            return state.Invalid(error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString().c_str()));
+            return state.Invalid(warning("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString().c_str()));
         if (mapOrphanBlocks.count(hash))
             return state.Invalid(error("ProcessBlock() : already have block (orphan) %s", hash.ToString().c_str()));
     }
@@ -2428,9 +2424,9 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
    // printf("3\n");
     // If we don't already have its previous block, shunt it off to holding area until we get it
-    if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock) && (pblock->GetHash() != hashGenesisBlock))
+    if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock) && (pblock->hashPrevBlock != hashGenesisBlock))
     {
-    //    printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().c_str());
+        warning("ProcessBlock: ORPHAN BLOCK, prev=%s. If this warning appears too many times, please close application and run it again.\n", pblock->hashPrevBlock.ToString().c_str());
 
         // Accept orphans as long as there is a node to request its parents from
         if (pfrom) {
@@ -2467,11 +2463,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
    // printf("5\n");
     // Store to disk
     if (!pblock->AcceptBlock(state, dbp))
-        return error("ProcessBlock() : AcceptBlock FAILED");
+        return warning("ProcessBlock() : AcceptBlock FAILED. If this warning appears too many times, please close application and run it again.");
   //  printf("6\n");
     int ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
     if(ret == 1)
-        return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in netowrk");
+        return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in network");
     if(ret == 2)
         return error("ProcessBlock() : AcceptBlock FAILED. Payout is not to accounts in network");
     if(ret == 3)
@@ -2990,12 +2986,13 @@ bool InitBlockIndex() {
             CValidationState state;
             if (!FindBlockPos(state, blockPos, nBlockSize+8, 0, block.nTime))
                 return error("LoadBlockIndex() : FindBlockPos failed");
+            if(acceptNameInQNetwork(state, NULL, &block, &blockPos)!=0)
+                warning("acceptNameInQNetwork() : genesis block");
             if (!block.WriteToDisk(blockPos))
                 return error("LoadBlockIndex() : writing genesis block to disk failed");
             if (!block.AddToBlockIndex(state, blockPos))
                 return error("LoadBlockIndex() : genesis block not accepted");
-            if(acceptNameInQNetwork(state, NULL, &block, &blockPos)!=0)
-                return error("acceptNameInQNetwork() : genesis block not accepted");
+
         } catch(std::runtime_error &e) {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());
         }

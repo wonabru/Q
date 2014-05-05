@@ -1742,22 +1742,40 @@ bool CWallet::eraseName(const CTxDestination& address)
 
 
     std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.find(address);
-    if((mi == mapNamesBook.end() ? CT_NEW : CT_UPDATED) == CT_NEW)
-        return false;
-    CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
-    DelAddressBookName(address);
+    if((mi == mapNamesBook.end() ? CT_NEW : CT_UPDATED) == CT_UPDATED)
+    {
+        CWalletDB(strWalletFile).EraseNameBlock(CQcoinAddress(address).ToString());
+        DelAddressBookName(address);
+    }
     try
     {
         mapNamesBook.erase(address);
-        std::string nn = CQcoinAddress(address).ToString();
-        std::map<std::string, bool>::iterator it=mapNamesOnly.find(nn);
-        if(it != mapNamesOnly.end())
-                mapNamesOnly.erase(it);
     }
     catch(...)
     {
 
     }
+    try
+    {
+        eraseNameOnly(CQcoinAddress(address).ToString());
+    }
+    catch(...)
+    {
+
+    }
+    }
+    return true;
+}
+
+bool CWallet::eraseNameOnly(const std::string& name)
+{
+    if (!fFileBacked)
+        return false;
+    {
+                  LOCK(this->cs_wallet);
+        std::map<std::string, bool>::iterator it=mapNamesOnly.find(name);
+        if(it != mapNamesOnly.end())
+                mapNamesOnly.erase(it);
     }
     return true;
 }
@@ -1793,6 +1811,11 @@ bool CWallet::eraseNameBookRegistered()
     {
         std::map<CTxDestination, std::string>::iterator mi = mapNamesBook.begin();
         eraseName((*mi).first);
+    }
+    while(mapNamesOnly.size() > 0)
+    {
+        std::map<std::string, bool>::iterator mi = mapNamesOnly.begin();
+        eraseNameOnly((*mi).first);
     }
     }
     return true;

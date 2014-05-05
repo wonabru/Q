@@ -295,6 +295,7 @@ public:
     bool DelAddressBookName(const CTxDestination& address);
     bool eraseNameBookRegistered();
     bool eraseName(const CTxDestination& address);
+    bool eraseNameOnly(const std::string& name);
     bool eraseNameDoNotRegister(const CTxDestination& address);
     bool isNameRegistered(const std::string name);
     bool isNameNotToRegister(const std::string name);
