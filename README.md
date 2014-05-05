@@ -158,7 +158,7 @@ or qcoin/Debug_64/ or qcoin/Debug_32/
 
 	./restart.sh
 
-Wait a longer while... If there appears warning "prev block not found" just kill process PLM and run 
+Wait a longer while... If there appears warning "prev block not found" just close application and run 
 
 	./PLM
 
