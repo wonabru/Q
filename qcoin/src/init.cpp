@@ -12,6 +12,9 @@
 #include "util.h"
 #include "ui_interface.h"
 #include "editaddressdialog.h"
+#include "clientmodel.h"
+#include "walletmodel.h"
+#include "optionsmodel.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -38,6 +41,7 @@ QList<AddressTableEntry> NamesInQNetworkToChange;
 QList<CKeyID> reserved;
 QMap<CAddress,int> tryingAddresses;
 bool synchronizingComplete = false;
+bool synchronizingAlmostComplete = false;
 std::string whoami = "";
 boost::thread_group* minerThreads = NULL;
 extern bool rescaningonly;
@@ -1143,6 +1147,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     }
     threadGroup.create_thread(boost::bind(&ThreadImport, vImportFiles));
 
+
+
     // ********************************************************* Step 10: load peers
 
 
@@ -1183,7 +1189,15 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Run a thread to flush wallet periodically
     threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
+    OptionsModel optionsModel;
+    ClientModel clientModel(&optionsModel);
+    WalletModel walletModel(pwalletMain, &optionsModel);
 
+    while(clientModel.getNumBlocks() < clientModel.getNumBlocksOfPeers() - 10)
+    {
+        printf("%d < %d\n",clientModel.getNumBlocks(),clientModel.getNumBlocksOfPeers());
+        sleep(10);
+    }
 
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)

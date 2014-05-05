@@ -21,6 +21,7 @@ extern QMap<CAddress,int> tryingAddresses;
 extern std::string whoami;
 const int mainNodesNumber=5;
 extern bool synchronizingComplete;
+extern bool synchronizingAlmostComplete;
 extern std::string mainNodes[mainNodesNumber];
 extern boost::thread_group* minerThreads;
 

@@ -2986,12 +2986,12 @@ bool InitBlockIndex() {
             CValidationState state;
             if (!FindBlockPos(state, blockPos, nBlockSize+8, 0, block.nTime))
                 return error("LoadBlockIndex() : FindBlockPos failed");
-            if(acceptNameInQNetwork(state, NULL, &block, &blockPos)!=0)
-                warning("acceptNameInQNetwork() : genesis block");
             if (!block.WriteToDisk(blockPos))
                 return error("LoadBlockIndex() : writing genesis block to disk failed");
             if (!block.AddToBlockIndex(state, blockPos))
                 return error("LoadBlockIndex() : genesis block not accepted");
+            if(acceptNameInQNetwork(state, NULL, &block, &blockPos)!=0)
+                warning("acceptNameInQNetwork() : genesis block");
 
         } catch(std::runtime_error &e) {
             return error("LoadBlockIndex() : failed to initialize block database: %s", e.what());

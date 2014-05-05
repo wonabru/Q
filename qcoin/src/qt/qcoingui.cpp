@@ -573,9 +573,15 @@ void QcoinGUI::setNumBlocks(int count, int nTotalBlocks)
     if(count >= nTotalBlocks)
     {
         synchronizingComplete = true;
+        synchronizingAlmostComplete = true;
+    }else if(count >= nTotalBlocks - 10)
+    {
+        synchronizingComplete = false;
+        synchronizingAlmostComplete = true;
     }else
     {
         synchronizingComplete = false;
+        synchronizingAlmostComplete = false;
     }
 
 

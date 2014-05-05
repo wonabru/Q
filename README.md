@@ -158,6 +158,10 @@ or qcoin/Debug_64/ or qcoin/Debug_32/
 
 	./restart.sh
 
+Wait a longer while... If there appears warning "prev block not found" just kill process PLM and run 
+
+	./PLM
+
 In ~/.PLMBackup is backup your waller myq.dat
 
 If it appears error: 'Salvage fails' do not panic just do:

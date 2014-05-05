@@ -244,6 +244,7 @@ int main(int argc, char *argv[])
         edg.setModal(true);
 
         window.setFocus();
+        QMessageBox::warning(guiref,QString("Wait for synchronization !"),"Synchronization with network is in progress. Please wait untill be informed ...", QMessageBox::Ok);
 
 
         if(AppInit2(threadGroup))
@@ -257,13 +258,12 @@ int main(int argc, char *argv[])
                 if (splashref)
                     splash.finish(&window);
 
-
+                QMessageBox::warning(guiref,QString("Synchronization complete!"),"Synchronization is complete :)", QMessageBox::Ok);
 
                 ClientModel clientModel(&optionsModel);
                 WalletModel walletModel(pwalletMain, &optionsModel);
 
                 clientModel.formatClientStartupTime();
-
                 window.setClientModel(&clientModel);
                 window.addWallet("~Default", &walletModel);
                 window.setCurrentWallet("~Default");
