@@ -1103,7 +1103,7 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
 }
 
 static const int64 nTargetTimespan = 150; // 2.5 min.
-static const int64 nTargetSpacing = 34560 * 5;// a 5 days
+static const int64 nTargetSpacing = 34560 * 5;// a 1 days
 static const int64 nInterval = nTargetSpacing / nTargetTimespan;
 
 //
@@ -1198,7 +1198,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
         nActualTimespan = nTargetTimespan*4;
 
     double multiplier = 1.0;
-    double powmult = log(nTargetTimespan / nActualTimespan) / log(2.0);
+    double powmult = log(nTargetTimespan * 1.0/ nActualTimespan) / log(2.0);
     if(powmult >= 1)
         multiplier = round(pow(2.0,powmult) / 2.0) * 2.0;
     else
