@@ -1208,7 +1208,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    if(pindexLast->nHeight == 1152)
+    if(pindexLast->nHeight == 1151)
     {
         bnNew.SetCompact((uint128)efff1152.c_str());
         return bnNew.GetCompact();
