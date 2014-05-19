@@ -1207,6 +1207,11 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
+    if(pindexLast->nHeight == 1152)
+    {
+        bnNew *= 2;
+        return bnNew.GetCompact();
+    }
     if(multiplier >= 1)
         bnNew *= (int)multiplier;
     else
@@ -1220,6 +1225,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     logPrint("nTargetTimespan = %"PRI64d"    nActualTimespan = %"PRI64d"\n", nTargetTimespan, nActualTimespan);
     logPrint("Before: %08llu  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
     logPrint("After:  %08llu  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+
 
     return bnNew.GetCompact();
 }
