@@ -48,6 +48,7 @@ unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
 std::string efff = "00000000000000000000000001ffffff";
+std::string efff1152 = "00000000000000000000000003fffffe";
 uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
 static CBigNum bnProofOfWorkLimit = 0xffffffffffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
@@ -1209,7 +1210,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     bnNew.SetCompact(pindexLast->nBits);
     if(pindexLast->nHeight == 1152)
     {
-        bnNew *= 2;
+        bnNew.SetCompact((uint128)efff1152.c_str());
         return bnNew.GetCompact();
     }
     if(multiplier >= 1)
