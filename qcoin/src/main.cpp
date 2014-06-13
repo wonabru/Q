@@ -49,6 +49,8 @@ unsigned int nTransactionsUpdated = 0;
 map<uint256, CBlockIndex*> mapBlockIndex;
 std::string efff = "00000000000000000000000001ffffff";
 std::string efff1152 = "00000000000000000000000003fffffe";
+std::string ffff2304 = "000000000000000001ffffff00000000";
+std::string ffff3456 = "00000000000000000000000000ffffff";
 uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
 static CBigNum bnProofOfWorkLimit = 0xffffffffffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
@@ -1155,7 +1157,7 @@ unsigned int ComputeMinWork(uint128 nBase, int64 nTime)
 
 uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
 {
-    uint64 nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
+    uint128 nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
     // Genesis block
     if (pindexLast == NULL)
@@ -1189,16 +1191,55 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     for (int i = 0; pindexFirst && i < nInterval-1; i++)
         pindexFirst = pindexFirst->pprev;
     assert(pindexFirst);
-
+    CBigNum bnNew;
+    if(pindexLast->nHeight == 1151)
+    {
+        bnNew.SetCompact((uint128)efff1152.c_str());
+        return bnNew.GetCompact();
+    }else     if(pindexLast->nHeight == 2303)
+    {
+        bnNew.SetCompact((uint128)ffff2304.c_str());
+        return bnNew.GetCompact();
+    }else     if(pindexLast->nHeight == 3455)
+    {
+        bnNew.SetCompact((uint128)ffff3456.c_str());
+        return bnNew.GetCompact();
+    }
     // Limit adjustment step
     int64 nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
+    uint128 currentWork = pindexLast->nBits;
     logPrint("  nActualTimespan = %"PRI64d"  before bounds\n", nActualTimespan);
-    if (nActualTimespan < nTargetTimespan/4)
-        nActualTimespan = nTargetTimespan/4;
-    if (nActualTimespan > nTargetTimespan*4)
-        nActualTimespan = nTargetTimespan*4;
+    if (nActualTimespan < nTargetTimespan/2)
+    {
+        if(nActualTimespan < nTargetTimespan/4)
+        {
+            nActualTimespan = nTargetTimespan/4;
+            currentWork >> 2;
 
-    double multiplier = 1.0;
+        }else{
+            nActualTimespan = nTargetTimespan/2;
+            currentWork >> 1;
+
+        }
+    }else
+    if (nActualTimespan > nTargetTimespan*2)
+    {
+        if (nActualTimespan > nTargetTimespan*4)
+        {
+            nActualTimespan = nTargetTimespan*4;
+            currentWork << 2;
+            currentWork = currentWork + 2;
+        }else{
+            nActualTimespan = nTargetTimespan*2;
+            currentWork << 1;
+            currentWork = currentWork + 1;
+        }
+    }else{
+        nActualTimespan = nTargetTimespan;
+    }
+
+    bnNew.SetCompact(currentWork);
+    /*double multiplier = 1.0;
     double powmult = log(nTargetTimespan * 1.0/ nActualTimespan) / log(2.0);
     if(powmult >= 1)
         multiplier = round(pow(2.0,powmult) / 2.0) * 2.0;
@@ -1208,11 +1249,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
-    if(pindexLast->nHeight == 1151)
-    {
-        bnNew.SetCompact((uint128)efff1152.c_str());
-        return bnNew.GetCompact();
-    }
+
     if(multiplier >= 1)
         bnNew *= (int)multiplier;
     else
@@ -1220,7 +1257,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
 
     if (bnNew > bnProofOfWorkLimit)
         bnNew = bnProofOfWorkLimit;
-
+*/
     /// debug print
     logPrint("GetNextWorkRequired RETARGET\n");
     logPrint("nTargetTimespan = %"PRI64d"    nActualTimespan = %"PRI64d"\n", nTargetTimespan, nActualTimespan);
@@ -1228,7 +1265,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     logPrint("After:  %08llu  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
 
 
-    return bnNew.GetCompact();
+    return currentWork;
 }
 
 uint128 ControlSum(uint256 hash)
@@ -2026,14 +2063,14 @@ bool FindBlockPos(CValidationState &state, CDiskBlockPos &pos, unsigned int nAdd
             fUpdatedLast = true;
         }
     } else {
-        while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
+      /*  while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
             logPrint("Leaving block file %i: %s\n", nLastBlockFile, infoLastBlockFile.ToString().c_str());
             FlushBlockFile(true);
             nLastBlockFile++;
             infoLastBlockFile.SetNull();
             pblocktree->ReadBlockFileInfo(nLastBlockFile, infoLastBlockFile); // check whether data for the new file somehow already exist; can fail just fine
             fUpdatedLast = true;
-        }
+        }*/
         pos.nFile = nLastBlockFile;
         pos.nPos = infoLastBlockFile.nSize;
     }
