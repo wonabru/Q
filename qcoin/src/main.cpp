@@ -2063,11 +2063,7 @@ bool FindBlockPos(CValidationState &state, CDiskBlockPos &pos, unsigned int nAdd
             fUpdatedLast = true;
         }
     } else {
-<<<<<<< HEAD
-      /*  while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
-=======
         /*while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
->>>>>>> fb1ddb80a6ef248785be0b51f8e309de05b1a8b2
             logPrint("Leaving block file %i: %s\n", nLastBlockFile, infoLastBlockFile.ToString().c_str());
             FlushBlockFile(true);
             nLastBlockFile++;
