@@ -2026,14 +2026,14 @@ bool FindBlockPos(CValidationState &state, CDiskBlockPos &pos, unsigned int nAdd
             fUpdatedLast = true;
         }
     } else {
-        while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
+        /*while (infoLastBlockFile.nSize + nAddSize >= MAX_BLOCKFILE_SIZE) {
             logPrint("Leaving block file %i: %s\n", nLastBlockFile, infoLastBlockFile.ToString().c_str());
             FlushBlockFile(true);
             nLastBlockFile++;
             infoLastBlockFile.SetNull();
             pblocktree->ReadBlockFileInfo(nLastBlockFile, infoLastBlockFile); // check whether data for the new file somehow already exist; can fail just fine
             fUpdatedLast = true;
-        }
+        }*/
         pos.nFile = nLastBlockFile;
         pos.nPos = infoLastBlockFile.nSize;
     }
