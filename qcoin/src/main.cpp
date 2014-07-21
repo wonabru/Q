@@ -31,6 +31,7 @@ using namespace json_spirit;
 std::string yourName = "";
 bool yourNameIsRegistered = false;
 bool rescaningonly = false;
+bool inProgressBlock = false;
 
 using namespace std;
 using namespace boost;
@@ -51,6 +52,8 @@ std::string efff = "00000000000000000000000001ffffff";
 std::string efff1152 = "00000000000000000000000003fffffe";
 std::string ffff2304 = "000000000000000001ffffff00000000";
 std::string ffff3456 = "00000000000000000000000000ffffff";
+std::string ffff4608 = "00000000000000000000000001000001";
+std::string ffff5760 = "00000000000000000000000000ffffff";
 uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
 static CBigNum bnProofOfWorkLimit = 0xffffffffffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
@@ -1204,6 +1207,14 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     {
         bnNew.SetCompact((uint128)ffff3456.c_str());
         return bnNew.GetCompact();
+    }else if(pindexLast->nHeight == 4607)
+    {
+        bnNew.SetCompact((uint128)ffff4608.c_str());
+        return bnNew.GetCompact();
+    }else if(pindexLast->nHeight == 5759)
+    {
+        bnNew.SetCompact((uint128)ffff5760.c_str());
+        return bnNew.GetCompact();
     }
     // Limit adjustment step
     int64 nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
@@ -1214,11 +1225,12 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
         if(nActualTimespan < nTargetTimespan/4)
         {
             nActualTimespan = nTargetTimespan/4;
-            currentWork >> 2;
+            currentWork = currentWork >> 1;
+            currentWork = currentWork >> 1;
 
         }else{
             nActualTimespan = nTargetTimespan/2;
-            currentWork >> 1;
+            currentWork = currentWork >> 1;
 
         }
     }else
@@ -1227,11 +1239,12 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
         if (nActualTimespan > nTargetTimespan*4)
         {
             nActualTimespan = nTargetTimespan*4;
-            currentWork << 2;
+            currentWork = currentWork << 1;
+            currentWork = currentWork << 1;
             currentWork = currentWork + 2;
         }else{
             nActualTimespan = nTargetTimespan*2;
-            currentWork << 1;
+            currentWork = currentWork << 1;
             currentWork = currentWork + 1;
         }
     }else{
@@ -2343,7 +2356,7 @@ void reconnection()
 
 int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
-   // printf("8ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
+   // printf("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
@@ -2437,6 +2450,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 {
     // Check for duplicate
   //  printf("2\n");
+    inProgressBlock = true;
     uint256 hash = pblock->GetHash();
     if(synchronizingComplete == true)
     {
@@ -2523,6 +2537,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(addr.Get());
     pwalletMain->NotifyAddressBookChanged(pwalletMain, addr.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, addr.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
  //   printf("20\n");
+    inProgressBlock = false;
     return true;
 }
 
@@ -3839,6 +3854,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         CInv inv(MSG_BLOCK, block.GetHash());
         pfrom->AddInventoryKnown(inv);
+
+        while(inProgressBlock == true)
+            sleep(1000);
 
         CValidationState state;
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
