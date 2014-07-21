@@ -1085,7 +1085,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     mainNodes[0] = "195.245.104.3";
     mainNodes[1] = "195.245.104.23";
     mainNodes[2] = "144.76.238.37";
-    mainNodes[3] = "95.108.108.83";
+    mainNodes[3] = "31.11.209.86";
     mainNodes[4] = "89.68.221.44";
 
     CAddress addr1;
