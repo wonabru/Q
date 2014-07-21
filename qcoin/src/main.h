@@ -99,7 +99,6 @@ extern unsigned int nCoinCacheSize;
 extern bool synchronizingComplete;
 void RestartMining();
 extern boost::thread_group* minerThreads;
-extern bool inProgressBlock;
 // Settings
 extern int64 nTransactionFee;
 

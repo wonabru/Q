@@ -31,7 +31,6 @@ using namespace json_spirit;
 std::string yourName = "";
 bool yourNameIsRegistered = false;
 bool rescaningonly = false;
-bool inProgressBlock = false;
 
 using namespace std;
 using namespace boost;
@@ -42,7 +41,7 @@ extern Value addnode(const Array& params, bool fHelp);
 //
 CCriticalSection cs_setpwalletRegistered;
 set<CWallet*> setpwalletRegistered;
-
+CCriticalSection cs_progressBlock;
 CCriticalSection cs_main;
 CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
@@ -2450,7 +2449,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
 {
     // Check for duplicate
   //  printf("2\n");
-    inProgressBlock = true;
+    {
+        LOCK(cs_progressBlock);
     uint256 hash = pblock->GetHash();
     if(synchronizingComplete == true)
     {
@@ -2537,7 +2537,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(addr.Get());
     pwalletMain->NotifyAddressBookChanged(pwalletMain, addr.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, addr.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
  //   printf("20\n");
-    inProgressBlock = false;
+    }
     return true;
 }
 
@@ -3854,9 +3854,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         CInv inv(MSG_BLOCK, block.GetHash());
         pfrom->AddInventoryKnown(inv);
-
-        while(inProgressBlock == true)
-            sleep(1000);
 
         CValidationState state;
         if (ProcessBlock(state, pfrom, &block) || state.CorruptionPossible())
