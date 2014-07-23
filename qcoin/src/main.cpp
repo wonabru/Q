@@ -2448,7 +2448,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     // Check for duplicate
-  //  printf("2\n");
+    printf("ProcessBlock\n");
     {
         LOCK(cs_progressBlock);
     uint256 hash = pblock->GetHash();
