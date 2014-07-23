@@ -813,8 +813,16 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                 {
                     LOCK(cs_main);
                     CValidationState state;
-                    if(acceptNameInQNetwork(state, NULL, &block) > 0)
-                        throw "Blocks are orphaned. No way to proceed";
+                    int ret = acceptNameInQNetwork(state, NULL, &block, NULL);
+                    if(ret == 1)
+                        error("ProcessBlock() : AcceptBlock FAILED. The block name exists in network");
+                    if(ret == 2)
+                        error("ProcessBlock() : AcceptBlock FAILED. Payout is not to accounts in network");
+                    if(ret == 3)
+                        error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
+                    if(ret > 3)
+                        error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
+
                     if (state.IsError())
                         throw "Error in block process!";
                 }
