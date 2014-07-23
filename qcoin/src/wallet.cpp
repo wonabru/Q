@@ -798,6 +798,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
     if(pindexStart == pindexGenesisBlock)
     {
         this->eraseNameBookRegistered();
+        this->eraseAddressBook();
     }
     CBlockIndex* pindex = pindexStart;
     {
@@ -1766,6 +1767,24 @@ bool CWallet::eraseName(const CTxDestination& address)
     return true;
 }
 
+bool CWallet::eraseAddress(const CTxDestination& address)
+{
+    if (!fFileBacked)
+        return false;
+    {
+                  LOCK(this->cs_wallet);
+
+
+
+    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
+    if((mi == mapAddressBook.end() ? CT_NEW : CT_UPDATED) == CT_UPDATED)
+    {
+        DelAddressBookName(address);
+    }
+    }
+    return true;
+}
+
 bool CWallet::eraseNameOnly(const std::string& name)
 {
     if (!fFileBacked)
@@ -1815,6 +1834,23 @@ bool CWallet::eraseNameBookRegistered()
     {
         std::map<std::string, bool>::iterator mi = mapNamesOnly.begin();
         eraseNameOnly((*mi).first);
+    }
+    }
+    return true;
+}
+
+bool CWallet::eraseAddressBook()
+{
+    if (!fFileBacked)
+        return false;
+    {
+                  LOCK(this->cs_wallet);
+
+
+    while(mapAddressBook.size() > 0)
+    {
+        std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.begin();
+        eraseAddress((*mi).first);
     }
     }
     return true;

@@ -295,12 +295,13 @@ public:
     bool DelAddressBookName(const CTxDestination& address);
     bool eraseNameBookRegistered();
     bool eraseName(const CTxDestination& address);
+    bool eraseAddress(const CTxDestination& address);
     bool eraseNameOnly(const std::string& name);
     bool eraseNameDoNotRegister(const CTxDestination& address);
     bool isNameRegistered(const std::string name);
     bool isNameNotToRegister(const std::string name);
     void UpdatedTransaction(const uint256 &hashTx);
-
+    bool eraseAddressBook();
     std::string GetName(CKeyID key);
     std::string GetNameAddressBook(CKeyID key);
     std::string GetDefaultName();
