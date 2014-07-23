@@ -822,7 +822,8 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
                         error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
                     if(ret > 3)
                         error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
-
+                    if(ret != 0)
+                        throw "ERROR: Read block.";
                     if (state.IsError())
                         throw "Error in block process!";
                 }

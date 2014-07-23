@@ -2373,20 +2373,22 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
     std::string names = printNamesInQNetwork();
   //  printf("9 %s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
-
+    int noVtx = 0;
     BOOST_FOREACH(const CTransaction& vtx, tx)
     {
-        BOOST_FOREACH(const CTxOut &vout, vtx.vout)
+        if(noVtx++ == 0)
         {
-            if(isNameInQNetwork(vout.scriptPubKey))
+            BOOST_FOREACH(const CTxOut &vout, vtx.vout)
             {
-                if(CQcoinAddress(vout.scriptPubKey.GetKeyID()).ToString() != address.ToString())
-                    ret = 2;
+                if(isNameInQNetwork(vout.scriptPubKey))
+                {
+                    if(CQcoinAddress(vout.scriptPubKey.GetKeyID()).ToString() != address.ToString())
+                        ret = 2;
+                }
+                if(vout.nValue != COIN)
+                    ret = 3;
             }
-            if(vout.nValue != COIN)
-               ret = 3;
         }
-
         bool isOK = false;
         if(vtx.vchn.size() > 0)
         {
