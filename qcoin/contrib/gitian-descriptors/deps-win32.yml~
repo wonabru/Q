@@ -6,7 +6,7 @@ architectures:
 - "i386"
 packages:
 - "pkg-config"
-- "mingw-w64"
+- "mingw32"
 - "git-core"
 - "zip"
 - "faketime"
@@ -53,7 +53,7 @@ script: |
   #
   tar xzf db-4.8.30.NC.tar.gz
   cd db-4.8.30.NC/build_unix
-  ../dist/configure --disable-replication --enable-mingw --enable-cxx --host=i686-w64-mingw32 
+  ../dist/configure --disable-replication --enable-mingw --enable-cxx --host=i686-w64-mingw32 --target=i686-w64-mingw32
   make $MAKEOPTS
   cd ../..
   #

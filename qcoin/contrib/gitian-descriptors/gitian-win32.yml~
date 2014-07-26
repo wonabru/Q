@@ -5,7 +5,8 @@ suites:
 architectures:
 - "amd64"
 packages:
-- "mingw32"
+- "mingw-w64"
+- "g++-mingw-w64"
 - "git-core"
 - "unzip"
 - "nsis"
