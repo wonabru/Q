@@ -642,7 +642,7 @@ public:
                     if(svch[i*8+j] == '9')
                         nn = 9;
 
-                    num[i] += pow(2,(7-j)*4)*nn;
+                    num[i] += pow((double)2,(double)((7-j)*4))*nn;
                 }
                 pn[3-i] = num[i];
                 }

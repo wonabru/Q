@@ -54,7 +54,7 @@ std::string ffff3456 = "00000000000000000000000000ffffff";
 std::string ffff4608 = "00000000000000000000000001000001";
 std::string ffff5760 = "00000000000000000000000000ffffff";
 uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
-static CBigNum bnProofOfWorkLimit = 0xffffffffffffffff;
+static CBigNum bnProofOfWorkLimit = 0xffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 uint256 nBestChainWork = 0;
@@ -4978,7 +4978,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         loop
         {
 
-            pblock->nNonce = (uint)random();
+            pblock->nNonce = (uint)(rand() * 1.0 * RAND_MAX);
 
             // Check if something found
             if (pblock->nNonce)

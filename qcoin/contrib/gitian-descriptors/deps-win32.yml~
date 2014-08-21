@@ -3,10 +3,11 @@ name: "PLM-deps"
 suites:
 - "precise"
 architectures:
-- "i386"
+- "amd64"
 packages:
 - "pkg-config"
-- "mingw32"
+- "mingw-w64"
+- "g++-mingw-w64"
 - "git-core"
 - "zip"
 - "faketime"

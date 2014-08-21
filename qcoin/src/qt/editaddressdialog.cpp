@@ -6,6 +6,7 @@
 #include "guiutil.h"
 #include "main.h"
 #include "base58.h"
+#include "util.h"
 
 #include <QDataWidgetMapper>
 #include <QMessageBox>

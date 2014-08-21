@@ -324,17 +324,7 @@ public:
         BN_set_word(this, nCompact.Get64());
         return *this;
     }
-    CBigNum& SetMax()
-    {
-        /*unsigned int nSize = nCompact >> 20;
-        bool fNegative     = (nCompact & 0x00000001) == 0;
-        unsigned int nWord = nCompact & 0x000fffff;
-        BN_set_word(this, nWord);
-        BN_lshift(this, this, nSize);
-        BN_set_negative(this, fNegative);*/
-        BN_set_word(this, (uint64)0xffffffffffffffff);
-        return *this;
-    }
+
     CBigNum& SetCompact(uint64 nCompact)
     {
         /*unsigned int nSize = nCompact >> 20;

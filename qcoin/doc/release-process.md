@@ -73,6 +73,8 @@ One have to change Makefile.mingw for miniupnpc
 	mv build/out/qt-win32-4.8.3-gitian-r1.zip inputs/
 	./bin/gbuild ../qcoin/contrib/gitian-descriptors/deps-win32.yml
 	mv build/out/PLM-deps-0.0.5.zip inputs/
+	./bin/gbuild ../qcoin/contrib/gitian-descriptors/deps-mini.yml
+	mv build/out/mini-deps-0.0.5.zip inputs/
 
  Build PLM on Linux32, Linux64, and Win32:
   

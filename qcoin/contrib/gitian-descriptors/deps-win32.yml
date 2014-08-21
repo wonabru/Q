@@ -21,7 +21,6 @@ files:
 - "zlib-1.2.6.tar.gz"
 - "libpng-1.5.9.tar.gz"
 - "qrencode-3.2.0.tar.bz2"
-- "miniupnpc-1.6.tar.gz"
 - "db-4.8.30.NC.tar.gz"
 script: |
   #

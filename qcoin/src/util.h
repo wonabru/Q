@@ -120,6 +120,11 @@ inline void MilliSleep(int64 n)
 #endif
 }
 
+inline void sleep(int sec)
+{
+   MilliSleep(sec * 1000);
+}
+
 /* This GNU C extension enables the compiler to check the format string against the parameters provided.
  * X is the number of the "format string" parameter, and Y is the number of the first variadic parameter.
  * Parameters count from 1.
