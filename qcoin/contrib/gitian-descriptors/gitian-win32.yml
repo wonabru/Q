@@ -19,8 +19,8 @@ files:
 - "PLM-deps-0.0.5.zip"
 - "mini-deps-0.0.5.zip"
 - "PLM-0.9.9-linux-gitian.zip"
-script: 
-  ##
+script: |
+  #
   mkdir $HOME/qt
   cd $HOME/qt
   unzip ../build/qt-win32-4.8.3-gitian-r1.zip

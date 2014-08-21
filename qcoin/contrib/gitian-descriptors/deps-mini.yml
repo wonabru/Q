@@ -18,7 +18,7 @@ reference_datetime: "2014-07-30 00:00:00"
 remotes: []
 files:
 - "miniupnpc-1.6.tar.gz"
-script:  
+script: |
   #
   tar -xzf miniupnpc-1.6.tar.gz
   cd miniupnpc-1.6
@@ -27,3 +27,4 @@ script:
   #
   zip -r $OUTDIR/mini-deps-0.0.5.zip miniupnpc-1.6
   killall wineserver services.exe explorer.exe winedevice.exe
+  
