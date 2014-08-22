@@ -22,9 +22,8 @@ script: |
   #
   tar -xzf miniupnpc-1.6.tar.gz
   cd miniupnpc-1.6
-  make -f Makefile.mingw PREFIX=i686-w64-mingw32-
+  make -f Makefile.mingw PREFIX=i586-mingw32msvc-
   cd ..
   #
   zip -r $OUTDIR/mini-deps-0.0.5.zip miniupnpc-1.6
-  killall wineserver services.exe explorer.exe winedevice.exe
-  
+    

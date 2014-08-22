@@ -11,6 +11,7 @@ packages:
 - "nsis"
 - "faketime"
 - "libminiupnpc-dev"
+- "libboost-all-dev"
 reference_datetime: "2014-07-30 00:00:00"
 remotes: []
 files:
@@ -19,8 +20,8 @@ files:
 - "PLM-deps-0.0.5.zip"
 - "mini-deps-0.0.5.zip"
 - "PLM-0.9.9-linux-gitian.zip"
-script: 
-  ##
+script: |
+  #
   mkdir $HOME/qt
   cd $HOME/qt
   unzip ../build/qt-win32-4.8.3-gitian-r1.zip
@@ -30,6 +31,7 @@ script:
   unzip PLM-deps-0.0.5.zip
   #
   unzip mini-deps-0.0.5.zip
+  cp -rf miniupnpc-1.6/* ../
   #
   mkdir boost_1_50_0
   cd boost_1_50_0
@@ -42,7 +44,7 @@ script:
   done
   cd ../..
   cp -rf include/boost .
-  cp -rf include/boost ../.
+  cp -rf include/boost $HOME/build/
   cd ..
   ls
   #
@@ -59,7 +61,7 @@ script:
   export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
   export FAKETIME=$REFERENCE_DATETIME
   export TZ=UTC
-  $HOME/qt/src/bin/qmake -spec unsupported/win32-g++-cross MINIUPNPC_LIB_PATH=$HOME/build/miniupnpc-1.6 MINIUPNPC_INCLUDE_PATH=$HOME/build/ BDB_LIB_PATH=$HOME/build/db-4.8.30.NC/build_unix BDB_INCLUDE_PATH=$HOME/build/db-4.8.30.NC/build_unix BOOST_LIB_PATH=$HOME/build/boost_1_50_0/stage/lib BOOST_INCLUDE_PATH=$HOME/build/boost_1_50_0 BOOST_LIB_SUFFIX=-mt-s BOOST_THREAD_LIB_SUFFIX=_win32-mt-s OPENSSL_LIB_PATH=$HOME/build/openssl-1.0.1c OPENSSL_INCLUDE_PATH=$HOME/build/openssl-1.0.1c/include QRENCODE_LIB_PATH=$HOME/build/qrencode-3.2.0/.libs QRENCODE_INCLUDE_PATH=$HOME/build/qrencode-3.2.0 USE_QRCODE=1 INCLUDEPATH=$HOME/build:$HOME/build/db-4.8.30.NC/build_unix:$HOME/build/boost_1_50_0 DEFINES=BOOST_THREAD_USE_LIB BITCOIN_NEED_QT_PLUGINS=1 QMAKE_LRELEASE=lrelease QMAKE_CXXFLAGS=-frandom-seed=bitcoin USE_BUILD_INFO=1
+  $HOME/qt/src/bin/qmake -spec unsupported/win32-g++-cross MINIUPNPC_LIB_PATH=$HOME/build/miniupnpc-1.6 MINIUPNPC_INCLUDE_PATH=$HOME/build/miniupnpc-1.6 BDB_LIB_PATH=$HOME/build/db-4.8.30.NC/build_unix BDB_INCLUDE_PATH=$HOME/build/db-4.8.30.NC/build_unix BOOST_LIB_PATH=$HOME/build/boost_1_50_0/stage/lib BOOST_INCLUDE_PATH=$HOME/build BOOST_LIB_SUFFIX=-mt-s BOOST_THREAD_LIB_SUFFIX=_win32-mt-s OPENSSL_LIB_PATH=$HOME/build/openssl-1.0.1c OPENSSL_INCLUDE_PATH=$HOME/build/openssl-1.0.1c/include QRENCODE_LIB_PATH=$HOME/build/qrencode-3.2.0/.libs QRENCODE_INCLUDE_PATH=$HOME/build/qrencode-3.2.0 USE_QRCODE=1 INCLUDEPATH=$HOME/build:$HOME/build/db-4.8.30.NC/build_unix:$HOME/build/boost_1_50_0:$HOME/build/miniupnpc-1.6 DEFINES=BOOST_THREAD_USE_LIB BITCOIN_NEED_QT_PLUGINS=1 QMAKE_LRELEASE=lrelease QMAKE_CXXFLAGS=-frandom-seed=bitcoin USE_BUILD_INFO=1
   make $MAKEOPTS
   cp release/PLM.exe $OUTDIR/
   #

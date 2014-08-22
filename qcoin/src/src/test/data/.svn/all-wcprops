@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data
+END
+base58_encode_decode.json
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/base58_encode_decode.json
+END
+base58_keys_invalid.json
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/base58_keys_invalid.json
+END
+sig_canonical.json
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/sig_canonical.json
+END
+script_invalid.json
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/script_invalid.json
+END
+tx_valid.json
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/tx_valid.json
+END
+base58_keys_valid.json
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/base58_keys_valid.json
+END
+tx_invalid.json
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/tx_invalid.json
+END
+alertTests
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/alertTests
+END
+script_valid.json
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/script_valid.json
+END
+sig_noncanonical.json
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/test/data/sig_noncanonical.json
+END

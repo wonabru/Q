@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/helpers/memenv
+END
+memenv_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/helpers/memenv/memenv_test.cc
+END
+memenv.cc
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/helpers/memenv/memenv.cc
+END
+memenv.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/helpers/memenv/memenv.h
+END
