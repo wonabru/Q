@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/pyminer
+END
+pyminer.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/pyminer/pyminer.py
+END
+example-config.cfg
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/pyminer/example-config.cfg
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/pyminer/README
+END

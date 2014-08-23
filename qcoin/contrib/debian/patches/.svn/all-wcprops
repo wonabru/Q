@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/patches
+END
+series
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/patches/series
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/patches/README
+END

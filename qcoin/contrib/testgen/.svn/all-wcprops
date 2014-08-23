@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/testgen
+END
+base58.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/testgen/base58.py
+END
+gen_base58_test_vectors.py
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/testgen/gen_base58_test_vectors.py
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/testgen/README
+END

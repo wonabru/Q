@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian
+END
+changelog
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/changelog
+END
+bitcoind.lintian-overrides
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoind.lintian-overrides
+END
+rules
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/rules
+END
+gbp.conf
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/gbp.conf
+END
+bitcoind.install
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoind.install
+END
+watch
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/watch
+END
+bitcoin-qt.lintian-overrides
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoin-qt.lintian-overrides
+END
+copyright
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/copyright
+END
+bitcoind.examples
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoind.examples
+END
+bitcoin-qt.protocol
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoin-qt.protocol
+END
+bitcoind.bash-completion
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoind.bash-completion
+END
+bitcoin-qt.install
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoin-qt.install
+END
+control
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/control
+END
+bitcoin-qt.desktop
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoin-qt.desktop
+END
+compat
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/compat
+END
+bitcoind.manpages
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/debian/bitcoind.manpages
+END

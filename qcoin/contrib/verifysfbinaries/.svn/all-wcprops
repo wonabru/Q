@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/bitcoin/bitcoin.git/!svn/ver/5540/branches/0.8.6/contrib/verifysfbinaries
+END
+verify.sh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5540/branches/0.8.6/contrib/verifysfbinaries/verify.sh
+END

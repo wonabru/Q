@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/bitcoin/bitcoin.git/!svn/ver/5654/branches/0.8.6/src/leveldb/port
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/README
+END
+atomic_pointer.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5654/branches/0.8.6/src/leveldb/port/atomic_pointer.h
+END
+port_example.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port_example.h
+END
+port_win.cc
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port_win.cc
+END
+port_win.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port_win.h
+END
+port.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port.h
+END
+port_posix.cc
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port_posix.cc
+END
+thread_annotations.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/thread_annotations.h
+END
+port_posix.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/port/port_posix.h
+END

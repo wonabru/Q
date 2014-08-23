@@ -1,0 +1,169 @@
+10
+
+dir
+5783
+https://github.com/bitcoin/bitcoin.git/branches/0.8.6/contrib
+https://github.com/bitcoin/bitcoin.git
+
+
+
+2013-12-23T08:53:30.000000Z
+5636
+wladimir.j..van.der.laan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+d481e746-e126-b5b1-ceaf-ce57b7db7bff
+
+wallettools
+dir
+
+testgen
+dir
+
+verifysfbinaries
+dir
+
+gitian-descriptors
+dir
+
+tidy_datadir.sh
+file
+
+
+
+
+2013-12-23T23:43:05.241426Z
+3f06b412e26bb1cfb862609b1aab3248
+2013-12-23T08:53:30.000000Z
+5521
+wladimir.j..van.der.laan
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1383
+
+qt_translations.py
+file
+
+
+
+
+2013-12-23T23:43:05.241426Z
+694475f854fce365d7dbf361ed3e81e8
+2013-12-23T08:53:30.000000Z
+5521
+wladimir.j..van.der.laan
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+616
+
+macdeploy
+dir
+
+bitcoind.bash-completion
+file
+
+
+
+
+2013-12-23T23:43:05.241426Z
+695fbd1a757430594eb5492f591c4504
+2013-12-23T08:53:30.000000Z
+5521
+wladimir.j..van.der.laan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3166
+
+debian
+dir
+
+pyminer
+dir
+
+bitrpc
+dir
+
+spendfrom
+dir
+
+seeds
+dir
+
+test-patches
+dir
+
+gitian-downloader
+dir
+
+homebrew
+dir
+

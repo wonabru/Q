@@ -49,8 +49,8 @@ script: |
   #
 
   cd qcoin
-  mkdir -p $OUTDIR/qcoin
-  git archive HEAD | tar -x -C $OUTDIR/qcoin
+  mkdir -p $OUTDIR/src
+  git archive HEAD | tar -x -C $OUTDIR/src
   cp $OUTDIR/src/doc/README.md $OUTDIR
   cp $OUTDIR/src/COPYING $OUTDIR
   cd src

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/bitcoin/bitcoin.git/!svn/ver/5636/branches/0.8.6/contrib
+END
+tidy_datadir.sh
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/tidy_datadir.sh
+END
+qt_translations.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/qt_translations.py
+END
+bitcoind.bash-completion
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/contrib/bitcoind.bash-completion
+END

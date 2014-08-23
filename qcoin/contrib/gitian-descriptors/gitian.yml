@@ -38,6 +38,7 @@ script: |
   #
   tar xzf miniupnpc-1.6.tar.gz
   cd miniupnpc-1.6
+  make clean
   INSTALLPREFIX=$INSTDIR make $MAKEOPTS install
   cd ..
   #

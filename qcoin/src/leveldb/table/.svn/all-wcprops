@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table
+END
+filter_block.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/filter_block.h
+END
+block_builder.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/block_builder.h
+END
+two_level_iterator.cc
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/two_level_iterator.cc
+END
+two_level_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/two_level_iterator.h
+END
+merger.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/merger.cc
+END
+merger.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/merger.h
+END
+table_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/table_test.cc
+END
+table.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/table.cc
+END
+format.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/format.cc
+END
+iterator.cc
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/iterator.cc
+END
+format.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/format.h
+END
+block.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/block.cc
+END
+iterator_wrapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/iterator_wrapper.h
+END
+block.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/block.h
+END
+table_builder.cc
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/table_builder.cc
+END
+filter_block_test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/filter_block_test.cc
+END
+filter_block.cc
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/filter_block.cc
+END
+block_builder.cc
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/bitcoin/bitcoin.git/!svn/ver/5521/branches/0.8.6/src/leveldb/table/block_builder.cc
+END
