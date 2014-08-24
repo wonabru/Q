@@ -4,16 +4,18 @@ suites:
 - "precise"
 architectures:
 - "amd64"
+- "i386"
 packages:
 - "mingw32"
 - "git-core"
 - "unzip"
 - "nsis"
 - "faketime"
-- "libminiupnpc-dev"
-- "libboost-all-dev"
 reference_datetime: "2014-07-30 00:00:00"
-remotes: []
+remotes:
+- "url": "https://github.com/wonabru/qcoin.git"
+  "commit": "master"
+  "dir": "qcoin"
 files:
 - "qt-win32-4.8.3-gitian-r1.zip"
 - "boost-win32-1.50.0-gitian2.zip"
@@ -67,12 +69,14 @@ script: |
   export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
   export FAKETIME=$REFERENCE_DATETIME
   export TZ=UTC
-  make -f makefile.linux-mingw $MAKEOPTS DEPSDIR=$HOME/build PLM.exe USE_UPNP=0 DEBUGFLAGS="-frandom-seed=bitcoin"
+  #make -f makefile.linux-mingw $MAKEOPTS DEPSDIR=$HOME/build PLMd.exe USE_UPNP=0 DEBUGFLAGS="-frandom-seed=bitcoin"
   cd ..
-  mkdir nsis
-  mv ../nsis
+  mkdir -p nsis
+  cd ../qcoin
+  git archive HEAD | tar -x -C ../src/nsis
+  cd ../src/nsis/src
   mkdir ../release
   cp ../../release/* ../release/
-  cp ../../src/*.exe .
-  makensis ../share/setup.nsi
-  cp ../share/PLM-*-win32-setup.exe $OUTDIR/
+  cp ../../release/*.exe .
+  makensis ../../../qcoin/share/setup.nsi
+  cp ../../../qcoin/share/PLM-*-win32-setup.exe $OUTDIR/

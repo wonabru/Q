@@ -18,11 +18,11 @@ USE_UPNP = 0
 # Dependency library locations can be customized with:
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
-#BDB_LIB_SUFFIX=-4.8
-BDB_INCLUDE_PATH += /usr/local/BerkeleyDB.4.8/include
-BDB_LIB_PATH += /usr/local/BerkeleyDB.4.8/lib
-BOOST_LIB_PATH += /usr/local/lib
-BOOST_INCLUDE_PATH += /usr/local/include
+!win32: BDB_LIB_SUFFIX=-4.8
+!win32: BDB_INCLUDE_PATH += /usr/local/BerkeleyDB.4.8/include
+!win32: BDB_LIB_PATH += /usr/local/BerkeleyDB.4.8/lib
+!win32: BOOST_LIB_PATH += /usr/local/lib
+!win32: BOOST_INCLUDE_PATH += /usr/local/include
 OBJECTS_DIR = build
 MOC_DIR = build
 UI_DIR = build

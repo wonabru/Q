@@ -729,6 +729,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                                      " your balance or transactions are incorrect you should"
                                      " restore from a backup."), strDataDir.c_str());
             InitWarning(msg);
+            mapArgs["-afterremoveblocks"] = 1;
         }
         if (r == CDBEnv::RECOVER_FAIL)
                 return InitError(_("myq.dat corrupt, salvage failed"));
