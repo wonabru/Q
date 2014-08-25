@@ -63,7 +63,7 @@ CPubKey CWallet::GenerateNewKey()
     if (!IsCrypted())
         if (!AddKey(key))
         {
-         printf("CWallet::GenerateNewKey() : AddKey failed");
+         logPrint("CWallet::GenerateNewKey() : AddKey failed");
         }
     return key.GetPubKey();
 }

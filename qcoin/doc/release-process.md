@@ -47,7 +47,7 @@ Release Process
 	wget 'http://download.qt-project.org/archive/qt/4.8/4.8.3/qt-everywhere-opensource-src-4.8.3.tar.gz'
 	wget http://sourceforge.net/projects/mingw-w64/files/Toolchain%20sources/Automated%20Builds/mingw-w64-src_20140501.tar.bz2/download
 
-One have to change Makefile.mingw for miniupnpc. You can download whole tar here https://github.com/wonabru/Q/blob/master/miniupnpc-1.6.tar.gz. Just replace existing file.
+One has to change Makefile.mingw for miniupnpc. You can download whole tar here https://github.com/wonabru/Q/blob/master/miniupnpc-1.6.tar.gz. Just replace existing file.
 
 	cd ..
 	./bin/gbuild ../qcoin/contrib/gitian-descriptors/boost-win32.yml

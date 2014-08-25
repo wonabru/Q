@@ -47,13 +47,13 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-std::string efff = "00000000000000000000000001ffffff";
-std::string efff1152 = "00000000000000000000000003fffffe";
-std::string ffff2304 = "000000000000000001ffffff00000000";
-std::string ffff3456 = "00000000000000000000000000ffffff";
-std::string ffff4608 = "00000000000000000000000001000001";
-std::string ffff5760 = "00000000000000000000000000ffffff";
-uint256 hashGenesisBlock("0x38ada30de2bc54fe375abc7d0930051341f33ad87e20f86bc93844a7f3300513");
+std::string efff = "00000000000000000000000000ffffff";
+//std::string efff1152 = "00000000000000000000000003fffffe";
+//std::string ffff2304 = "000000000000000001ffffff00000000";
+//std::string ffff3456 = "00000000000000000000000000ffffff";
+//std::string ffff4608 = "00000000000000000000000001000001";
+//std::string ffff5760 = "00000000000000000000000000ffffff";
+uint256 hashGenesisBlock("0xf8cb3e058b7a98fb4503f7d4033587656982b173cd341cbdf0b32b48cd358765");
 static CBigNum bnProofOfWorkLimit = 0xffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1194,7 +1194,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
         pindexFirst = pindexFirst->pprev;
     assert(pindexFirst);
     CBigNum bnNew;
-    if(pindexLast->nHeight == 1151)
+   /* if(pindexLast->nHeight == 1151)
     {
         bnNew.SetCompact((uint128)efff1152.c_str());
         return bnNew.GetCompact();
@@ -1214,7 +1214,7 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     {
         bnNew.SetCompact((uint128)ffff5760.c_str());
         return bnNew.GetCompact();
-    }
+    }*/
     // Limit adjustment step
     int64 nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
     uint128 currentWork = pindexLast->nBits;
@@ -2336,9 +2336,9 @@ void initAccountsRegister()
         CQcoinAddress wonabruScript(keyWonabru.GetID());
         CQcoinAddress QScript(keyQ.GetID());
         CQcoinAddress Script1(CPubKey(WQ1.GetPubKey()).GetID());
-        printf("KeyWonabru pubKey: %s\n",wonabruScript.ToString().c_str());
-        printf("KeyQ pubKey: %s\n",QScript.ToString().c_str());
-        printf("Key1 pubKey: %s\n",Script1.ToString().c_str());
+        logPrint("KeyWonabru pubKey: %s\n",wonabruScript.ToString().c_str());
+        logPrint("KeyQ pubKey: %s\n",QScript.ToString().c_str());
+        logPrint("Key1 pubKey: %s\n",Script1.ToString().c_str());
 }
 
 void reconnection()
@@ -2355,7 +2355,7 @@ void reconnection()
 
 int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
-   // printf("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
+   // logPrint("ProcessBlock: ACCEPTED\n Adding new information to PLM-network\n");
 
     CKeyID key = (CKeyID)(pblock->namePubKey);
     CQcoinAddress address;
@@ -2371,7 +2371,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
               ret = 1;
     }
     std::string names = printNamesInQNetwork();
-  //  printf("9 %s\n New name accepted\n",names.c_str());
+  //  logPrint("9 %s\n New name accepted\n",names.c_str());
     vector<CTransaction> tx = pblock->vtx;
     int noVtx = 0;
     BOOST_FOREACH(const CTransaction& vtx, tx)
@@ -2427,11 +2427,11 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
             }
         }
     }
-  //  printf("10\n");
+  //  logPrint("10\n");
 
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
         yourNameIsRegistered = true;
-  //  printf("11\n");
+  //  logPrint("11\n");
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         AddressTableModel atm(pwalletMain);
@@ -2450,7 +2450,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
 bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)
 {
     // Check for duplicate
-    printf("ProcessBlock\n");
+    logPrint("ProcessBlock\n");
     {
         LOCK(cs_progressBlock);
     uint256 hash = pblock->GetHash();
@@ -2482,7 +2482,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             return state.DoS(100, error("ProcessBlock() : block with too little proof-of-work"));
         }
     }
-   // printf("3\n");
+   // logPrint("3\n");
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (pblock->hashPrevBlock != 0 && !mapBlockIndex.count(pblock->hashPrevBlock) && (pblock->hashPrevBlock != hashGenesisBlock))
     {
@@ -2499,7 +2499,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         return true;
     }
- //   printf("4\n");
+ //   logPrint("4\n");
     // Recursively process any orphan blocks that depended on this one
     vector<uint256> vWorkQueue;
     vWorkQueue.push_back(hash);
@@ -2520,11 +2520,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-   // printf("5\n");
+   // logPrint("5\n");
     // Store to disk
     if (!pblock->AcceptBlock(state, dbp))
         return warning("ProcessBlock() : AcceptBlock FAILED. If this warning appears too many times, please close application and run it again.");
-  //  printf("6\n");
+  //  logPrint("6\n");
     int ret = acceptNameInQNetwork(state, pfrom, pblock, dbp);
     if(ret == 1)
         return error("ProcessBlock() : AcceptBlock FAILED. The block name exists in network");
@@ -2534,11 +2534,11 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
         return error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
     if(ret > 3)
         return error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
-    printf("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
+    logPrint("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
     CQcoinAddress addr((CKeyID)pblock->namePubKey);
     std::map<CTxDestination, std::string>::iterator mi2 = pwalletMain->mapAddressBook.find(addr.Get());
     pwalletMain->NotifyAddressBookChanged(pwalletMain, addr.Get(), pblock->GetBlockName(), ::IsMine(*pwalletMain, addr.Get()), (mi2 == pwalletMain->mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
- //   printf("20\n");
+ //   logPrint("20\n");
     }
     return true;
 }
@@ -3023,9 +3023,9 @@ bool InitBlockIndex() {
 
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 2;
-        block.nTime    = 1398027600;
+        block.nTime    = 1409011200;
         block.nBits    = (uint128)efff.c_str();
-        block.nNonce   = 1838306573;
+        block.nNonce   = 1721065856;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -3033,7 +3033,7 @@ bool InitBlockIndex() {
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-     //   CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+      //  CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
@@ -4470,7 +4470,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
     pblock->SetBlockName(myname);
     pblock->SetBlockPubKey((uint160)(key));
     myname = pblock->GetBlockName();
-    printf("MyName: %s\n",myname.c_str());
+    logPrint("MyName: %s\n",myname.c_str());
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
@@ -4880,7 +4880,7 @@ void RestartMining()
     {
         mapArgs["-gen"] = 1;
        // reconnection();
-        printf("Restart mining!\n");
+        logPrint("Restart mining!\n");
         if (minerThreads != NULL)
         {
            minerThreads->interrupt_all();
@@ -4899,7 +4899,7 @@ void RestartMining()
                     if(address.IsValid() == true)
                     {
                         reserved.push_back(key);
-                        printf("Names for mining: %s\n",name.c_str());
+                        logPrint("Names for mining: %s\n",name.c_str());
                     }
             }
         }
@@ -5022,12 +5022,12 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                         //    uint128 cs = getHashCS(hash);
                         //    uint128 csc = ControlSum(hash);
                             nLogTime = GetTime();
-                        //    printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
-                         //   printf("nB: %s\n",byte_to_binary(pblock->nBits));
-                         //   printf("cs: %s\n", byte_to_binary(cs));
-                         //   printf("cc: %s\n", byte_to_binary(csc));
-                         //   printf("csb: %s\n", byte_to_binary(cs & pblock->nBits));
-                         //   printf("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
+                        //    logPrint("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
+                         //   logPrint("nB: %s\n",byte_to_binary(pblock->nBits));
+                         //   logPrint("cs: %s\n", byte_to_binary(cs));
+                         //   logPrint("cc: %s\n", byte_to_binary(csc));
+                         //   logPrint("csb: %s\n", byte_to_binary(cs & pblock->nBits));
+                         //   logPrint("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
                            // logPrint("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
                         }*/
                     }

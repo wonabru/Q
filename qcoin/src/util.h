@@ -130,7 +130,7 @@ inline void sleep(int sec)
  * Parameters count from 1.
  */
 #ifdef __GNUC__
-#define ATTR_WARN_PRINTF(X,Y) __attribute__((format(printf,X,Y)))
+#define ATTR_WARN_PRINTF(X,Y) __attribute__((format(logPrint,X,Y)))
 #else
 #define ATTR_WARN_PRINTF(X,Y)
 #endif
@@ -154,7 +154,7 @@ void RandAddSeed();
 void RandAddSeedPerfmon();
 //int ATTR_WARN_PRINTF(1,2) logPrint(const char* pszFormat, ...);
 
-//#define logPrint LogPrint
+#define logPrint OutputDebugStringF
 /*
   Rationale for the real_strprintf / strprintf construction:
     It is not allowed to use va_start with a pass-by-reference argument.
@@ -180,7 +180,7 @@ bool ATTR_WARN_PRINTF(1,2) warning(const char *format, ...);
  * which confuses gcc.
  */
 //#define logPrint(format,...) logPrint(const char* format,__VA_ARGS__)
-
+int OutputDebugStringF(const char* pszFormat, ...);
 void LogException(std::exception* pex, const char* pszThread);
 void PrintException(std::exception* pex, const char* pszThread);
 void PrintExceptionContinue(std::exception* pex, const char* pszThread);
@@ -238,12 +238,15 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 void AddTimeData(const CNetAddr& ip, int64 nTime);
 void runCommand(std::string strCommand);
 
+/*
 inline void logPrint(const char * format, ...)
 {
+    std::string s;
+
     return;
 }
-
-int LogPrintStr(const std::string &str);
+*/
+int logPrint(const std::string &str);
 
 //#define logPrint(format, ...) {char *logstr;try{sprintf(logstr,format,__VA_ARGS__);LogPrintStr(logstr);}catch(...){LogPrintStr(format);}}
 

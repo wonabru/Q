@@ -1686,7 +1686,7 @@ public:
     {
         std::string myname = GetBlockName();
         std::string myPubKey = GetBlockPubKey();
-        printf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%s, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
+        logPrint("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%s, nNonce=%u, name=%s, namePubKey=%s vtx=%"PRIszu")\n",
             GetHash().ToString().c_str(),
             nVersion,
             hashPrevBlock.ToString().c_str(),

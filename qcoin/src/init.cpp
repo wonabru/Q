@@ -729,10 +729,11 @@ bool AppInit2(boost::thread_group& threadGroup)
                                      " your balance or transactions are incorrect you should"
                                      " restore from a backup."), strDataDir.c_str());
             InitWarning(msg);
-            mapArgs["-afterremoveblocks"] = 1;
+
         }
         if (r == CDBEnv::RECOVER_FAIL)
                 return InitError(_("myq.dat corrupt, salvage failed"));
+
     }
 
     // ********************************************************* Step 6: network initialization
@@ -906,6 +907,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             string msg(_("Warning: error reading myq.dat! All keys read correctly, but transaction data"
                          " or address book entries might be missing or incorrect."));
             InitWarning(msg);
+            mapArgs["-afterremoveblocks"] = 1;
         }
         else if (nLoadWalletRet == DB_TOO_NEW)
             strErrors << _("Error loading myq.dat: Root requires newer version of Mark") << "\n";
@@ -970,7 +972,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     {
         pwalletMain->eraseNameBookRegistered();
         pwalletMain->eraseAddressBook();
-        printf("-afterremoveblocks=true");
+        logPrint("-afterremoveblocks=true");
     }
 
     bool fLoaded = false;
@@ -1197,7 +1199,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     while(clientModel.getNumBlocks() < clientModel.getNumBlocksOfPeers() - 10)
     {
-        printf("%d < %d\n",clientModel.getNumBlocks(),clientModel.getNumBlocksOfPeers());
+        logPrint("%d < %d\n",clientModel.getNumBlocks(),clientModel.getNumBlocksOfPeers());
         sleep(10);
     }
 

@@ -62,13 +62,17 @@ One have to change Makefile.mingw for miniupnpc. You can download whole tar here
  Build PLM on Linux32, Linux64, and Win32:
   
 	./bin/gbuild --commit PLM=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian.yml
+	(begin optional)
 	./bin/gsign --signer $SIGNER --release ${VERSION} --destination ../gitian.sigs/ ../qcoin/contrib/gitian-descriptors/gitian.yml
+	(end optional)
 	pushd build/out
 	zip -r PLM-${VERSION}-linux-gitian.zip *
 	mv PLM-${VERSION}-linux-gitian.zip ../../../
 	popd
 	./bin/gbuild --commit PLM=v${VERSION} ../qcoin/contrib/gitian-descriptors/gitian-win32.yml
+	(begin optional)
 	./bin/gsign --signer $SIGNER --release ${VERSION}-win32 --destination ../gitian.sigs/ ../qcoin/contrib/gitian-descriptors/gitian-win32.yml
+	(end optional)
 	pushd build/out
 	zip -r PLM-${VERSION}-win32-gitian.zip *
 	mv PLM-${VERSION}-win32-gitian.zip ../../../

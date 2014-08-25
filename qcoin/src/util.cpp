@@ -172,6 +172,8 @@ void RandAddSeedPerfmon()
 #endif
 }
 
+
+
 uint64 GetRand(uint64 nMax)
 {
     if (nMax == 0)
@@ -237,6 +239,68 @@ static void DebugPrintInit()
     mutexDebugLog = new boost::mutex();
 }
 
+int OutputDebugStringF(const char* pszFormat, ...)
+{
+    int ret = 0; // Returns total number of characters written
+    if (fPrintToConsole)
+    {
+        // print to console
+        va_list arg_ptr;
+        va_start(arg_ptr, pszFormat);
+        ret += vprintf(pszFormat, arg_ptr);
+        va_end(arg_ptr);
+    }
+    else if (!fPrintToDebugger)
+    {
+        static bool fStartedNewLine = true;
+        boost::call_once(&DebugPrintInit, debugPrintInitFlag);
+        if (fileout == NULL)
+            return ret;
+        boost::mutex::scoped_lock scoped_lock(*mutexDebugLog);
+        // reopen the log file, if requested
+        if (fReopenDebugLog) {
+            fReopenDebugLog = false;
+            boost::filesystem::path pathDebug = GetDataDir() / "debug.log";
+            if (freopen(pathDebug.string().c_str(),"a",fileout) != NULL)
+                setbuf(fileout, NULL); // unbuffered
+        }
+        // Debug print useful for profiling
+        if (fLogTimestamps && fStartedNewLine)
+            ret += fprintf(fileout, "%s ", DateTimeStrFormat("%Y-%m-%d %H:%M:%S", GetTime()).c_str());
+        if (pszFormat[strlen(pszFormat) - 1] == '\n')
+            fStartedNewLine = true;
+        else
+            fStartedNewLine = false;
+        va_list arg_ptr;
+        va_start(arg_ptr, pszFormat);
+        ret += vfprintf(fileout, pszFormat, arg_ptr);
+        va_end(arg_ptr);
+    }
+#ifdef WIN32
+    if (fPrintToDebugger)
+    {
+        static CCriticalSection cs_OutputDebugStringF;
+        // accumulate and output a line at a time
+        {
+            LOCK(cs_OutputDebugStringF);
+            static std::string buffer;
+            va_list arg_ptr;
+            va_start(arg_ptr, pszFormat);
+            buffer += vstrprintf(pszFormat, arg_ptr);
+            va_end(arg_ptr);
+            int line_start = 0, line_end;
+            while((line_end = buffer.find('\n', line_start)) != -1)
+            {
+                OutputDebugStringA(buffer.substr(line_start, line_end - line_start).c_str());
+                line_start = line_end + 1;
+                ret += line_end-line_start;
+            }
+            buffer.erase(0, line_start);
+        }
+    }
+#endif
+    return ret;
+}
 
 int LogPrintStr(const std::string &str)
 {
@@ -335,7 +399,7 @@ bool error(const char *format, ...)
     va_start(arg_ptr, format);
     std::string str = vstrprintf(format, arg_ptr);
     va_end(arg_ptr);
-    printf("WARNING: %s\n", str.c_str());
+    logPrint("WARNING: %s\n", str.c_str());
     return false;
 }
 
@@ -345,7 +409,7 @@ bool warning(const char *format, ...)
     va_start(arg_ptr, format);
     std::string str = vstrprintf(format, arg_ptr);
     va_end(arg_ptr);
-    printf("warning: %s\n", str.c_str());
+    logPrint("warning: %s\n", str.c_str());
     return false;
 }
 
