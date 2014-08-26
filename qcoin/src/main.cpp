@@ -3706,7 +3706,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         // Send the rest of the chain
         if (pindex)
             pindex = pindex->pnext;
-        int nLimit = 500;
+        int nLimit = 1;
         logPrint("getblocks %d to %s limit %d\n", (pindex ? pindex->nHeight : -1), hashStop.ToString().c_str(), nLimit);
         for (; pindex; pindex = pindex->pnext)
         {
@@ -4867,7 +4867,7 @@ void static QcoinMiner(CKeyID key)
      CBlock *pblock = &pblocktemplate->block;
      QcoinMinerGenesisBlock(pblock);
      logPrint("QcoinMiner restarted\n");
-     RestartMining();
+ //    RestartMining();
      return;
 }
 
@@ -4876,17 +4876,19 @@ void RestartMining()
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("qcoin-miner");
 
+    logPrint("yourName = %s",yourName.c_str());
+    logPrint("synchronizingComplete = %d",synchronizingComplete);
     if((yourName !="") && (synchronizingComplete == true))
     {
         mapArgs["-gen"] = 1;
        // reconnection();
         logPrint("Restart mining!\n");
-        if (minerThreads != NULL)
-        {
-           minerThreads->interrupt_all();
-           delete minerThreads;
-           minerThreads = NULL;
-        }
+      //  if (minerThreads != NULL)
+     //   {
+      //     minerThreads->interrupt_all();
+        //   delete minerThreads;
+      //     minerThreads = NULL;
+      //  }
         reserved.clear();
         BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, pwalletMain->mapAddressBook)
         {
@@ -4905,7 +4907,9 @@ void RestartMining()
         }
         sleep(10);
         if(reserved.size() > 0)
+        {
             GenerateMarks(true, reserved.first());
+        }
         else
         {
             et5:
@@ -4921,13 +4925,13 @@ void RestartMining()
             }
         }
     }else{
-        if (minerThreads != NULL)
+      /*  if (minerThreads != NULL)
         {
            logPrint("Kill thread mining.\n");
            minerThreads->interrupt_all();
            delete minerThreads;
            minerThreads = NULL;
-        }
+        }*/
         sleep(60);
     }
     RestartMining();
@@ -4961,8 +4965,8 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         //
         // Create new block
         //
-        logPrint("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
-               ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
+    //    logPrint("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
+     //          ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         pblock->nNonce++;
 

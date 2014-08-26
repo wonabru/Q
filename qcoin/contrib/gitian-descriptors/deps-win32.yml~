@@ -3,7 +3,6 @@ name: "PLM-deps"
 suites:
 - "precise"
 architectures:
-- "amd64"
 - "i386"
 packages:
 - "pkg-config"

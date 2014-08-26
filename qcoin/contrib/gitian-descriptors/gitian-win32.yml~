@@ -3,8 +3,8 @@ name: "PLM"
 suites:
 - "precise"
 architectures:
-- "amd64"
 - "i386"
+- "amd64"
 packages:
 - "mingw32"
 - "git-core"

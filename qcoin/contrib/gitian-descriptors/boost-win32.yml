@@ -3,7 +3,7 @@ name: "boost"
 suites:
 - "precise"
 architectures:
-- "i386"
+- "amd64"
 packages: 
 - "mingw32"
 - "faketime"
