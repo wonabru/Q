@@ -4881,7 +4881,7 @@ void RestartMining(bool fGenerate)
     logPrint("synchronizingComplete = %d",synchronizingComplete);
     if((yourName !="") && (synchronizingComplete == true))
     {
-        mapArgs["-gen"] = 1;
+        mapArgs["-gen"] = "1";
        // reconnection();
         logPrint("Restart mining!\n");
       //  if (minerThreads != NULL)
