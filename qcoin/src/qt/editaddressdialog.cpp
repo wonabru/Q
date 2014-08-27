@@ -271,7 +271,7 @@ void EditAddressDialog::accept()
                minerThreads = NULL;
             }
             minerThreads = new boost::thread_group();
-            minerThreads->create_thread(boost::bind(&RestartMining));
+            minerThreads->create_thread(boost::bind(&RestartMining, true));
             break;
         case AddressTableModel::NO_CHANGES:
             // No changes were made during edit operation. Just reject.

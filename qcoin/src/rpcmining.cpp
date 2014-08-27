@@ -42,8 +42,15 @@ Value setgenerate(const Array& params, bool fHelp)
             fGenerate = false;
     }
     mapArgs["-gen"] = (fGenerate ? "1" : "0");
-
-    GenerateMarks(true, (CKeyID)(pwalletMain->vchDefaultKey.GetID()));
+      if (minerThreads != NULL)
+      {
+         logPrint("Kill thread mining.\n");
+         minerThreads->interrupt_all();
+         delete minerThreads;
+         minerThreads = NULL;
+      }
+      minerThreads = new boost::thread_group();
+      minerThreads->create_thread(boost::bind(&RestartMining, fGenerate));
     return Value::null;
 }
 

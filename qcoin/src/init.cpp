@@ -1206,7 +1206,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)
     minerThreads = new boost::thread_group();
-    minerThreads->create_thread(boost::bind(&RestartMining));
+    minerThreads->create_thread(boost::bind(&RestartMining, true));
     //Should be like this but one should give an option for someone who would like to check.
 
     //One can always abort here!

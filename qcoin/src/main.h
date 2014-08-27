@@ -97,7 +97,7 @@ extern int nScriptCheckThreads;
 extern bool fTxIndex;
 extern unsigned int nCoinCacheSize;
 extern bool synchronizingComplete;
-void RestartMining();
+void RestartMining(bool fGenerate);
 extern boost::thread_group* minerThreads;
 // Settings
 extern int64 nTransactionFee;
