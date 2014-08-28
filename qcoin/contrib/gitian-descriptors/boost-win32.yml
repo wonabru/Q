@@ -8,11 +8,20 @@ packages:
 - "mingw32"
 - "faketime"
 - "zip"
+- "libz-dev"
+- "libtool"
 reference_datetime: "2011-01-30 00:00:00"
 remotes: []
 files:
 - "boost_1_50_0.tar.bz2"
+- "zlib-1.2.6.tar.gz"
 script: |
+  #
+  tar xzf zlib-1.2.6.tar.gz
+  cd zlib-1.2.6
+  make -f win32/Makefile.gcc PREFIX=i586-mingw32msvc- $MAKEOPTS
+  cd ..
+  #
   TMPDIR="$HOME/tmpdir"
   mkdir -p $TMPDIR/bin/$GBUILD_BITS $TMPDIR/include
   tar xjf boost_1_50_0.tar.bz2

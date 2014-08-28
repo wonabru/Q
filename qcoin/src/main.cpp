@@ -4877,11 +4877,11 @@ void RestartMining(bool fGenerate)
     RenameThread("qcoin-miner");
     while(fGenerate)
     {
-    logPrint("yourName = %s",yourName.c_str());
-    logPrint("synchronizingComplete = %d",synchronizingComplete);
+    logPrint("yourName = %s\n",yourName.c_str());
+    logPrint("synchronizingComplete = %d\n",synchronizingComplete);
     if((yourName !="") && (synchronizingComplete == true))
     {
-        mapArgs["-gen"] = "1";
+     //   mapArgs["-gen"] = "1";
        // reconnection();
         logPrint("Restart mining!\n");
       //  if (minerThreads != NULL)

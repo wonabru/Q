@@ -264,14 +264,14 @@ void EditAddressDialog::accept()
         {
         case AddressTableModel::OK:
             // Failed with unknown reason. Just reject.
-            if (minerThreads != NULL)
+         /*   if (minerThreads != NULL)
             {
                minerThreads->interrupt_all();
                delete minerThreads;
                minerThreads = NULL;
             }
             minerThreads = new boost::thread_group();
-            minerThreads->create_thread(boost::bind(&RestartMining, true));
+            minerThreads->create_thread(boost::bind(&RestartMining, true));*/
             break;
         case AddressTableModel::NO_CHANGES:
             // No changes were made during edit operation. Just reject.
