@@ -4859,11 +4859,13 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 
 void static QcoinMiner(CKeyID key)
 {
-    logPrint("QcoinMiner started...........\n");
+
 
      auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(key));
      if (!pblocktemplate.get())
         return;
+     logPrint("QcoinMiner started...........\n");
+    // srand((unsigned)GetTime());
      CBlock *pblock = &pblocktemplate->block;
      QcoinMinerGenesisBlock(pblock);
      logPrint("QcoinMiner restarted\n");
@@ -4948,7 +4950,7 @@ const char *byte_to_binary(uint128 x)
 void static QcoinMinerGenesisBlock(CBlock *pblock)
 {
 
-
+    pblock->nNonce = 0;
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwalletMain);
@@ -4962,7 +4964,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
     //    logPrint("Running QcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
      //          ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-        pblock->nNonce++;
+       // pblock->nNonce++;
 
 
         //
@@ -4976,7 +4978,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
         loop
         {
 
-            pblock->nNonce = (uint)(rand() * 1.0 * RAND_MAX);
+            pblock->nNonce++;
 
             // Check if something found
             if (pblock->nNonce)
@@ -5014,28 +5016,29 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                         dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
                         nHPSTimerStart = GetTimeMillis();
                         nHashCounter = 0;
-                        /*static int64 nLogTime;
+                        static int64 nLogTime;
                         if (GetTime() - nLogTime > 30)
                         {
-                        //    uint128 cs = getHashCS(hash);
-                        //    uint128 csc = ControlSum(hash);
+                            uint128 cs = getHashCS(hash);
+                            uint128 csc = ControlSum(hash);
                             nLogTime = GetTime();
-                        //    logPrint("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
-                         //   logPrint("nB: %s\n",byte_to_binary(pblock->nBits));
-                         //   logPrint("cs: %s\n", byte_to_binary(cs));
-                         //   logPrint("cc: %s\n", byte_to_binary(csc));
-                         //   logPrint("csb: %s\n", byte_to_binary(cs & pblock->nBits));
-                         //   logPrint("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
+                            logPrint("nNounce: %u\n",pblock->nNonce);
+                            logPrint("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
+                            logPrint("nB: %s\n",byte_to_binary(pblock->nBits));
+                            logPrint("cs: %s\n", byte_to_binary(cs));
+                            logPrint("cc: %s\n", byte_to_binary(csc));
+                            logPrint("csb: %s\n", byte_to_binary(cs & pblock->nBits));
+                            logPrint("ccb: %s\n", byte_to_binary(csc & pblock->nBits));
                            // logPrint("No of accounts: %d\n",accountsInQNetwork->cachedAddressTable.size());
-                        }*/
+                        }
                     }
                 }
             }
 
             // Check for stop or if block needs to be rebuilt
             boost::this_thread::interruption_point();
-            if (GetTime() - nStart > 60*2.5)
-                break;
+            if (GetTime() - nStart > 60*10)
+                return;
 
         }
     } }

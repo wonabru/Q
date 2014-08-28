@@ -1202,7 +1202,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         logPrint("%d < %d\n",clientModel.getNumBlocks(),clientModel.getNumBlocksOfPeers());
         sleep(10);
     }
-
+    srand((unsigned)GetTime());
     // Generate coins in the background
    // GenerateMarks(true,(CKeyID) key)
     minerThreads = new boost::thread_group();
