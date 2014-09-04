@@ -1273,8 +1273,8 @@ uint128 static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHe
     /// debug print
     logPrint("GetNextWorkRequired RETARGET\n");
     logPrint("nTargetTimespan = %"PRI64d"    nActualTimespan = %"PRI64d"\n", nTargetTimespan, nActualTimespan);
-    logPrint("Before: %08llu  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
-    logPrint("After:  %08llu  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+   // logPrint("Before: %08llu  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
+   // logPrint("After:  %08llu  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
 
 
     return currentWork;
