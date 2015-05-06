@@ -1632,6 +1632,8 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 
 bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
+    if(ato == -1)
+        return true;
     if (!fFileBacked)
         return false;
     bool ret = true;

@@ -130,11 +130,62 @@ public:
 }
 instance_of_cinit;
 
+const char letters[40]  = {
+  '\0','1','2','3','4','5','6','7','8','9',
+  'a','b','c','d','e','f','g','h','i','j',
+  'k','l','m','n','o','p','r','s','t','u',
+  'q','v','w','x','y','z','-','.','0','/'
+};
 
+uint256 name2hash(std::string name)
+{
+    uint256 hash = 0;
+    u_int8_t byte[32];
+    for(int k = 0;k<32;k++)
+        byte[k] = 0;
+    const char * namestr = name.c_str();
 
+    int i = 0, j;
+    while(namestr[i]!='\0')
+    {
+        for(j = 0;j<39;j++)
+        {
+            if(namestr[i] == letters[j])
+            {
+                byte[i] = j;
+                break;
+            }
+        }
+        if(j == 39)
+            return 0;
+        i++;
+    }
+    byte[i++]=255;
+    memcpy(&hash,byte,i);
+    return hash;
+}
 
-
-
+string hash2name(uint256 hash)
+{
+    string ret = "";
+    u_int8_t byte[32];
+    memcpy(&byte,&hash,32);
+    int i = 0, j;
+    while(byte[i]!=63)
+    {
+        for(j = 0;j<39;j++)
+        {
+            if(byte[i] == letters[j])
+            {
+                ret += letters[j];
+                break;
+            }
+        }
+        if(j == 39)
+            return 0;
+    }
+    return ret;
+}
 
 
 void RandAddSeed()
@@ -813,10 +864,10 @@ string DecodeBase64(const string& str)
 
 
 
+
 string EncodeBaseMM(const unsigned char* pch, size_t len)
 {
-    static const char *pbase64 = "ABCDEFGHIJKLMNOPQRSTUWYXZabcdefghijklmnopqrstuvwxyz0123456789-()"; //64
-//"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static const char *pbase64 = "abcdefghijklmnopqrstuvwxyz0123456789-."; //38
     string strRet="";
     strRet.reserve((len+2)/3*4);
 
@@ -869,12 +920,12 @@ vector<unsigned char> DecodeBaseMM(const char* p, bool* pfInvalid)
     static const int decode64_table[256] =
     {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62,
-        63, -1, -1, -1, 61, -1, -1, -1, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, -1, -1,
-        -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-        15, 16, 17, 18, 19, 20, 21, -1, 22, 23, 24, -1, -1, -1, -1, -1, -1, 25, 26, 27,
-        28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-        48, 49, 50, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, 36, 37, -1, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2,
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+        23, 24, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
