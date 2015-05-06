@@ -47,7 +47,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-std::string efff = "00000000000000000000000000ffffff";
+std::string efff = "000000000000000000000000000fffff";
 //std::string efff1152 = "00000000000000000000000003fffffe";
 //std::string ffff2304 = "000000000000000001ffffff00000000";
 //std::string ffff3456 = "00000000000000000000000000ffffff";
@@ -2450,7 +2450,29 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
   //  logPrint("10\n");
 
     if(pwalletMain->isNameRegistered(pwalletMain->GetDefaultName()) == true)
+    {
         yourNameIsRegistered = true;
+    }
+
+    if((blockname == yourName) && (yourName != "")){
+        int ret = 0;
+        int pos = yourName.find('/');
+        if(pos > 0)
+        {
+            ret = -1;
+        }
+        pos = yourName.find('.');
+        pos = yourName.find('.',pos);
+        if(pos > 0)
+        {
+            ret = 5;
+        }
+        if(ret != 0)
+        {
+            AddressTableModel atm(pwalletMain);
+            atm.setNewName();
+        }
+    }
   //  logPrint("11\n");
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
