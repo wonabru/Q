@@ -47,13 +47,13 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-std::string efff = "0000000000000000000000000000ffff";
+std::string efff = "00000000000000000000000000ffffff";
 //std::string efff1152 = "00000000000000000000000003fffffe";
 //std::string ffff2304 = "000000000000000001ffffff00000000";
 //std::string ffff3456 = "00000000000000000000000000ffffff";
 //std::string ffff4608 = "00000000000000000000000001000001";
 //std::string ffff5760 = "00000000000000000000000000ffffff";
-uint256 hashGenesisBlock("0x9551cfef935dcd0165f243f57a59d1093df279ce857d421ea703d9d13837d109");
+uint256 hashGenesisBlock("0x6edfbe2f7e9179d3b5108c9f8faab41186fb53e5439b93671c1adcefe5bdac31");
 static CBigNum bnProofOfWorkLimit = 0xffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1294,7 +1294,7 @@ bool CheckProofOfWork(const CBlock * pblock)
 {
     string name = pblock->GetBlockName();
     uint256 hashTarget = name2hash(name);
-    //logPrint("name = %s",name.c_str());
+    //
     uint256 hash = pblock->GetHash();
     u_int8_t bytes[32];
     memcpy(bytes,&hashTarget,32);
@@ -1306,12 +1306,6 @@ bool CheckProofOfWork(const CBlock * pblock)
     }
     if(i == 32)
         return false;
-    i--;
-    uint256 nBits = (uint256)-1;
-    nBits = nBits >> (256 - i * 8);
-    // Check proof of work matches claimed amount
-    if( (hashTarget & nBits) != (hash & nBits) )
-        return false;
 
 
     CBigNum bnTarget;
@@ -1321,10 +1315,14 @@ bool CheckProofOfWork(const CBlock * pblock)
     if (bnTarget <= 0)
          return false;
 
-    uint128 cs = getHashCS(hash);
-    uint128 csc = ControlSum(hash);
+    //logPrint("i = %d\n",i);
 
 
+    uint128 cs = getHashCS(hash^hashTarget);
+    uint128 csc = ControlSum(hash^hashTarget);
+
+   // logPrint("cs = %s\n",cs.ToString().c_str());
+   // logPrint("csc = %s\n",csc.ToString().c_str());
     // Check proof of work matches claimed amount
     if( (cs & (pblock->nBits)) != (csc & (pblock->nBits)) )
          return false;
@@ -2469,6 +2467,12 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
     {
         ret = -1;
     }
+    pos = namefake.find('.');
+    pos = namefake.find('.',pos);
+    if(pos > 0)
+    {
+        ret = 5;
+    }
     if(ret != 0)
     {
         pwalletMain->eraseName((CKeyID)(pblock->namePubKey));
@@ -2565,6 +2569,8 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             return error("ProcessBlock() : AcceptBlock FAILED. Payout is not to accounts in network");
         if(ret == 3)
             return error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
+        if(ret == 5)
+            return error("ProcessBlock() : AcceptBlock FAILED. In host names are not allowed subdomains.");
         if(ret == 10)
             return error("ProcessBlock() : AcceptBlock FAILED. No connection to registered host. Name should be valid host name.");
         if(ret > 3)
@@ -3102,7 +3108,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1409011200;
         block.nBits    = (uint128)efff.c_str();
-        block.nNonce   = 1721065856;
+        block.nNonce   = 35813014;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -3110,7 +3116,7 @@ bool InitBlockIndex() {
         logPrint("M1 %s\n", block.hashMerkleRoot.ToString().c_str());
         logPrint("HT %s\n", CBigNum().SetCompact(block.nBits).getuint256().ToString().c_str());
 
-        CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
+       // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
         logPrint("MM %s\n", block.getMM().c_str());
@@ -4557,7 +4563,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
 
     BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
     {
-        if(item.label != "")
+        if(item.label != "" && item.label != QString::fromStdString(myname))
         {
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
