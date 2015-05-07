@@ -1632,33 +1632,36 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 
 bool CWallet::SetAddressBookName(const CTxDestination& address, const string& strName, int ato)
 {
-    if(ato == -1)
-        return true;
     if (!fFileBacked)
         return false;
     bool ret = true;
     {
-          LOCK(this->cs_wallet);
+        LOCK(this->cs_wallet);
 
 
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
-    {
-        const std::string nameIs = item.second;
-        if(nameIs == strName)
-            if(ato < 3)
-                return false;
-    }
+        BOOST_FOREACH(const PAIRTYPE(CTxDestination, std::string)& item, mapAddressBook)
+        {
+            const std::string nameIs = item.second;
+            if(nameIs == strName)
+                if(ato < 3)
+                    return false;
+        }
+        if(ato >= 0)
+        {
+            CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
+        }
+        std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
+        NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
+        if(ato >= 0)
+        {
+            try{
+                mapAddressBook[address] = strName;
+            }
+            catch(...)
+            {
 
-    CWalletDB(strWalletFile).WriteName(CQcoinAddress(address).ToString(), strName);
-    std::map<CTxDestination, std::string>::iterator mi = mapAddressBook.find(address);
-    NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address), (mi == mapAddressBook.end()) ? CT_NEW : CT_UPDATED);
-    try{
-    mapAddressBook[address] = strName;
-    }
-    catch(...)
-    {
-
-    }
+            }
+        }
     }
     return ret;
 }

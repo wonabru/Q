@@ -140,28 +140,22 @@ const char letters[40]  = {
 uint256 name2hash(std::string name)
 {
     uint256 hash = 0;
-    u_int8_t byte[32];
-    for(int k = 0;k<32;k++)
-        byte[k] = 0;
     const char * namestr = name.c_str();
-
     int i = 0, j;
     while(namestr[i]!='\0')
     {
-        for(j = 0;j<39;j++)
+        for(j = 0;j<40;j++)
         {
             if(namestr[i] == letters[j])
             {
-                byte[i] = j;
+                hash += j;
                 break;
             }
         }
-        if(j == 39)
+        if(j == 40)
             return 0;
         i++;
     }
-    byte[i++]=255;
-    memcpy(&hash,byte,i);
     return hash;
 }
 
@@ -450,7 +444,7 @@ bool error(const char *format, ...)
     va_start(arg_ptr, format);
     std::string str = vstrprintf(format, arg_ptr);
     va_end(arg_ptr);
-    logPrint("WARNING: %s\n", str.c_str());
+    logPrint("ERROR: %s\n", str.c_str());
     return false;
 }
 

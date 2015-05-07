@@ -127,7 +127,7 @@ inline bool DecodeBase58(const std::string& str, std::vector<unsigned char>& vch
     return DecodeBase58(str.c_str(), vchRet);
 }
 
-static const char* pszBaseQ = "0123456789abcdefghijklmnopqrstuvwxyz-.()";//40
+static const char* pszBaseQ = "0123456789abcdefghijklmnopqrstuvwxyz-./(";//40
 
 // Encode a byte sequence as a base58-encoded string
 inline std::string EncodeBaseQ(const unsigned char* pbegin, const unsigned char* pend)

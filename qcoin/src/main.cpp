@@ -53,7 +53,7 @@ std::string efff = "000000000000000000000000000fffff";
 //std::string ffff3456 = "00000000000000000000000000ffffff";
 //std::string ffff4608 = "00000000000000000000000001000001";
 //std::string ffff5760 = "00000000000000000000000000ffffff";
-uint256 hashGenesisBlock("0x6edfbe2f7e9179d3b5108c9f8faab41186fb53e5439b93671c1adcefe5bdac31");
+uint256 hashGenesisBlock("0x82f0e54d14b933eba4b35ee96c463de12f1a6c135d6f5d9b4cb838b46f763de1");
 static CBigNum bnProofOfWorkLimit = 0xffffffff;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -1290,24 +1290,10 @@ uint128 getHashCS(uint256 hash)
     return hash.GetSecond128();
 }
 
-bool CheckProofOfWork(const CBlock * pblock)
+bool CheckProofOfWork(const CBlockHeader * pblock, uint256 hash)
 {
     string name = pblock->GetBlockName();
     uint256 hashTarget = name2hash(name);
-    //
-    uint256 hash = pblock->GetHash();
-    u_int8_t bytes[32];
-    memcpy(bytes,&hashTarget,32);
-    int i;
-    for(i = 0;i<32;i++)
-    {
-        if(bytes[i] == 255)
-            break;
-    }
-    if(i == 32)
-        return false;
-
-
     CBigNum bnTarget;
     bnTarget.SetCompact(pblock->nBits);
         // Check range
@@ -1319,7 +1305,7 @@ bool CheckProofOfWork(const CBlock * pblock)
 
 
     uint128 cs = getHashCS(hash^hashTarget);
-    uint128 csc = ControlSum(hash^hashTarget);
+    uint128 csc = ControlSum(hash);
 
    // logPrint("cs = %s\n",cs.ToString().c_str());
    // logPrint("csc = %s\n",csc.ToString().c_str());
@@ -2186,7 +2172,8 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
         return state.DoS(100, error("CheckBlock() : size limits failed"));
 
     // Check proof of work matches claimed amount
-    if (fCheckPOW && !CheckProofOfWork(this))
+    CBlockHeader bh = this->GetBlockHeader();
+    if (fCheckPOW && !CheckProofOfWork(&bh,this->GetHash()))
         return state.DoS(50, error("CheckBlock() : proof of work failed"));
 
     // Check timestamp
@@ -2454,26 +2441,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
         yourNameIsRegistered = true;
     }
 
-    if((blockname == yourName) && (yourName != "")){
-        int ret = 0;
-        int pos = yourName.find('/');
-        if(pos > 0)
-        {
-            ret = -1;
-        }
-        pos = yourName.find('.');
-        pos = yourName.find('.',pos);
-        if(pos > 0)
-        {
-            ret = 5;
-        }
-        if(ret != 0)
-        {
-            AddressTableModel atm(pwalletMain);
-            atm.setNewName();
-        }
-    }
-  //  logPrint("11\n");
+ //  logPrint("11\n");
     if((blockname == yourName) && (yourNameIsRegistered == false) && yourName != "")
     {
         AddressTableModel atm(pwalletMain);
@@ -2481,7 +2449,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
     }
     CAddress addr;
     if(ConnectNode(addr,pblock->GetBlockName().c_str()) == NULL)
-        ret = 10;
+        ret = -3;
 
     string namefake = pblock->GetBlockName();
     int pos = namefake.find('/');
@@ -2490,14 +2458,18 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
         ret = -1;
     }
     pos = namefake.find('.');
-    pos = namefake.find('.',pos);
+    pos = namefake.find('.',pos+1);
     if(pos > 0)
     {
-        ret = 5;
+        ret = -2;
     }
     if(ret != 0)
     {
         pwalletMain->eraseName((CKeyID)(pblock->namePubKey));
+        if(blockname == yourName)
+        {
+            yourName = "";
+        }
     }
 
   //  pwalletMain->refresh();
@@ -2591,10 +2563,10 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
             return error("ProcessBlock() : AcceptBlock FAILED. Payout is not to accounts in network");
         if(ret == 3)
             return error("ProcessBlock() : AcceptBlock FAILED. Payout is not equal one Mark");
-        if(ret == 5)
-            return error("ProcessBlock() : AcceptBlock FAILED. In host names are not allowed subdomains.");
-        if(ret == 10)
-            return error("ProcessBlock() : AcceptBlock FAILED. No connection to registered host. Name should be valid host name.");
+      //  if(ret == -2)
+      //      return error("ProcessBlock() : AcceptBlock FAILED. In host names are not allowed subdomains.");
+      //  if(ret == -3)
+      //      return error("ProcessBlock() : AcceptBlock FAILED. No connection to registered host. Name should be valid host name.");
         if(ret > 3)
             return error("ProcessBlock() : AcceptBlock FAILED. Unknown error");
         logPrint("Accepted block = %d\n",mapBlockIndex[pblock->GetHash()]->nHeight);
@@ -3130,7 +3102,7 @@ bool InitBlockIndex() {
         block.nVersion = 2;
         block.nTime    = 1409011200;
         block.nBits    = (uint128)efff.c_str();
-        block.nNonce   = 35813014;
+        block.nNonce   = 669391;
 
         logPrint("%d\n", bnProofOfWorkLimit.getint());//2147483647
         logPrint("%llu\n", bnProofOfWorkLimit.GetCompact());
@@ -3141,7 +3113,7 @@ bool InitBlockIndex() {
        // CBlock *pblock = &block;QcoinMinerGenesisBlock(pblock);
         logPrint("%u\n", block.nNonce);
         logPrint("h %s\n", block.GetHash().ToString().c_str());
-        logPrint("MM %s\n", block.getMM().c_str());
+      //  logPrint("MM %s\n", block.getMM().c_str());
         block.print();
         assert(block.hashMerkleRoot == uint256("0xce4b18f0bcb9cc3165abd7ccbba1da9a50357b37d73f031a021358d91c3ef6cd"));
 
@@ -4585,7 +4557,7 @@ CBlockTemplate* CreateNewBlock(CKeyID key)
 
     BOOST_FOREACH(AddressTableEntry item, NamesInQNetwork)
     {
-        if(item.label != "" && item.label != QString::fromStdString(myname))
+        if(item.label != "" && item.label.toStdString() != myname)
         {
             string to = item.address.toStdString();
             CQcoinAddress address(to.c_str());
@@ -4927,8 +4899,8 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
 {
    // uint256 hash = pblock->GetHash();
    // uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-
-    if(!CheckProofOfWork(pblock))
+    CBlockHeader bh = pblock->GetBlockHeader();
+    if(!CheckProofOfWork(&bh,pblock->GetHash()))
         return false;
 
     //// debug print
@@ -4972,6 +4944,7 @@ void static QcoinMiner(CKeyID key)
      logPrint("QcoinMiner started...........\n");
     // srand((unsigned)GetTime());
      CBlock *pblock = &pblocktemplate->block;
+     pindexBest->currentBlock = pblock;
      QcoinMinerGenesisBlock(pblock);
      logPrint("QcoinMiner restarted\n");
  //    RestartMining();
@@ -5027,7 +5000,7 @@ void RestartMining(bool fGenerate)
                 std::string newName = yourName + "/" + newKey.GetID().GetHex();
                 if(pwalletMain->isNameRegistered(newName) == false)
                 {
-                    pwalletMain->SetAddressBookName(newKey.GetID(), newName, -1);
+                    pwalletMain->SetAddressBookName(newKey.GetID(), newName, 5);
                 }else
                     goto et5;
             }
@@ -5089,8 +5062,8 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
             if (pblock->nNonce)
             {
                 hash = pblock->GetHash();
-
-                if(CheckProofOfWork(pblock))
+                CBlockHeader bh = pblock->GetBlockHeader();
+                if(CheckProofOfWork(&bh,pblock->GetHash()))
                 {
                     // Found a solution
                     assert(hash == pblock->GetHash());
@@ -5111,6 +5084,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
                 nHPSTimerStart = GetTimeMillis();
                 nHashCounter = 0;
             }
+
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
                 static CCriticalSection cs;
@@ -5144,7 +5118,7 @@ void static QcoinMinerGenesisBlock(CBlock *pblock)
             boost::this_thread::interruption_point();
             if (GetTime() - nStart > 60*10)
                 return;
-          //TODO  pblock->UpdateTime(pblock);
+            pblock->nTime = GetTime();
 
         }
     } }

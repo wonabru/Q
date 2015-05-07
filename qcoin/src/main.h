@@ -117,7 +117,7 @@ class CCoinsViewCache;
 class CScriptCheck;
 class CValidationState;
 class SendCoinsRecipient;
-
+class CBlockHeader;
 struct CBlockTemplate;
 
 std::string printNamesInQNetwork();
@@ -174,7 +174,7 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 /** Check mined block */
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
-bool CheckProofOfWork(const CBlock *pblock);
+bool CheckProofOfWork(const CBlockHeader *pblock, uint256 hash);
 /** Calculate the minimum amount of work a received block needs, without knowing its direct parent */
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime);
 /** Get the number of active peers */
@@ -1674,7 +1674,8 @@ public:
         }
 
         // Check the header
-        if (!CheckProofOfWork(this))
+        CBlockHeader bh = this->GetBlockHeader();
+        if (!CheckProofOfWork(&bh,this->GetHash()))
             return error("CBlock::ReadFromDisk() : errors in block header");
 
         return true;
@@ -1820,6 +1821,7 @@ public:
     // pointer to the hash of the block, if any. memory is owned by this CBlockIndex
     const uint256* phashBlock;
 
+    CBlock * currentBlock;
     // pointer to the index of the predecessor of this block
     CBlockIndex* pprev;
 
@@ -1966,9 +1968,8 @@ public:
 
     bool CheckIndex() const
     {
-      //  CBlock * pblock = this->;
-        //TODO
-        return true;//CheckProofOfWork(pblock);
+        CBlockHeader bh = this->GetBlockHeader();
+        return CheckProofOfWork(&bh,this->GetBlockHash());
     }
 
     enum { nMedianTimeSpan=11 };

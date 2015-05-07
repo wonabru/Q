@@ -40,7 +40,7 @@ double GetDifficulty(const CBlockIndex* blockindex)
     }
 */
     uint64 bb = blockindex->nBits.Get64();
-    return bb/((uint64)0x0000000000ffffff);
+    return bb/((uint64)0x00000000000fffff);
 }
 
 
