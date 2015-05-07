@@ -205,7 +205,7 @@ void QcoinGUI::createActions()
     tabGroup->addAction(addressBookAction);
 
     editNameAction = new QAction(QIcon(":/icons/address-book"), tr("Registered"), this);
-    editNameAction->setStatusTip(tr("Put your name"));
+    editNameAction->setStatusTip(tr("Put your valid hostname (max 110 letters; subdomains are not allowed). Host should accept port 8444."));
     editNameAction->setToolTip(editNameAction->statusTip());
     editNameAction->setCheckable(true);
     editNameAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));

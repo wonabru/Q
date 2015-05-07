@@ -22,7 +22,7 @@ files:
 - "qrencode-3.2.0.tar.bz2"
 script: |
   #
-  tar -xzf miniupnpc-1.6.tar.gz
+  tar xzf miniupnpc-1.6.tar.gz
   cd miniupnpc-1.6
   make -f Makefile.mingw PREFIX=i586-mingw32msvc-
   cd ..
