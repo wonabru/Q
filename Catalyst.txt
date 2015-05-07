@@ -1,1 +1,0 @@
-sudo add-apt-repository ppa:makson96/fglrx -y && sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install fglrx-legacy -y
