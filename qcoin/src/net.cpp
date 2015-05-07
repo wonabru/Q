@@ -535,6 +535,83 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
     }
 }
 
+CNode* ConnectNodeToCheck(CAddress addrConnect, const char *pszDest)
+{
+    CNode* pnode = FindNode((CService)addrConnect);
+    if(addrConnect.IsRFC100() == true)
+    {
+        return NULL;
+    }
+    if (pszDest == NULL) {
+        if (IsLocal(addrConnect))
+            return NULL;
+
+        // Look for an existing connection
+
+        if (pnode)
+        {
+            pnode->AddRef();
+            return pnode;
+        }
+    }
+   /* if(pnode != NULL)
+    {
+        try
+        {
+             tryingAddresses[addrConnect]++;
+             if(tryingAddresses[addrConnect] >= 3)
+             {
+                tryingAddresses[addrConnect] = 0;
+                pnode->Misbehaving(100);
+             }
+        }
+        catch(...)
+        {
+            tryingAddresses[addrConnect]=0;
+        }
+    }*/
+    /// debug print
+    logPrint("trying connection %s lastseen=%.1fhrs\n",
+        pszDest ? pszDest : addrConnect.ToString().c_str(),
+        pszDest ? 0 : (double)(GetAdjustedTime() - addrConnect.nTime)/3600.0);
+
+    // Connect
+    SOCKET hSocket;
+    if (pszDest ? ConnectSocketByName(addrConnect, hSocket, pszDest, 8866) : ConnectSocket(addrConnect, hSocket))
+    {
+        addrman.Attempt(addrConnect);
+
+        /// debug print
+        logPrint("connected %s\n", pszDest ? pszDest : addrConnect.ToString().c_str());
+
+        // Set to non-blocking
+#ifdef WIN32
+        u_long nOne = 1;
+        if (ioctlsocket(hSocket, FIONBIO, &nOne) == SOCKET_ERROR)
+            logPrint("ConnectSocket() : ioctlsocket non-blocking setting failed, error %d\n", WSAGetLastError());
+#else
+        if (fcntl(hSocket, F_SETFL, O_NONBLOCK) == SOCKET_ERROR)
+            logPrint("ConnectSocket() : fcntl non-blocking setting failed, error %d\n", errno);
+#endif
+
+        // Add node
+        CNode* pnode = new CNode(hSocket, addrConnect, pszDest ? pszDest : "", false);
+        pnode->AddRef();
+
+        {
+            LOCK(cs_vNodes);
+            vNodes.push_back(pnode);
+        }
+
+        pnode->nTimeConnected = GetTime();
+        return pnode;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 void CNode::CloseSocketDisconnect()
 {
     fDisconnect = true;

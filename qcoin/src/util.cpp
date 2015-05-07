@@ -159,27 +159,6 @@ uint256 name2hash(std::string name)
     return hash;
 }
 
-string hash2name(uint256 hash)
-{
-    string ret = "";
-    u_int8_t byte[32];
-    memcpy(&byte,&hash,32);
-    int i = 0, j;
-    while(byte[i]!=63)
-    {
-        for(j = 0;j<39;j++)
-        {
-            if(byte[i] == letters[j])
-            {
-                ret += letters[j];
-                break;
-            }
-        }
-        if(j == 39)
-            return 0;
-    }
-    return ret;
-}
 
 
 void RandAddSeed()

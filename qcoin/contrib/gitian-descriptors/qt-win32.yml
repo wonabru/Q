@@ -3,7 +3,7 @@ name: "qt"
 suites:
 - "precise"
 architectures:
-- "amd64"
+- "i386"
 packages: 
 - "mingw32"
 - "zip"

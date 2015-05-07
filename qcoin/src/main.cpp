@@ -2447,9 +2447,7 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
         AddressTableModel atm(pwalletMain);
         atm.setNewName();
     }
-    CAddress addr;
-    if(ConnectNode(addr,pblock->GetBlockName().c_str()) == NULL)
-        ret = -3;
+
 
     string namefake = pblock->GetBlockName();
     int pos = namefake.find('/');
@@ -2471,7 +2469,12 @@ int acceptNameInQNetwork(CValidationState &state, CNode* pfrom, CBlock* pblock, 
             yourName = "";
         }
     }
-
+    CAddress addr;
+    if(ret == 0)
+    {
+        if(ConnectNodeToCheck(addr,pblock->GetBlockName().c_str()) == NULL)
+            ret = -3;
+    }
   //  pwalletMain->refresh();
     return ret;
 }
